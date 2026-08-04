@@ -4,7 +4,7 @@ import WidgetCard from '@/components/WidgetCard'
 
 export default async function Home() {
   const supabase = await createClient()
-  
+
   // 위젯과 해당 카테고리, 제작자 프로필을 조인해서 가져옵니다.
   const { data: widgets, error } = await supabase
     .from('widgets')
@@ -23,27 +23,27 @@ export default async function Home() {
       <section className="bg-bakery-beige rounded-[32px] p-8 sm:p-12 mb-12 shadow-sm border border-toast-brown/10 relative overflow-hidden">
         {/* 장식용 종이 질감 */}
         <div className="absolute inset-0 bg-paper-texture opacity-20 pointer-events-none"></div>
-        
+
         <div className="relative z-10 max-w-2xl">
           <div className="inline-block bg-forest-green text-white text-xs font-bold px-3 py-1 rounded-full mb-6">
             ✨ 새로운 위젯 업데이트
           </div>
           <h1 className="text-4xl sm:text-5xl font-extrabold text-ink mb-6 leading-tight">
-            내 노션을 더 따뜻하게<br />
-            구워낸 귀여운 위젯들
+            나만의 노션 워크스페이스를<br />
+            이쁘고 유용하게 꾸며주는 위젯들
           </h1>
           <p className="text-lg text-ink/80 mb-8 font-medium">
-            개발했슈 1기, 2기 제작자들이 갓 구워낸 위젯들을 만나보세요.<br />
+            개발했슈 제작자들이 갓 구워낸 위젯들을 만나보세요.<br />
             로그인 없이 누구나 무료로 가져갈 수 있어요!
           </p>
           <div className="flex gap-4">
-            <Link 
+            <Link
               href="/widgets"
               className="bg-forest-green text-white font-bold py-3 px-6 rounded-xl hover:bg-forest-green/90 transition-colors shadow-sm"
             >
               진열대 둘러보기 🥐
             </Link>
-            <Link 
+            <Link
               href="/creators/join"
               className="bg-white text-forest-green border-2 border-forest-green font-bold py-3 px-6 rounded-xl hover:bg-forest-green/5 transition-colors"
             >
@@ -51,7 +51,7 @@ export default async function Home() {
             </Link>
           </div>
         </div>
-        
+
         {/* 장식용 그래픽 요소 (우측 하단) */}
         <div className="absolute right-[-20px] bottom-[-20px] text-[150px] opacity-20 transform rotate-[-15deg] pointer-events-none">
           🥨
