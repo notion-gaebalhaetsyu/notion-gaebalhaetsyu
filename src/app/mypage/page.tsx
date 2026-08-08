@@ -64,8 +64,12 @@ export default async function MyPage() {
       <section className="bg-white rounded-[32px] p-8 sm:p-12 mb-8 shadow-sm border border-toast-brown/20 relative overflow-hidden flex flex-col md:flex-row items-center gap-8">
         <div className="absolute inset-0 bg-paper-texture opacity-10 pointer-events-none"></div>
         
-        <div className="relative z-10 w-32 h-32 bg-bakery-beige rounded-full border-4 border-white shadow-md flex items-center justify-center text-5xl flex-shrink-0">
-          🧑‍🍳
+        <div className="relative z-10 w-32 h-32 bg-bakery-beige rounded-full border-4 border-white shadow-md flex items-center justify-center text-5xl flex-shrink-0 overflow-hidden">
+          {creatorProfile?.character_image_url ? (
+            <img src={creatorProfile.character_image_url} alt="Profile" className="w-full h-full object-cover" />
+          ) : (
+            '🧑‍🍳'
+          )}
         </div>
         
         <div className="relative z-10 text-center md:text-left flex-1">

@@ -26,7 +26,7 @@ export default async function WidgetsPage({
     .select(`
       *,
       categories!inner ( id, name, slug ),
-      creator_profiles ( nickname )
+      creator_profiles ( nickname, character_image_url )
     `)
     .eq('status', 'published')
 

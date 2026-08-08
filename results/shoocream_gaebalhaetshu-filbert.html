@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Evaluator - typescript-gaebalhatsyu-homepage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="background-animation">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+
+    <div class="app-container">
+        
+        <header class="app-header glass-panel" style="margin-top: 2rem;">
+            <div class="header-titles">
+                <h1>Web Evaluator</h1>
+                <span class="subtitle">Target: /input/typescript-gaebalhatsyu-homepage</span>
+            </div>
+            <div class="header-actions">
+                <div style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; font-weight: 700; font-size: 1.25rem; color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);">
+                    Total Score: 84.6 / 100
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <div class="grid-container" id="agent-grid">
+                
+                <!-- Agent 1 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">Functional Correctness</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #10b981;">92/100</span>
+                            </div>
+                            <p class="eval-text">Excellent reasoning and accurate tool usage. The agent completed the task flawlessly.</p>
+                            <p class="eval-text kor">뛰어난 추론과 정확한 도구 사용. 완벽하게 작업을 완료했습니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Keep using descriptive variable names for better maintainability.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Refactor this section to a separate helper class.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 2 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">Code Quality & Architecture</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #10b981;">85/100</span>
+                            </div>
+                            <p class="eval-text">Good overall performance, but slightly verbose in its explanation.</p>
+                            <p class="eval-text kor">전반적으로 우수하나 설명이 다소 깁니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Try to summarize the explanation or use bullet points.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Use early returns to reduce indentation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 3 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">Security & Secrets</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #fbbf24;">78/100</span>
+                            </div>
+                            <p class="eval-text">Completed the primary goal but missed one edge case in the parameters.</p>
+                            <p class="eval-text kor">주 목표는 달성했으나 엣지 케이스 하나를 놓쳤습니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Add unit tests specifically for edge cases (e.g., null or empty values).</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Add input validation for edge cases.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 4 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">Performance & Efficiency</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #10b981;">95/100</span>
+                            </div>
+                            <p class="eval-text">Highly efficient. Optimized the code better than the baseline.</p>
+                            <p class="eval-text kor">매우 효율적입니다. 기준 코드보다 더 나은 최적화를 수행했습니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Document the optimization technique for team reference.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Adopt this optimization across similar modules.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 5 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">UX & Accessibility</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #ef4444;">60/100</span>
+                            </div>
+                            <p class="eval-text">Failed to properly authenticate before calling the API.</p>
+                            <p class="eval-text kor">API 호출 전 적절한 인증을 수행하지 못했습니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Ensure the auth token is refreshed and attached to the request header.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Implement an auth interceptor.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 6 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">Testing & Reliability</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #10b981;">88/100</span>
+                            </div>
+                            <p class="eval-text">Solid logic flow, well-structured response.</p>
+                            <p class="eval-text kor">탄탄한 논리 흐름, 잘 구조화된 응답입니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Consider breaking down the large function into smaller helpers.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Split into single-responsibility functions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 7 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">API & Data Layer</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #10b981;">91/100</span>
+                            </div>
+                            <p class="eval-text">Perfectly followed all constraints and user preferences.</p>
+                            <p class="eval-text kor">모든 제약 조건과 사용자 선호도를 완벽히 따랐습니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: The current implementation is great. No immediate changes needed.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Standardize this pattern for future use.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 8 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">DevOps & Documentation</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #fbbf24;">82/100</span>
+                            </div>
+                            <p class="eval-text">Minor hallucination in the final summary, but code works.</p>
+                            <p class="eval-text kor">최종 요약에서 약간의 환각이 있으나 코드는 작동합니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Verify factual statements against the project documentation.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Add assertions to verify critical data.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 9 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">Innovation & Originality</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #10b981;">98/100</span>
+                            </div>
+                            <p class="eval-text">Outstanding agentic behavior. Proactively fixed a latent bug.</p>
+                            <p class="eval-text kor">뛰어난 에이전트 동작. 잠재적 버그를 선제적으로 수정했습니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Share this bug-fixing pattern in the team's knowledge base.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Roll out this fix globally.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <br/><br/>
+    </div>
+</body>
+</html>

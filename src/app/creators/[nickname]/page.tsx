@@ -29,7 +29,7 @@ export default async function CreatorProfilePage({
     .select(`
       *,
       categories ( name ),
-      creator_profiles ( nickname )
+      creator_profiles ( nickname, character_image_url )
     `)
     .eq('creator_profile_id', creator.id)
     .eq('status', 'published')

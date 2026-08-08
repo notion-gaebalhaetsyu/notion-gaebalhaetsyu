@@ -24,8 +24,8 @@ export default function AboutPage() {
           {/* 운영진 1 */}
           <div className="bg-bakery-beige/30 rounded-2xl p-6 border border-toast-brown/10">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-16 h-16 bg-white rounded-full border-2 border-forest-green flex items-center justify-center text-3xl shadow-sm">
-                🧑‍🍳
+              <div className="w-16 h-16 bg-white rounded-full border-2 border-forest-green flex items-center justify-center overflow-hidden shadow-sm">
+                <img src="/filbert_leader.png" alt="필버트 제빵사" className="w-full h-full object-cover" />
               </div>
               <div>
                 <div className="text-sm font-bold text-forest-green mb-1">운영진</div>
@@ -44,8 +44,8 @@ export default function AboutPage() {
           {/* 운영진 2 */}
           <div className="bg-bakery-beige/30 rounded-2xl p-6 border border-toast-brown/10">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-16 h-16 bg-white rounded-full border-2 border-toast-brown flex items-center justify-center text-3xl shadow-sm">
-                🥟
+              <div className="w-16 h-16 bg-white rounded-full border-2 border-toast-brown flex items-center justify-center overflow-hidden shadow-sm">
+                <img src="/mandoo_leader.png" alt="만두 제빵메이트" className="w-full h-full object-cover" />
               </div>
               <div>
                 <div className="text-sm font-bold text-toast-brown mb-1">운영진</div>
@@ -150,7 +150,18 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 5. 운영진의 한 마디 */}
+      {/* 5. 피드백 루프 */}
+      <section className="bg-white rounded-[32px] p-8 border border-toast-brown/20 shadow-sm">
+        <h2 className="text-xl font-bold text-ink mb-6 flex items-center gap-2">
+          <span>🔄</span> 우리의 피드백 루프
+        </h2>
+        <p className="text-ink/80 font-medium leading-relaxed">
+          Slack 스레드를 중심으로 <strong>공유 → 피드백 → 개선</strong>의 빠른 루프를 만들고, 주 1회 진행 상황을 공유합니다.<br/>
+          월 1회 베타테스터 피드백 2건 이상을 수집해 품질을 개선하고 결과물을 문서화·아카이빙합니다.
+        </p>
+      </section>
+
+      {/* 6. 운영진의 한 마디 */}
       <section className="bg-bakery-beige rounded-[32px] p-8 md:p-12 text-center shadow-inner border-2 border-dashed border-toast-brown/30">
         <h2 className="text-xl font-bold text-toast-brown mb-4">💬 운영진의 한 마디</h2>
         <p className="text-ink font-bold text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">

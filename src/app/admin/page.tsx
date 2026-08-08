@@ -29,7 +29,7 @@ export default async function AdminPage() {
     .from('widgets')
     .select(`
       *,
-      creator_profiles ( nickname ),
+      creator_profiles ( nickname, character_image_url ),
       categories ( name )
     `)
     .order('created_at', { ascending: false })

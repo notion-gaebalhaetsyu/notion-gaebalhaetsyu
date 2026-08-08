@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import WidgetCard from '@/components/WidgetCard'
+import HeroBanner from '@/components/HeroBanner'
+import HowToUse from '@/components/HowToUse'
 
 export default async function Home() {
   const supabase = await createClient()
@@ -11,7 +13,7 @@ export default async function Home() {
     .select(`
       *,
       categories ( name ),
-      creator_profiles ( nickname )
+      creator_profiles ( nickname, character_image_url )
     `)
     .eq('status', 'published')
     .order('created_at', { ascending: false })
@@ -20,43 +22,7 @@ export default async function Home() {
   return (
     <div className="pb-24">
       {/* 히어로 배너 */}
-      <section className="bg-bakery-beige rounded-[32px] p-8 sm:p-12 mb-12 shadow-sm border border-toast-brown/10 relative overflow-hidden">
-        {/* 장식용 종이 질감 */}
-        <div className="absolute inset-0 bg-paper-texture opacity-20 pointer-events-none"></div>
-
-        <div className="relative z-10 max-w-2xl">
-          <div className="inline-block bg-forest-green text-white text-xs font-bold px-3 py-1 rounded-full mb-6">
-            ✨ 새로운 위젯 업데이트
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-ink mb-6 leading-tight">
-            나만의 노션 워크스페이스를<br />
-            이쁘고 유용하게 꾸며주는 위젯들
-          </h1>
-          <p className="text-lg text-ink/80 mb-8 font-medium">
-            개발했슈 제작자들이 갓 구워낸 위젯들을 만나보세요.<br />
-            로그인 없이 누구나 무료로 가져갈 수 있어요!
-          </p>
-          <div className="flex gap-4">
-            <Link
-              href="/widgets"
-              className="bg-forest-green text-white font-bold py-3 px-6 rounded-xl hover:bg-forest-green/90 transition-colors shadow-sm"
-            >
-              진열대 둘러보기 🥐
-            </Link>
-            <Link
-              href="/creators/join"
-              className="bg-white text-forest-green border-2 border-forest-green font-bold py-3 px-6 rounded-xl hover:bg-forest-green/5 transition-colors"
-            >
-              위젯 제작자로 참여하기
-            </Link>
-          </div>
-        </div>
-
-        {/* 장식용 그래픽 요소 (우측 하단) */}
-        <div className="absolute right-[-20px] bottom-[-20px] text-[150px] opacity-20 transform rotate-[-15deg] pointer-events-none">
-          🥨
-        </div>
-      </section>
+      <HeroBanner />
 
       {/* 위젯 진열대 (Grid) */}
       <section id="widgets">
@@ -90,6 +56,9 @@ export default async function Home() {
           </div>
         )}
       </section>
+
+      {/* 이용 방법 안내 */}
+      <HowToUse />
     </div>
   )
 }

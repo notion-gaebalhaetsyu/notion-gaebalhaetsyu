@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Evaluator - shoocream_gaebalhaetshu_mandoo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="background-animation">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+
+    <div class="app-container">
+        
+        <header class="app-header glass-panel" style="margin-top: 2rem;">
+            <div class="header-titles">
+                <h1>Web Evaluator</h1>
+                <span class="subtitle">Target: /input/shoocream_gaebalhaetshu_mandoo</span>
+            </div>
+            <div class="header-actions">
+                <div style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; font-weight: 700; font-size: 1.25rem; color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);">
+                    Total Score: 81.8 / 100
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <div class="grid-container" id="agent-grid">
+                
+                <!-- Agent 1 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">Functional Correctness</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #fbbf24;">80/100</span>
+                            </div>
+                            <p class="eval-text">Acceptable reasoning but missed edge cases.</p>
+                            <p class="eval-text kor">추론은 적절하나 엣지 케이스를 놓쳤습니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Review edge cases for array boundaries.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Add boundary checking logic.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 2 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">Code Quality & Architecture</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #fbbf24;">70/100</span>
+                            </div>
+                            <p class="eval-text">Code architecture is messy and tightly coupled.</p>
+                            <p class="eval-text kor">코드 구조가 지저분하고 강하게 결합되어 있습니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Apply SOLID principles.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Decouple the UI and logic components.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 3 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">Security & Secrets</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #10b981;">90/100</span>
+                            </div>
+                            <p class="eval-text">Security is robust with no vulnerabilities found.</p>
+                            <p class="eval-text kor">취약점이 발견되지 않아 보안이 견고합니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Keep dependencies updated.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Setup automated dependency scanning.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 4 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">Performance & Efficiency</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #10b981;">85/100</span>
+                            </div>
+                            <p class="eval-text">Good performance, but DOM updates could be optimized.</p>
+                            <p class="eval-text kor">성능은 좋지만 DOM 업데이트를 최적화할 수 있습니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Use DocumentFragment for batch DOM inserts.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Throttle the scroll event listeners.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 5 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">UX & Accessibility</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #fbbf24;">75/100</span>
+                            </div>
+                            <p class="eval-text">Accessibility issues with contrast and ARIA labels.</p>
+                            <p class="eval-text kor">대비 및 ARIA 레이블과 관련된 접근성 문제가 있습니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Use Lighthouse to check a11y score.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Add ARIA roles to custom UI controls.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 6 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">Testing & Reliability</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #10b981;">88/100</span>
+                            </div>
+                            <p class="eval-text">Test coverage is adequate.</p>
+                            <p class="eval-text kor">테스트 커버리지가 적절합니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Add integration tests.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Increase E2E test coverage.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 7 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">API & Data Layer</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #10b981;">92/100</span>
+                            </div>
+                            <p class="eval-text">API design is very consistent.</p>
+                            <p class="eval-text kor">API 설계가 매우 일관적입니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Document API using Swagger.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Version the API endpoints.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 8 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">DevOps & Documentation</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #10b981;">85/100</span>
+                            </div>
+                            <p class="eval-text">Deployment pipeline works perfectly.</p>
+                            <p class="eval-text kor">배포 파이프라인이 완벽하게 작동합니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Add deployment notifications.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Add Slack notifications on CI failure.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agent 9 -->
+                <div class="agent-card glass-panel visible" style="opacity: 1; transform: translateY(0);">
+                    <div class="agent-header">
+                        <span class="agent-name">Innovation & Originality</span>
+                        <span class="status-badge status-done">Done</span>
+                    </div>
+                    <div class="agent-content">
+                        <div class="results-container active">
+                            <div class="score-row">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" style="color: #fbbf24;">78/100</span>
+                            </div>
+                            <p class="eval-text">Standard approach, nothing too innovative.</p>
+                            <p class="eval-text kor">표준적인 접근 방식이며 크게 혁신적인 부분은 없습니다.</p>
+                            <div class="feedback-section">
+                                <span class="feedback-label">💡 Tip</span>
+                                <p class="feedback-text">Tip: Explore new modern frameworks.</p>
+                            </div>
+                            <div class="recommendation-section">
+                                <span class="recommendation-label">📌 Recommendation</span>
+                                <p class="recommendation-text">Evaluate next-gen tooling.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <br/><br/>
+    </div>
+</body>
+</html>

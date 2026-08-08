@@ -15,7 +15,7 @@ export default async function WidgetDetailPage({
     .from('widgets')
     .select(`
       *,
-      creator_profiles ( nickname )
+      creator_profiles ( nickname, character_image_url )
     `)
     .eq('slug', slug)
     .single();

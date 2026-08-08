@@ -1,0 +1,9 @@
+﻿feat: Add custom profile image upload and display
+
+Implement user profile image upload using Base64 encoding to avoid
+dependency on external storage buckets.
+Update database queries across main, widgets, creators, and admin
+pages to fetch the 'character_image_url' field.
+Replace default emojis with the fetched user avatars in WidgetCard,
+WidgetDetailClient, and MyPage components.
+Add specific leader avatars to the About page for better representation.

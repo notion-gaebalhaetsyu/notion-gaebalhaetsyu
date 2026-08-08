@@ -37,7 +37,7 @@ export default function WidgetDetailClient({
         body: JSON.stringify({ widgetId: widget.id })
       });
       if (res.ok) {
-        setCopyCount(prev => prev + 1);
+        setCopyCount((prev: number) => prev + 1);
       }
     } catch (err) {
       console.error('Failed to copy', err);
@@ -105,7 +105,15 @@ export default function WidgetDetailClient({
             </button>
           </div>
           <div className="flex items-center gap-2 text-sm text-ink font-medium mb-4 pb-4 border-b border-toast-brown/20">
-            <span className="w-8 h-8 rounded-full bg-custard-cream flex items-center justify-center text-sm">👨‍🍳</span>
+            {widget.creator_profiles?.character_image_url ? (
+              <img 
+                src={widget.creator_profiles.character_image_url} 
+                alt={widget.creator_profiles?.nickname || '제빵사'} 
+                className="w-8 h-8 rounded-full object-cover border border-toast-brown/20"
+              />
+            ) : (
+              <span className="w-8 h-8 rounded-full bg-custard-cream flex items-center justify-center text-sm">👨‍🍳</span>
+            )}
             <Link href={`/creators/${widget.creator_profiles?.nickname}`} className="hover:underline hover:text-forest-green">
               {widget.creator_profiles?.nickname || '익명의 제빵사'}의 작업대
             </Link>

@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   description: "노션에 필요한 기능, 우리가 직접 구웠슈!",
 };
 
+import { ToastProvider } from "@/components/Toast";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -25,10 +27,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col pl-64">
-        <Sidebar />
-        <main className="flex-1 p-8">
-          {children}
-        </main>
+        <ToastProvider>
+          <Sidebar />
+          <main className="flex-1 p-8">
+            {children}
+          </main>
+        </ToastProvider>
       </body>
     </html>
   );
