@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+import { getWidgetBySlug, incrementWidgetViewCount, checkIsFavorited } from "@/utils/firebase/db";
+import { getCurrentUser } from "@/utils/firebase/server-auth";
 import WidgetDetailClient from "@/components/WidgetDetailClient";
+
+export const dynamic = 'force-dynamic'
 
 export default async function WidgetDetailPage({
   params,
@@ -8,43 +11,23 @@ export default async function WidgetDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
 
   // 1. 위젯 데이터 가져오기 (제작자 프로필 포함)
-  const { data: widget, error } = await supabase
-    .from('widgets')
-    .select(`
-      *,
-      creator_profiles ( nickname, character_image_url )
-    `)
-    .eq('slug', slug)
-    .single();
+  const widget = await getWidgetBySlug(slug);
 
-  if (error || !widget) {
+  if (!widget) {
     notFound();
   }
 
-  // 2. 조회수 증가 (단순 업데이트)
-  // 실제 프로덕션에서는 RPC나 서버 액션을 쓰는 것이 안전하지만, MVP를 위해 직접 update
-  await supabase
-    .from('widgets')
-    .update({ view_count: (widget.view_count || 0) + 1 })
-    .eq('id', widget.id);
+  // 2. 조회수 증가 (비동기 호출)
+  incrementWidgetViewCount(widget.id).catch(console.error);
 
   // 3. 현재 유저 확인 및 관심 위젯 여부 조회
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   let isFavorited = false;
   
   if (user) {
-    const { data: favData } = await supabase
-      .from('favorites')
-      .select('id')
-      .match({ user_id: user.id, widget_id: widget.id })
-      .single();
-    
-    if (favData) {
-      isFavorited = true;
-    }
+    isFavorited = await checkIsFavorited(user.id, widget.id);
   }
 
   return (

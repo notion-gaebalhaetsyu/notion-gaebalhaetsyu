@@ -1,44 +1,32 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/utils/supabase/server'
+import { getCurrentUser } from '@/utils/firebase/server-auth'
+import { getWidgets, getAllUsers } from '@/utils/firebase/db'
 import WidgetManager from '@/components/admin/WidgetManager'
 import UserManager from '@/components/admin/UserManager'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminPage() {
-  const supabase = await createClient()
-  
   // 1. 유저 로그인 및 권한(Admin) 체크
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getCurrentUser()
   
   if (!user) {
-    redirect('/?auth_error=true')
+    redirect('/')
   }
 
-  const { data: userData } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (!userData || userData.role !== 'admin') {
+  if (user.role !== 'admin') {
     // 권한이 없으면 메인으로 리다이렉트
     redirect('/')
   }
 
   // 2. 전체 위젯 데이터 가져오기 (가장 최신순)
-  const { data: widgets } = await supabase
-    .from('widgets')
-    .select(`
-      *,
-      creator_profiles ( nickname, character_image_url ),
-      categories ( name )
-    `)
-    .order('created_at', { ascending: false })
+  const widgets = await getWidgets({
+    status: 'all',
+    sortBy: 'latest',
+  })
 
   // 3. 전체 유저 데이터 가져오기
-  const { data: users } = await supabase
-    .from('users')
-    .select('*')
-    .order('created_at', { ascending: false })
+  const users = await getAllUsers()
 
   return (
     <div className="pb-24 max-w-7xl mx-auto">

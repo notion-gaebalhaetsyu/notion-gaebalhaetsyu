@@ -1,21 +1,15 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
+import { getCategories as fetchCategories, getCreatorProfileByUserId } from '@/utils/firebase/db'
+import { getCurrentUser } from '@/utils/firebase/server-auth'
+import { adminDb } from '@/utils/firebase/admin'
+import { db } from '@/utils/firebase/client'
+import { collection, addDoc, doc, setDoc } from 'firebase/firestore'
 import { revalidatePath } from 'next/cache'
 
 // 카테고리 목록을 가져오는 함수 (폼 렌더링용)
 export async function getCategories() {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('categories')
-    .select('*')
-    .order('display_order', { ascending: true })
-
-  if (error) {
-    console.error('Error fetching categories:', error)
-    return []
-  }
-  return data
+  return await fetchCategories()
 }
 
 // 폼 데이터를 받아 위젯을 등록하는 함수
@@ -23,68 +17,110 @@ export async function createWidget(formData: FormData) {
   const name = formData.get('name') as string
   const slug = formData.get('slug') as string
   const category_id = formData.get('category_id') as string
+  const new_category_name = formData.get('new_category_name') as string
   const short_description = formData.get('short_description') as string
   const embed_url = formData.get('embed_url') as string
   const tagsString = formData.get('tags') as string
 
   // 필수 값 검증
-  if (!name || !slug || !category_id || !short_description || !embed_url) {
+  if (!name || !slug || !short_description || !embed_url) {
     return { error: '필수 항목을 모두 입력해 주세유!' }
+  }
+
+  if (!category_id && !new_category_name) {
+    return { error: '카테고리를 선택하거나 새로 입력해 주세유!' }
   }
 
   const tags = tagsString ? tagsString.split(',').map(tag => tag.trim()).filter(Boolean) : []
 
-  const supabase = await createClient()
-
   try {
     // 1. 로그인 유저 확인 및 제빵사(Creator) 프로필 조회
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getCurrentUser()
     if (!user) {
       return { error: '먼저 로그인을 진행해주세유!' }
     }
 
-    const { data: creatorProfile, error: profileError } = await supabase
-      .from('creator_profiles')
-      .select('id')
-      .eq('user_id', user.id)
-      .single()
+    let creatorProfile = await getCreatorProfileByUserId(user.id)
+    const now = new Date().toISOString()
 
-    if (profileError || !creatorProfile) {
-      return { error: '제빵사 인증을 아직 안 하셨슈. 인증을 먼저 진행해주세유!' }
+    // 프로필이 없는 경우 기본 프로필 생성
+    if (!creatorProfile) {
+      const defaultProfile = {
+        id: user.id,
+        user_id: user.id,
+        nickname: user.name || (user.email ? user.email.split('@')[0] : `제빵사_${user.id.slice(0, 4)}`),
+        bio_short: '개발했슈 1기 제빵사입니다 🍕',
+        cohort: '개발했슈 1기',
+        created_at: now,
+        updated_at: now,
+      }
+      if (adminDb) {
+        await adminDb.collection('creator_profiles').doc(user.id).set(defaultProfile, { merge: true })
+      } else {
+        await setDoc(doc(db, 'creator_profiles', user.id), defaultProfile, { merge: true })
+      }
+      creatorProfile = defaultProfile as any
     }
 
-    // 2. 위젯 DB에 삽입 (status는 임시로 즉시 배포인 'published' 사용)
-    const { data: newWidget, error: insertError } = await supabase
-      .from('widgets')
-      .insert({
-        name,
-        slug,
-        category_id,
-        creator_profile_id: creatorProfile.id,
-        short_description,
-        embed_url,
-        tags,
-        status: 'published',
-      })
-      .select()
-      .single()
+    // 2. 신규 카테고리 등록 처리
+    let finalCategoryId = category_id
+    if (category_id === '__new__' && new_category_name && new_category_name.trim()) {
+      const trimmedName = new_category_name.trim()
+      const catDocId = `cat_${Date.now()}`
+      const newCat = {
+        id: catDocId,
+        name: trimmedName,
+        slug: trimmedName.toLowerCase().replace(/[^a-z0-9가-힣]/g, '-'),
+        display_order: 10,
+      }
 
-    if (insertError) {
-      // UNIQUE 제약 조건(slug 중복 등) 에러 처리
-      if (insertError.code === '23505') {
+      if (adminDb) {
+        await adminDb.collection('categories').doc(catDocId).set(newCat)
+      } else {
+        await setDoc(doc(db, 'categories', catDocId), newCat)
+      }
+      finalCategoryId = catDocId
+    }
+
+    const widgetData = {
+      name,
+      slug,
+      category_id: finalCategoryId || 'cat_cohort_1',
+      creator_profile_id: creatorProfile?.id || user.id,
+      short_description,
+      embed_url,
+      tags,
+      status: 'published', // 기본 즉시 발행
+      view_count: 0,
+      copy_count: 0,
+      like_count: 0,
+      created_at: now,
+      updated_at: now,
+      published_at: now,
+    }
+
+    // 3. 위젯 Firestore에 저장
+    if (adminDb) {
+      // Slug 중복 체크
+      const existing = await adminDb.collection('widgets').where('slug', '==', slug).get()
+      if (!existing.empty) {
         return { error: '이미 사용 중인 주소(Slug)에유. 다른 주소를 입력해주세유!' }
       }
-      console.error('Error inserting widget:', insertError)
-      return { error: '빵을 굽는 중 에러가 났슈 🥲 관리자에게 문의해주세유.' }
+      await adminDb.collection('widgets').add(widgetData)
+    } else {
+      await addDoc(collection(db, 'widgets'), widgetData)
     }
 
-    // 3. 메인 홈 진열대(목록) 갱신
+    // 4. 메인 홈 진열대(목록) 갱신
     revalidatePath('/')
+    revalidatePath('/widgets')
+    revalidatePath('/creators')
 
-    return { success: true, slug: newWidget.slug }
+    return { success: true, slug }
 
-  } catch (error) {
-    console.error('Unexpected error:', error)
-    return { error: '알 수 없는 오류가 발생했슈.' }
+  } catch (error: any) {
+    console.error('Error creating widget:', error)
+    return { error: error.message || '피자 위젯을 굽는 중 에러가 났슈 🥲 관리자에게 문의해주세유.' }
   }
 }
+

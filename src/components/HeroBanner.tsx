@@ -5,12 +5,12 @@ import Link from 'next/link';
 
 export const homeBanners = [
   {
-    image: "", // Use fallback UI
-    alt: "새로운 위젯이 도착했어요",
+    image: "/banner_widgets.jpg",
+    alt: "노션에 필요한 기능, 우리가 직접 구웠슈!",
     href: "/widgets",
     label: "NEW WIDGETS FROM 개발했슈",
     title: "새로운 위젯이 도착했어요",
-    text: "개발했슈 제빵사들의 소식을 만나보세요",
+    text: "개발했슈 1기 제빵사들의 위젯을 만나보세요",
   },
   {
     image: "",
@@ -26,7 +26,7 @@ export const homeBanners = [
     href: "/creators",
     label: "MEET THE BAKERS",
     title: "아이디어를 함께 구워요",
-    text: "개발했슈 제빵사들의 작품을 만나보세요",
+    text: "개발했슈 1기 제빵사들의 작품을 만나보세요",
   },
 ];
 
@@ -45,10 +45,17 @@ export default function HeroBanner() {
   return (
     <div className="w-full flex flex-col gap-12 mb-16">
       {/* 1. News Banner (Rolling) */}
-      <div className="relative w-full h-[400px] md:h-[480px] rounded-[24px] border border-toast-brown/20 overflow-hidden bg-[radial-gradient(circle_at_72%_50%,#fff2c7_0%,#fffaf1_28%,#ffffff_62%)] shadow-sm">
+      <div className="relative w-full h-[320px] sm:h-[400px] md:h-[480px] rounded-[24px] border border-toast-brown/20 overflow-hidden bg-[radial-gradient(circle_at_72%_50%,#fff2c7_0%,#fffaf1_28%,#ffffff_62%)] shadow-sm">
         {banner.image ? (
-          <Link href={banner.href} aria-label={banner.alt} className="block w-full h-full">
-            <img src={banner.image} alt={banner.alt} className="w-full h-full object-contain" />
+          <Link href={banner.href} aria-label={banner.alt} className="block w-full h-full relative group">
+            <img src={banner.image} alt={banner.alt} className="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex items-end p-6 sm:p-8">
+              <div className="text-white drop-shadow-md">
+                <span className="inline-block bg-forest-green text-white text-xs font-bold px-2.5 py-1 rounded-full mb-2">✦ 개발했슈 1기 갓 구운 위젯</span>
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold">{banner.title}</h3>
+                <p className="text-sm sm:text-base text-white/90 font-medium">{banner.text} →</p>
+              </div>
+            </div>
           </Link>
         ) : (
           <Link href={banner.href} className="block w-full h-full relative group">
@@ -66,7 +73,7 @@ export default function HeroBanner() {
         )}
 
         {/* Dots */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
           {homeBanners.map((item, index) => (
             <button
               key={item.alt}
@@ -81,48 +88,48 @@ export default function HeroBanner() {
       </div>
 
       {/* 2. Main Hero Section */}
-      <section className="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-24 px-8 lg:px-16 py-12 lg:py-16 bg-bakery-beige rounded-[32px] border border-toast-brown/10 relative overflow-hidden shadow-sm">
+      <section className="flex flex-col-reverse lg:flex-row items-center justify-between gap-8 lg:gap-16 px-8 lg:px-14 py-10 lg:py-14 bg-bakery-beige rounded-[32px] border border-toast-brown/10 relative overflow-hidden shadow-sm">
         {/* 장식용 종이 질감 */}
         <div className="absolute inset-0 bg-paper-texture opacity-20 pointer-events-none"></div>
         
         <div className="flex-1 relative z-10 min-w-0">
-          <div className="flex items-center gap-4 text-xs font-bold tracking-[1.2px] text-toast-brown/80 font-mono mb-6">
+          <div className="flex items-center gap-3 text-xs font-bold tracking-[1.2px] text-toast-brown/80 font-mono mb-4">
             <span>DEVELOPED BY 개발했슈</span>
             <span>✦ FREE NOTION WIDGETS</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-[clamp(40px,3.5vw,58px)] font-extrabold text-ink mb-6 leading-[1.25] tracking-[-1.3px] break-keep">
+          <h1 className="text-3xl sm:text-4xl lg:text-[clamp(36px,3.2vw,52px)] font-extrabold text-ink mb-5 leading-[1.25] tracking-[-1.3px] break-keep">
             노션에 필요한 기능,<br />
-            <span className="text-forest-green font-normal italic">우리가 직접 구웠슈!</span>
+            <span className="text-forest-green font-normal italic">우리가 직접 구웠슈! 🍕</span>
           </h1>
-          <p className="text-base sm:text-lg text-ink/80 mb-8 font-medium leading-[1.8]">
-            개발했슈 제빵사들이 바이브코딩으로 만든<br className="hidden sm:block" />
-            무료 위젯을 구경하고 바로 내 노션에 담아보세요.
+          <p className="text-base sm:text-lg text-ink/80 mb-7 font-medium leading-[1.7] break-keep">
+            개발했슈 1기 제빵사들이 바이브코딩으로 정성껏 구운<br className="hidden sm:block" />
+            무료 노션 위젯을 구경하고 내 노션에 바로 담아보세요.
           </p>
           <div className="flex gap-4">
             <Link
               href="/widgets"
-              className="bg-forest-green text-white font-bold py-3.5 px-6 rounded-lg hover:bg-forest-green/90 transition-all shadow-[0_3px_0_#1c452b] active:shadow-none active:translate-y-[3px] flex items-center gap-2"
+              className="bg-forest-green text-white font-bold py-3.5 px-6 rounded-xl hover:bg-forest-green/90 transition-all shadow-[0_3px_0_#1c452b] active:shadow-none active:translate-y-[3px] flex items-center gap-2"
             >
-              갓 구운 위젯 구경하기 <span className="text-xl">→</span>
+              갓 구운 위젯 진열대 구경하기 <span className="text-xl">→</span>
             </Link>
           </div>
         </div>
 
-        {/* Hero Art */}
-        <div className="relative w-[300px] sm:w-[380px] h-[300px] flex-shrink-0 z-10 hidden md:block">
-          <div className="absolute top-2 left-20 text-3xl text-toast-brown/60 tracking-widest">〰　〰</div>
-          <div className="text-[142px] drop-shadow-[0_15px_2px_#dfd0bd] mt-10 -rotate-[8deg] text-center transition-transform hover:rotate-0 duration-300 cursor-default">🍞</div>
-          
-          <div className="absolute top-[100px] right-[22px] bg-custard-cream border-2 border-toast-brown rounded-full w-[135px] h-[135px] flex items-center justify-center rotate-[8deg] text-toast-brown font-bold text-center text-sm shadow-[inset_0_0_0_8px_#fae9b1] leading-[1.4]">
-            <div className="pt-2">오늘도<br /><span className="text-[20px] font-extrabold">천천히</span><br />구워요</div>
+        {/* Hero Art (피자 캐릭터 마스코트 이미지) */}
+        <div className="relative w-[260px] sm:w-[320px] lg:w-[360px] aspect-square flex-shrink-0 z-10">
+          <div className="w-full h-full rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-white relative group">
+            <img 
+              src="/hero_pizza_mascot.jpg" 
+              alt="개발했슈 피자 마스코트" 
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+            />
+            <div className="absolute top-3 left-3 bg-[#f9dce2] text-[#a95368] font-bold px-3 py-1 text-xs rounded-full shadow-sm">
+              100% 무료! 🍕
+            </div>
+            <div className="absolute bottom-3 right-3 bg-custard-cream/95 text-toast-brown font-extrabold px-3 py-1.5 text-xs rounded-xl shadow-md border border-toast-brown/20 text-center leading-tight">
+              오늘도 따끈하게<br /><span className="text-forest-green text-sm">구워냈슈!</span>
+            </div>
           </div>
-
-          <span className="absolute top-[73px] left-[21px] bg-[#f9dce2] text-[#a95368] font-bold px-2.5 py-1.5 text-[11px] rounded-[3px] -rotate-[8deg]">
-            무료예요!
-          </span>
-          <span className="absolute bottom-[28px] right-[5px] bg-[#dce9d6] text-forest-green font-bold px-2.5 py-1.5 text-[11px] rounded-[3px] rotate-[8deg] text-left leading-[1.4]">
-            made with<br />바이브코딩
-          </span>
         </div>
       </section>
     </div>

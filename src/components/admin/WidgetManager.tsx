@@ -1,26 +1,25 @@
 "use client"
 
 import { useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
+import { db } from '@/utils/firebase/client'
+import { doc, updateDoc } from 'firebase/firestore'
 import Link from 'next/link'
+import { Widget } from '@/utils/firebase/types'
 
-export default function WidgetManager({ initialWidgets }: { initialWidgets: any[] }) {
+export default function WidgetManager({ initialWidgets }: { initialWidgets: Widget[] }) {
   const [widgets, setWidgets] = useState(initialWidgets)
-  const supabase = createClient()
   const [updatingId, setUpdatingId] = useState<string | null>(null)
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     setUpdatingId(id)
     try {
-      const { error } = await supabase
-        .from('widgets')
-        .update({ status: newStatus })
-        .eq('id', id)
-
-      if (error) throw error
+      await updateDoc(doc(db, 'widgets', id), {
+        status: newStatus,
+        updated_at: new Date().toISOString()
+      })
 
       // 로컬 상태 업데이트
-      setWidgets(widgets.map(w => w.id === id ? { ...w, status: newStatus } : w))
+      setWidgets(widgets.map(w => w.id === id ? { ...w, status: newStatus as any } : w))
     } catch (err) {
       console.error('Failed to update status', err)
       alert('상태 변경에 실패했습니다.')

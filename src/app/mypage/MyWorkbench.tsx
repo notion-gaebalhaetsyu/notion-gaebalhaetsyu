@@ -2,17 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-
-type Widget = {
-  id: string
-  name: string
-  slug: string
-  short_description: string
-  status: string
-  categories?: { name: string }
-  view_count: number
-  copy_count: number
-}
+import { Widget } from '@/utils/firebase/types'
 
 interface MyWorkbenchProps {
   bakedWidgets: Widget[]
@@ -41,11 +31,14 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets }: MyWorkben
       
       <div className="aspect-[4/3] bg-bakery-beige flex items-center justify-center p-6 relative overflow-hidden">
         <div className="w-full h-full bg-white/50 rounded-xl border-2 border-toast-brown/10 flex items-center justify-center text-4xl group-hover:scale-105 transition-transform duration-300">
-          {widget.categories?.name === '시계' ? '⏰' : 
-           widget.categories?.name === '날씨' ? '🌤️' : '🍞'}
+          {widget.thumbnail_url ? (
+            <img src={widget.thumbnail_url} alt={widget.name} className="w-full h-full object-cover rounded-xl" />
+          ) : (
+            '🍕'
+          )}
         </div>
         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-forest-green rounded-full shadow-sm">
-          {widget.categories?.name || '기타'}
+          {widget.categories?.name || '개발했슈 1기'}
         </div>
       </div>
       
@@ -59,6 +52,7 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets }: MyWorkben
         <div className="flex items-center gap-3 text-xs font-medium text-ink/50 pt-4 border-t border-toast-brown/10">
           <span className="flex items-center gap-1">👀 {widget.view_count || 0}</span>
           <span className="flex items-center gap-1">📋 {widget.copy_count || 0}</span>
+          <span className="flex items-center gap-1">❤️ {widget.like_count || 0}</span>
         </div>
       </div>
     </Link>
@@ -76,7 +70,7 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets }: MyWorkben
               : 'bg-white text-ink/60 hover:bg-bakery-beige'
           }`}
         >
-          🧺 내가 찜한 빵 <span className="ml-1 opacity-70">({favoriteWidgets.length})</span>
+          🍕 내가 찜한 피자 <span className="ml-1 opacity-70">({favoriteWidgets.length})</span>
         </button>
         <button
           onClick={() => setActiveTab('baked')}
@@ -86,7 +80,7 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets }: MyWorkben
               : 'bg-white text-ink/60 hover:bg-bakery-beige'
           }`}
         >
-          🧑‍🍳 내가 구운 빵 <span className="ml-1 opacity-70">({bakedWidgets.length})</span>
+          🧑‍🍳 내가 구운 피자 <span className="ml-1 opacity-70">({bakedWidgets.length})</span>
         </button>
       </div>
 
@@ -97,9 +91,9 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets }: MyWorkben
             {favoriteWidgets.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-3xl border border-toast-brown/20 shadow-sm border-dashed">
                 <div className="text-5xl mb-4 opacity-50">🛒</div>
-                <h3 className="text-xl font-bold text-ink mb-2">아직 바구니에 담은 빵이 없슈!</h3>
-                <p className="text-ink/60 font-medium mb-6">마음에 드는 위젯을 찾아 하트를 눌러보세요.</p>
-                <Link href="/" className="inline-block bg-forest-green text-white font-bold py-3 px-6 rounded-xl hover:bg-forest-green/90 transition-colors">
+                <h3 className="text-xl font-bold text-ink mb-2">아직 찜한 피자가 없슈!</h3>
+                <p className="text-ink/60 font-medium mb-6">마음에 드는 위젯을 찾아 하트(❤️)를 눌러보세요.</p>
+                <Link href="/widgets" className="inline-block bg-forest-green text-white font-bold py-3 px-6 rounded-xl hover:bg-forest-green/90 transition-colors">
                   진열대 구경가기
                 </Link>
               </div>
@@ -115,9 +109,9 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets }: MyWorkben
           <div>
             {bakedWidgets.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-3xl border border-toast-brown/20 shadow-sm border-dashed">
-                <div className="text-5xl mb-4 opacity-50">🥣</div>
-                <h3 className="text-xl font-bold text-ink mb-2">아직 구워낸 빵이 없네유.</h3>
-                <p className="text-ink/60 font-medium mb-6">첫 위젯을 만들어 세상에 공유해 보세요!</p>
+                <div className="text-5xl mb-4 opacity-50">🍕</div>
+                <h3 className="text-xl font-bold text-ink mb-2">아직 구워낸 피자 위젯이 없네유.</h3>
+                <p className="text-ink/60 font-medium mb-6">첫 위젯을 만들어 개발했슈 진열대에 공유해 보세요!</p>
                 <Link href="/creators/widgets/new" className="inline-block bg-forest-green text-white font-bold py-3 px-6 rounded-xl hover:bg-forest-green/90 transition-colors">
                   새 위젯 굽기
                 </Link>
@@ -143,3 +137,4 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets }: MyWorkben
     </section>
   )
 }
+

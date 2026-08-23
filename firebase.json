@@ -1,0 +1,15 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "auth": {
+    "providers": {
+      "googleSignIn": {
+        "authorizedRedirectUris": [
+          "http://localhost:3000",
+          "http://localhost"
+        ]
+      }
+    }
+  }
+}

@@ -1,25 +1,24 @@
 "use client"
 
 import { useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
+import { db } from '@/utils/firebase/client'
+import { doc, updateDoc } from 'firebase/firestore'
+import { DbUser } from '@/utils/firebase/types'
 
-export default function UserManager({ initialUsers }: { initialUsers: any[] }) {
+export default function UserManager({ initialUsers }: { initialUsers: DbUser[] }) {
   const [users, setUsers] = useState(initialUsers)
-  const supabase = createClient()
   const [updatingId, setUpdatingId] = useState<string | null>(null)
 
   const handleRoleChange = async (id: string, newRole: string) => {
     setUpdatingId(id)
     try {
-      const { error } = await supabase
-        .from('users')
-        .update({ role: newRole })
-        .eq('id', id)
-
-      if (error) throw error
+      await updateDoc(doc(db, 'users', id), {
+        role: newRole,
+        updated_at: new Date().toISOString()
+      })
 
       // 로컬 상태 업데이트
-      setUsers(users.map(u => u.id === id ? { ...u, role: newRole } : u))
+      setUsers(users.map(u => u.id === id ? { ...u, role: newRole as any } : u))
     } catch (err) {
       console.error('Failed to update role', err)
       alert('권한 변경에 실패했습니다.')
@@ -56,7 +55,7 @@ export default function UserManager({ initialUsers }: { initialUsers: any[] }) {
                   <div className="text-xs text-ink/50 mt-1">{user.id}</div>
                 </td>
                 <td className="p-4 text-sm font-medium text-ink/80">
-                  {new Date(user.created_at).toLocaleDateString()}
+                  {user.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}
                 </td>
                 <td className="p-4">
                   {getRoleBadge(user.role)}

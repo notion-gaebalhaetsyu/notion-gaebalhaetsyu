@@ -1,60 +1,40 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { createClient } from '@/utils/supabase/server'
+import { getCurrentUser } from '@/utils/firebase/server-auth'
+import { getCreatorProfileByUserId, getWidgets, getUserFavorites } from '@/utils/firebase/db'
 import MyWorkbench from './MyWorkbench'
 
-export default async function MyPage() {
-  const supabase = await createClient()
+export const dynamic = 'force-dynamic'
 
+export default async function MyPage() {
   // 1. 로그인 유저 확인
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getCurrentUser()
   
   if (!user) {
-    redirect('/?auth_error=true')
+    redirect('/')
   }
 
-  // 2. 유저 정보 및 제빵사 프로필 가져오기
-  const { data: userData } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  const { data: creatorProfile } = await supabase
-    .from('creator_profiles')
-    .select('*')
-    .eq('user_id', user.id)
-    .single()
+  // 2. 제빵사 프로필 가져오기
+  const creatorProfile = await getCreatorProfileByUserId(user.id)
 
   // 3. "내가 구운 빵" (제작한 위젯) 데이터 가져오기
   let bakedWidgets: any[] = []
   if (creatorProfile) {
-    const { data } = await supabase
-      .from('widgets')
-      .select('*, categories(name)')
-      .eq('creator_profile_id', creatorProfile.id)
-      .order('created_at', { ascending: false })
-    
-    if (data) bakedWidgets = data
+    bakedWidgets = await getWidgets({
+      creatorProfileId: creatorProfile.id,
+      status: 'all',
+      sortBy: 'latest',
+    })
   }
 
   // 4. "내가 찜한 빵" (관심 위젯) 데이터 가져오기
-  let favoriteWidgets: any[] = []
-  const { data: favData } = await supabase
-    .from('favorites')
-    .select('widgets(*, categories(name))')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-    
-  if (favData) {
-    // favorites 배열 안에 있는 widgets 객체들을 추출
-    favoriteWidgets = favData.map(f => f.widgets).filter(Boolean)
-  }
+  const favoriteWidgets = await getUserFavorites(user.id)
 
   // 프로필 정보 세팅
+  const isCreator = user.role === 'creator' || creatorProfile?.cohort === '개발했슈 1기'
   const profile = {
-    nickname: creatorProfile?.nickname || user.user_metadata?.full_name || user.email?.split('@')[0] || '익명의 사용자',
-    role: userData?.role === 'creator' ? '제빵사' : '일반 손님',
+    nickname: creatorProfile?.nickname || user.name || user.email?.split('@')[0] || '익명의 제빵사',
+    role: user.role === 'admin' ? '촌장 (관리자)' : isCreator ? '개발했슈 1기 제빵사 🍕' : '일반 손님',
     bio: creatorProfile?.bio_short || '아직 자기소개가 없슈.',
   }
 
@@ -65,8 +45,12 @@ export default async function MyPage() {
         <div className="absolute inset-0 bg-paper-texture opacity-10 pointer-events-none"></div>
         
         <div className="relative z-10 w-32 h-32 bg-bakery-beige rounded-full border-4 border-white shadow-md flex items-center justify-center text-5xl flex-shrink-0 overflow-hidden">
-          {creatorProfile?.character_image_url ? (
-            <img src={creatorProfile.character_image_url} alt="Profile" className="w-full h-full object-cover" />
+          {creatorProfile?.character_image_url || user.avatar_url ? (
+            <img 
+              src={creatorProfile?.character_image_url || user.avatar_url} 
+              alt="Profile" 
+              className="w-full h-full object-cover" 
+            />
           ) : (
             '🧑‍🍳'
           )}

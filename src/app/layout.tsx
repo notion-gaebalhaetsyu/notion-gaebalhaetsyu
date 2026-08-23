@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "개발했슈 | 위젯 제빵소",
+  title: "개발했슈 | 노션 바이브 코딩 동아리",
   description: "노션에 필요한 기능, 우리가 직접 구웠슈!",
 };
 

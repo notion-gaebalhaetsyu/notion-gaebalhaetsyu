@@ -55,9 +55,7 @@ export default function CreatorJoinPage() {
                   required
                   className="w-full appearance-none bg-bakery-beige border border-toast-brown/30 text-ink rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-forest-green/50 font-medium"
                 >
-                  <option value="">기수를 선택해 주세요</option>
                   <option value="개발했슈 1기">개발했슈 1기</option>
-                  <option value="개발했슈 2기">개발했슈 2기</option>
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-toast-brown">
                   ▼
@@ -66,12 +64,12 @@ export default function CreatorJoinPage() {
             </div>
 
             <div>
-              <label htmlFor="code" className="block text-sm font-bold text-ink mb-2">가입 코드</label>
+              <label htmlFor="code" className="block text-sm font-bold text-ink mb-2">가입 해시 코드</label>
               <input 
                 type="text" 
                 id="code" 
                 name="code" 
-                placeholder="발급받은 코드를 입력하세요 (테스트: dev1234)"
+                placeholder="사전 공유받은 1기 코드를 입력하세요 (예: dev1234)"
                 required
                 className="w-full bg-bakery-beige border border-toast-brown/30 text-ink rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-forest-green/50 placeholder:text-ink/40 font-medium"
               />
@@ -88,7 +86,7 @@ export default function CreatorJoinPage() {
                 </>
               ) : (
                 <>
-                  <span>🥖</span> 인증하기
+                  <span>🍕</span> 1기 제빵사 인증하기
                 </>
               )}
             </button>

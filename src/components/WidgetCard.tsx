@@ -1,7 +1,15 @@
 import Link from 'next/link';
 import { WidgetCardHeart, WidgetCardCopy } from './WidgetCardActions';
 
-export default function WidgetCard({ widget }: { widget: any }) {
+export default function WidgetCard({ 
+  widget, 
+  initialIsFavorited = false, 
+  userId 
+}: { 
+  widget: any;
+  initialIsFavorited?: boolean;
+  userId?: string;
+}) {
   return (
     <Link 
       href={`/widgets/${widget.slug}`}
@@ -9,23 +17,21 @@ export default function WidgetCard({ widget }: { widget: any }) {
     >
       {/* 썸네일 영역 */}
       <div className="aspect-[4/3] bg-bakery-beige flex items-center justify-center p-6 relative overflow-hidden flex-shrink-0">
-        <WidgetCardHeart widget={widget} />
+        <WidgetCardHeart 
+          widget={widget} 
+          initialIsFavorited={initialIsFavorited}
+          userId={userId}
+        />
         
         <div className="w-full h-full bg-white/50 rounded-xl border-2 border-toast-brown/10 flex items-center justify-center text-4xl group-hover:scale-105 transition-transform duration-300">
           {widget.thumbnail_url ? (
             <img src={widget.thumbnail_url} alt={widget.name} className="w-full h-full object-cover rounded-xl" />
           ) : (
-            widget.categories?.name === '시계' ? '⏰' : 
-            widget.categories?.name === '일정·D-Day' ? '🗓️' :
-            widget.categories?.name === '공부·집중' ? '🔥' :
-            widget.categories?.name === '기록' ? '✏️' :
-            widget.categories?.name === '꾸미기' ? '✨' :
-            widget.categories?.name === '생활' ? '🪴' :
-            widget.categories?.name === '재미' ? '🎲' : '🍞'
+            '🍕'
           )}
         </div>
         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-forest-green rounded-full shadow-sm z-10">
-          {widget.categories?.name || '기타'}
+          {widget.categories?.name || '개발했슈 1기'}
         </div>
       </div>
       
@@ -57,3 +63,4 @@ export default function WidgetCard({ widget }: { widget: any }) {
     </Link>
   );
 }
+

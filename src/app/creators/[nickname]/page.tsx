@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation'
-import { createClient } from '@/utils/supabase/server'
+import { getCreatorByNickname, getWidgets } from '@/utils/firebase/db'
 import WidgetCard from '@/components/WidgetCard'
+
+export const dynamic = 'force-dynamic'
 
 export default async function CreatorProfilePage({
   params,
@@ -8,32 +10,21 @@ export default async function CreatorProfilePage({
   params: Promise<{ nickname: string }>
 }) {
   const { nickname } = await params;
-  const supabase = await createClient()
-  
   const decodedNickname = decodeURIComponent(nickname);
 
   // 1. 제빵사 프로필 가져오기
-  const { data: creator, error } = await supabase
-    .from('creator_profiles')
-    .select('*')
-    .eq('nickname', decodedNickname)
-    .single()
+  const creator = await getCreatorByNickname(decodedNickname);
 
-  if (error || !creator) {
-    notFound()
+  if (!creator) {
+    notFound();
   }
 
   // 2. 해당 제빵사가 만든 위젯 가져오기
-  const { data: widgets } = await supabase
-    .from('widgets')
-    .select(`
-      *,
-      categories ( name ),
-      creator_profiles ( nickname, character_image_url )
-    `)
-    .eq('creator_profile_id', creator.id)
-    .eq('status', 'published')
-    .order('created_at', { ascending: false })
+  const widgets = await getWidgets({
+    creatorProfileId: creator.id,
+    status: 'published',
+    sortBy: 'latest',
+  });
 
   return (
     <div className="pb-24">
@@ -41,7 +32,7 @@ export default async function CreatorProfilePage({
       <section className="bg-white rounded-[32px] p-8 sm:p-12 mb-12 shadow-sm border border-toast-brown/20 relative overflow-hidden flex flex-col md:flex-row items-center gap-8">
         <div className="absolute inset-0 bg-paper-texture opacity-10 pointer-events-none"></div>
         
-        <div className="relative z-10 w-32 h-32 bg-bakery-beige rounded-full border-4 border-white shadow-md flex items-center justify-center text-5xl flex-shrink-0">
+        <div className="relative z-10 w-32 h-32 bg-bakery-beige rounded-full border-4 border-white shadow-md flex items-center justify-center text-5xl flex-shrink-0 overflow-hidden">
           {creator.character_image_url ? (
             <img src={creator.character_image_url} alt={creator.nickname} className="w-full h-full object-cover rounded-full" />
           ) : (

@@ -13,6 +13,11 @@ export default function WidgetForm({ categories }: { categories: Category[] }) {
   const router = useRouter()
   const [isPending, setIsPending] = useState(false)
   const [toastMessage, setToastMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null)
+  
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    categories.length > 0 ? categories[0]!.id : '__new__'
+  )
+  const [newCategoryName, setNewCategoryName] = useState('')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -27,7 +32,7 @@ export default function WidgetForm({ categories }: { categories: Category[] }) {
       if (result?.error) {
         setToastMessage({ type: 'error', text: result.error })
       } else if (result?.success) {
-        setToastMessage({ type: 'success', text: '진열대에 빵을 무사히 올렸슈! 🥐' })
+        setToastMessage({ type: 'success', text: '진열대에 피자를 무사히 올렸슈! 🍕' })
         // 성공 시 방금 등록한 위젯 상세 페이지로 이동
         setTimeout(() => {
           router.push(`/widgets/${result.slug}`)
@@ -57,11 +62,11 @@ export default function WidgetForm({ categories }: { categories: Category[] }) {
         />
       </div>
 
-      {/* 2. 고유 주소 (Slug) */}
+      {/* 2. 개발했슈 웹페이지 주소 설정 */}
       <div>
-        <label htmlFor="slug" className="block text-sm font-bold text-ink mb-2">URL 주소 (영문/숫자/하이픈) <span className="text-strawberry-pink">*</span></label>
+        <label htmlFor="slug" className="block text-sm font-bold text-ink mb-2">개발했슈 웹페이지 주소 설정 <span className="text-strawberry-pink">*</span></label>
         <div className="flex items-center">
-          <span className="bg-bakery-beige border border-r-0 border-toast-brown/30 text-ink/50 rounded-l-xl px-4 py-3 font-medium">/widgets/</span>
+          <span className="bg-bakery-beige border border-r-0 border-toast-brown/30 text-ink/50 rounded-l-xl px-4 py-3 font-medium text-sm">/widgets/</span>
           <input 
             type="text" 
             id="slug" 
@@ -73,6 +78,7 @@ export default function WidgetForm({ categories }: { categories: Category[] }) {
             className="w-full bg-bakery-beige border border-toast-brown/30 text-ink rounded-r-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-forest-green/50 placeholder:text-ink/40 font-medium"
           />
         </div>
+        <p className="text-xs text-ink/50 mt-1">위젯 상세 페이지의 고유 URL 주소로 사용됩니다 (영문, 숫자, 하이픈 권장).</p>
       </div>
 
       {/* 3. 카테고리 */}
@@ -83,17 +89,34 @@ export default function WidgetForm({ categories }: { categories: Category[] }) {
             id="category_id" 
             name="category_id" 
             required
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
             className="w-full appearance-none bg-bakery-beige border border-toast-brown/30 text-ink rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-forest-green/50 font-medium"
           >
-            <option value="">카테고리를 선택해 주세요</option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
+            <option value="__new__">➕ 새로운 카테고리 직접 등록</option>
           </select>
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-toast-brown">
             ▼
           </div>
         </div>
+
+        {/* 새 카테고리 직접 등록 인풋 */}
+        {selectedCategory === '__new__' && (
+          <div className="mt-3">
+            <input 
+              type="text" 
+              name="new_category_name"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              placeholder="새로운 카테고리 이름을 입력하세요 (예: 개발했슈 1기, 생산성, 미니게임)"
+              required={selectedCategory === '__new__'}
+              className="w-full bg-white border-2 border-forest-green text-ink rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-forest-green/50 placeholder:text-ink/40 font-medium"
+            />
+          </div>
+        )}
       </div>
 
       {/* 4. 짧은 설명 */}
@@ -150,7 +173,7 @@ export default function WidgetForm({ categories }: { categories: Category[] }) {
             </>
           ) : (
             <>
-              <span>🥐</span> 진열대에 내놓기
+              <span>🍕</span> 진열대에 내놓기
             </>
           )}
         </button>
@@ -165,3 +188,4 @@ export default function WidgetForm({ categories }: { categories: Category[] }) {
     </form>
   )
 }
+
