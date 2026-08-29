@@ -182,7 +182,7 @@ export default function ProfileEditForm({
           placeholder="사전 공유받은 1기 해시 코드를 입력하세요 (예: dev1234)"
         />
         <p className="text-xs text-ink/60 mt-1.5">
-          개발했슈 1기 참가자분들은 사전에 공유된 코드를 입력하시면 1기 제빵사 권한이 부여됩니다.
+          개발했슈 1기 참가자분들은 사전에 공유된 코드를 입력하시면 1기 제작자 권한이 부여됩니다.
         </p>
       </div>
 
