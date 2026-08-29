@@ -12,8 +12,8 @@ export default async function NewWidgetPage() {
     redirect('/')
   }
 
-  // 제작자 또는 관리자만 위젯 등록 가능
-  if (user.role !== 'creator' && user.role !== 'admin') {
+  // 제작자(provider) 또는 관리자(admin)만 위젯 등록 가능
+  if (user.role !== 'provider' && user.role !== 'creator' && user.role !== 'admin') {
     redirect('/creators/join')
   }
 

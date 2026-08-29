@@ -10,9 +10,9 @@ interface MyWorkbenchProps {
   role?: UserRole
 }
 
-export default function MyWorkbench({ bakedWidgets, favoriteWidgets, role = 'general' }: MyWorkbenchProps) {
+export default function MyWorkbench({ bakedWidgets, favoriteWidgets, role = 'visitor' }: MyWorkbenchProps) {
   const [activeTab, setActiveTab] = useState<'favorites' | 'baked'>('favorites')
-  const isCreatorOrAdmin = role === 'creator' || role === 'admin'
+  const isCreatorOrAdmin = role === 'provider' || role === 'creator' || role === 'admin'
 
   // 위젯 카드 렌더링 함수
   const renderWidgetCard = (widget: Widget, isBaked: boolean = false) => (

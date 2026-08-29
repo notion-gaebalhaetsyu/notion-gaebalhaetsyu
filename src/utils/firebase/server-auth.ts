@@ -1,13 +1,13 @@
 import { cookies } from 'next/headers';
 import { adminAuth, adminDb } from './admin';
-import { DbUser } from './types';
+import { DbUser, UserRole } from './types';
 
 export interface ServerUser {
   id: string;
   email: string;
   name?: string;
   avatar_url?: string;
-  role: 'general' | 'creator' | 'admin';
+  role: UserRole;
 }
 
 export async function getCurrentUser(): Promise<ServerUser | null> {
@@ -46,16 +46,16 @@ export async function getCurrentUser(): Promise<ServerUser | null> {
     }
 
     // Firestore에서 유저의 최신 역할(role) 조회
-    let role: 'general' | 'creator' | 'admin' = 'general';
+    let role: UserRole = 'visitor';
     if (adminDb) {
       try {
         const userDoc = await adminDb.collection('users').doc(parsedSession.uid).get();
         if (userDoc.exists) {
           const data = userDoc.data() as DbUser;
-          role = data.role || 'general';
+          role = data.role || 'visitor';
         }
       } catch (e) {
-        console.warn('Could not fetch user role from adminDb, defaulting to general:', e);
+        console.warn('Could not fetch user role from adminDb, defaulting to visitor:', e);
       }
     }
 

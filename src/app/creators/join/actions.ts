@@ -83,9 +83,10 @@ export async function verifyJoinCode(formData: FormData) {
       updated_at: now,
     }, { merge: true })
 
-    // 8. users 컬렉션 role을 'creator'로 승급
+    // 8. users 컬렉션 role을 부여된 역할 (기본: 'provider')로 승급
+    const grantedRole = inviteData.role || 'provider'
     await adminDb.collection('users').doc(user.id).set({
-      role: 'creator',
+      role: grantedRole,
       name: inviteData.nickname,
       updated_at: now,
     }, { merge: true })

@@ -40,8 +40,8 @@ export async function createWidget(formData: FormData) {
       return { error: '먼저 로그인을 진행해주세유!' }
     }
 
-    if (user.role !== 'creator' && user.role !== 'admin') {
-      return { error: '위젯을 등록할 수 있는 제작자(또는 관리자) 권한이 없슈! 먼저 제작자 인증을 진행해 주세유.' }
+    if (user.role !== 'provider' && user.role !== 'creator' && user.role !== 'admin') {
+      return { error: '위젯을 등록할 수 있는 제작자(provider) 권한이 없슈! 먼저 제작자 인증을 진행해 주세유.' }
     }
 
     let creatorProfile = await getCreatorProfileByUserId(user.id)

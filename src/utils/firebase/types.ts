@@ -1,4 +1,5 @@
-export type UserRole = 'general' | 'creator' | 'admin';
+export type UserRole = 'visitor' | 'provider' | 'admin' | 'general' | 'creator';
+
 export type WidgetStatus = 'draft' | 'pending' | 'published' | 'hidden';
 export type ReportType = 'bug' | 'idea';
 export type ReportStatus = 'new' | 'reviewing' | 'resolved' | 'closed';
@@ -99,8 +100,10 @@ export interface CohortInvite {
   nickname: string;
   code: string;
   cohort: string;
+  role: UserRole; // 'visitor' | 'provider' | 'admin'
   is_used: boolean;
   used_by?: string | null;
   used_at?: string | null;
   created_at?: string;
 }
+

@@ -31,10 +31,10 @@ export default async function MyPage() {
   const favoriteWidgets = await getUserFavorites(user.id)
 
   // 프로필 정보 세팅
-  const isCreator = user.role === 'creator' || creatorProfile?.cohort === '개발했슈 1기'
+  const isCreator = user.role === 'provider' || user.role === 'creator' || creatorProfile?.cohort === '개발했슈 1기'
   const profile = {
     nickname: creatorProfile?.nickname || user.name || user.email?.split('@')[0] || '익명의 제빵사',
-    role: user.role === 'admin' ? '촌장 (관리자)' : isCreator ? '개발했슈 1기 제빵사 🍕' : '일반 손님',
+    role: user.role === 'admin' ? '관리자 (admin)' : isCreator ? '1기 제작자 (provider) 🍕' : '일반 손님 (visitor) ☕',
     bio: creatorProfile?.bio_short || '아직 자기소개가 없슈.',
   }
 

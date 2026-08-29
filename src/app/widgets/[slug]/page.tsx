@@ -35,7 +35,10 @@ export default async function WidgetDetailPage({
     widget.creator_profile_id === user.id || 
     Boolean(creatorProfile && widget.creator_profile_id === creatorProfile.id)
   );
-  const canEdit = Boolean(user && (user.role === 'admin' || (user.role === 'creator' && isOwner)));
+  const canEdit = Boolean(user && (
+    user.role === 'admin' || 
+    ((user.role === 'provider' || user.role === 'creator') && isOwner)
+  ));
 
   return (
     <WidgetDetailClient 

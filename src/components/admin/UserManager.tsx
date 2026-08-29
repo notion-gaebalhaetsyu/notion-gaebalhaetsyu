@@ -29,9 +29,10 @@ export default function UserManager({ initialUsers }: { initialUsers: DbUser[] }
 
   const getRoleBadge = (role: string) => {
     switch(role) {
-      case 'admin': return <span className="bg-forest-green text-white px-3 py-1 rounded-full text-xs font-bold">관리자 (Admin)</span>
-      case 'creator': return <span className="bg-custard-cream text-ink px-3 py-1 rounded-full text-xs font-bold">제작자 (Creator)</span>
-      default: return <span className="bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-xs font-bold">주민 (General)</span>
+      case 'admin': return <span className="bg-forest-green text-white px-3 py-1 rounded-full text-xs font-bold">관리자 (admin)</span>
+      case 'provider':
+      case 'creator': return <span className="bg-custard-cream text-ink px-3 py-1 rounded-full text-xs font-bold">제작자 (provider)</span>
+      default: return <span className="bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-xs font-bold">일반 (visitor)</span>
     }
   }
 
@@ -63,13 +64,13 @@ export default function UserManager({ initialUsers }: { initialUsers: DbUser[] }
                 <td className="p-4 text-center">
                   <select
                     disabled={updatingId === user.id}
-                    value={user.role}
+                    value={user.role === 'general' ? 'visitor' : user.role === 'creator' ? 'provider' : user.role}
                     onChange={(e) => handleRoleChange(user.id, e.target.value)}
                     className="bg-white border border-toast-brown/30 rounded-lg px-3 py-1.5 text-sm font-bold text-ink focus:outline-none focus:border-forest-green disabled:opacity-50"
                   >
-                    <option value="general">주민 (일반)</option>
-                    <option value="creator">제빵사 (크리에이터)</option>
-                    <option value="admin">촌장 (관리자)</option>
+                    <option value="visitor">일반 (visitor)</option>
+                    <option value="provider">제작자 (provider)</option>
+                    <option value="admin">관리자 (admin)</option>
                   </select>
                 </td>
               </tr>

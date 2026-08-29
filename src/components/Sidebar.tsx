@@ -42,7 +42,7 @@ export default async function Sidebar() {
                 🛠️ 관리자 페이지
               </Link>
             )}
-            {(role === 'creator' || role === 'admin') ? (
+            {(role === 'provider' || role === 'creator' || role === 'admin') ? (
               <Link href="/creators/widgets/new" className="w-full text-center py-3 rounded-xl bg-forest-green text-white font-bold hover:bg-forest-green/90 transition-colors">
                 🍕 새 위젯 굽기
               </Link>

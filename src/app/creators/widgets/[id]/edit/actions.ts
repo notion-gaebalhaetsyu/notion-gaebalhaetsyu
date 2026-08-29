@@ -33,7 +33,7 @@ export async function updateWidget(widgetId: string, formData: FormData) {
       return { error: '먼저 로그인을 진행해주세유!' }
     }
 
-    if (user.role !== 'creator' && user.role !== 'admin') {
+    if (user.role !== 'provider' && user.role !== 'creator' && user.role !== 'admin') {
       return { error: '위젯 수정 권한이 없습니다.' }
     }
 

@@ -26,7 +26,7 @@ export async function POST(request: Request) {
           email,
           name: displayName || email.split('@')[0],
           avatar_url: photoURL || '',
-          role: 'general',
+          role: 'visitor',
           created_at: now,
           updated_at: now,
         });
