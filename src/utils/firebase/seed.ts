@@ -99,6 +99,31 @@ export const INITIAL_WIDGETS = [
   },
 ];
 
+export const INITIAL_INVITES = [
+  {
+    id: 'invite_sample_1',
+    email: 'kdj9502@naver.com',
+    nickname: '우주피자장인',
+    code: 'dev1_8f9c2a',
+    cohort: '개발했슈 1기',
+    is_used: false,
+    used_by: null,
+    used_at: null,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'invite_sample_2',
+    email: 'creator1@gmail.com',
+    nickname: '바이브코딩러버',
+    code: 'dev1_pizza101',
+    cohort: '개발했슈 1기',
+    is_used: false,
+    used_by: null,
+    used_at: null,
+    created_at: new Date().toISOString(),
+  },
+];
+
 export async function seedInitialData(): Promise<{ success: boolean; message: string }> {
   try {
     if (adminDb) {
@@ -116,6 +141,11 @@ export async function seedInitialData(): Promise<{ success: boolean; message: st
       for (const widget of INITIAL_WIDGETS) {
         await adminDb.collection('widgets').doc(widget.id).set(widget, { merge: true });
       }
+
+      // 4. Cohort Invites
+      for (const invite of INITIAL_INVITES) {
+        await adminDb.collection('cohort_invites').doc(invite.id).set(invite, { merge: true });
+      }
     } else {
       // Client Firestore fallback
       for (const cat of INITIAL_CATEGORIES) {
@@ -129,11 +159,16 @@ export async function seedInitialData(): Promise<{ success: boolean; message: st
       for (const widget of INITIAL_WIDGETS) {
         await setDoc(doc(db, 'widgets', widget.id), widget, { merge: true });
       }
+
+      for (const invite of INITIAL_INVITES) {
+        await setDoc(doc(db, 'cohort_invites', invite.id), invite, { merge: true });
+      }
     }
 
-    return { success: true, message: '초기 데이터 시딩이 완료되었습니다.' };
+    return { success: true, message: '초기 데이터(카테고리, 위젯, 제작자, 1기 초대코드) 시딩이 완료되었습니다.' };
   } catch (error: any) {
     console.error('seedInitialData error:', error);
     return { success: false, message: error.message || '시딩 중 에러가 발생했습니다.' };
   }
 }
+
