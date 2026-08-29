@@ -32,10 +32,10 @@ export async function POST(request: Request) {
     const now = new Date().toISOString();
     let assignedRole: UserRole = isAdmin ? 'admin' : 'visitor';
 
-    // 1. users 컬렉션 및 cohort_invites 확인하여 역할 결정 및 동기화
+    // 1. users 컬렉션 및 cohort_invites 확인하여 역할 결정 및 동기화 (문서 ID: 이메일)
     if (adminDb) {
       try {
-        const userRef = adminDb.collection('users').doc(uid);
+        const userRef = adminDb.collection('users').doc(normalizedEmail);
         const userSnap = await userRef.get();
 
         if (userSnap.exists) {
@@ -46,12 +46,15 @@ export async function POST(request: Request) {
             assignedRole = existingData.role as UserRole;
           }
 
-          await userRef.update({
+          await userRef.set({
+            id: normalizedEmail,
+            uid,
+            email: normalizedEmail,
             name: displayName || existingData?.name || email.split('@')[0],
             avatar_url: photoURL || existingData?.avatar_url || '',
             role: assignedRole,
             updated_at: now,
-          });
+          }, { merge: true });
         } else {
           // 신규 유저인 경우 초대 목록에 admin/provider가 있는지 확인
           if (!isAdmin) {
@@ -80,14 +83,15 @@ export async function POST(request: Request) {
           }
 
           await userRef.set({
-            id: uid,
+            id: normalizedEmail,
+            uid,
             email: normalizedEmail,
             name: displayName || email.split('@')[0],
             avatar_url: photoURL || '',
             role: assignedRole,
             created_at: now,
             updated_at: now,
-          });
+          }, { merge: true });
         }
       } catch (e) {
         console.warn('adminDb user update failed, falling back to client db:', e);
@@ -95,7 +99,7 @@ export async function POST(request: Request) {
     } else {
       // Client Firestore fallback
       try {
-        const userRef = doc(db, 'users', uid);
+        const userRef = doc(db, 'users', normalizedEmail);
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
@@ -106,12 +110,15 @@ export async function POST(request: Request) {
             assignedRole = existingData.role as UserRole;
           }
 
-          await updateDoc(userRef, {
+          await setDoc(userRef, {
+            id: normalizedEmail,
+            uid,
+            email: normalizedEmail,
             name: displayName || existingData?.name || email.split('@')[0],
             avatar_url: photoURL || existingData?.avatar_url || '',
             role: assignedRole,
             updated_at: now,
-          });
+          }, { merge: true });
         } else {
           if (!isAdmin) {
             try {
@@ -137,14 +144,15 @@ export async function POST(request: Request) {
           }
 
           await setDoc(userRef, {
-            id: uid,
+            id: normalizedEmail,
+            uid,
             email: normalizedEmail,
             name: displayName || email.split('@')[0],
             avatar_url: photoURL || '',
             role: assignedRole,
             created_at: now,
             updated_at: now,
-          });
+          }, { merge: true });
         }
       } catch (e) {
         console.warn('client db user update failed:', e);

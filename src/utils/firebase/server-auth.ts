@@ -59,13 +59,17 @@ export async function getCurrentUser(): Promise<ServerUser | null> {
 
     // Firestore에서 유저의 최신 역할(role) 조회
     let role: UserRole = 'visitor';
+    const userEmail = parsedSession.email?.toLowerCase().trim();
 
-    if (checkIsAdminEmail(parsedSession.email)) {
+    if (checkIsAdminEmail(userEmail)) {
       role = 'admin';
     } else if (adminDb) {
       try {
-        const userDoc = await adminDb.collection('users').doc(parsedSession.uid).get();
-        if (userDoc.exists) {
+        let userDoc = userEmail ? await adminDb.collection('users').doc(userEmail).get() : null;
+        if (!userDoc || !userDoc.exists) {
+          userDoc = await adminDb.collection('users').doc(parsedSession.uid).get();
+        }
+        if (userDoc && userDoc.exists) {
           const data = userDoc.data() as DbUser;
           role = data.role || parsedSession.role || 'visitor';
         } else if (parsedSession.role) {
@@ -79,8 +83,11 @@ export async function getCurrentUser(): Promise<ServerUser | null> {
       try {
         const { db } = await import('./client');
         const { doc, getDoc } = await import('firebase/firestore');
-        const userSnap = await getDoc(doc(db, 'users', parsedSession.uid));
-        if (userSnap.exists()) {
+        let userSnap = userEmail ? await getDoc(doc(db, 'users', userEmail)) : null;
+        if (!userSnap || !userSnap.exists()) {
+          userSnap = await getDoc(doc(db, 'users', parsedSession.uid));
+        }
+        if (userSnap && userSnap.exists()) {
           const data = userSnap.data() as DbUser;
           role = data.role || parsedSession.role || 'visitor';
         } else if (parsedSession.role) {

@@ -162,15 +162,15 @@ export async function updateUserRoleAction(userId: string, newRole: UserRole) {
   try {
     const now = new Date().toISOString()
     if (adminDb) {
-      await adminDb.collection('users').doc(userId).update({
+      await adminDb.collection('users').doc(userId).set({
         role: newRole,
         updated_at: now,
-      })
+      }, { merge: true })
     } else {
-      await updateDoc(doc(db, 'users', userId), {
+      await setDoc(doc(db, 'users', userId), {
         role: newRole,
         updated_at: now,
-      })
+      }, { merge: true })
     }
 
     revalidatePath('/admin')

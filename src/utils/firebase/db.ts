@@ -366,18 +366,30 @@ export async function getCreatorByNickname(nickname: string): Promise<CreatorPro
 // 4. 유저 (Users)
 // ==========================================
 
-export async function getUserProfile(userId: string): Promise<DbUser | null> {
+export async function getUserProfile(userIdOrEmail: string): Promise<DbUser | null> {
   try {
+    const key = userIdOrEmail.toLowerCase().trim();
     if (adminDb) {
-      const docSnap = await adminDb.collection('users').doc(userId).get();
+      // 1. Direct doc lookup by email or id
+      let docSnap = await adminDb.collection('users').doc(key).get();
       if (docSnap.exists) {
         return { id: docSnap.id, ...docSnap.data() } as DbUser;
       }
+      // 2. Fallback search by uid
+      const snapByUid = await adminDb.collection('users').where('uid', '==', userIdOrEmail).limit(1).get();
+      if (!snapByUid.empty) {
+        return { id: snapByUid.docs[0].id, ...snapByUid.docs[0].data() } as DbUser;
+      }
     } else {
-      const docRef = doc(db, 'users', userId);
-      const docSnap = await getDoc(docRef);
+      let docRef = doc(db, 'users', key);
+      let docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         return { id: docSnap.id, ...docSnap.data() } as DbUser;
+      }
+      const q = query(collection(db, 'users'), where('uid', '==', userIdOrEmail), limit(1));
+      const snapByUid = await getDocs(q);
+      if (!snapByUid.empty) {
+        return { id: snapByUid.docs[0].id, ...snapByUid.docs[0].data() } as DbUser;
       }
     }
     return null;

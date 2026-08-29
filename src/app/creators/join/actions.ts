@@ -122,6 +122,7 @@ export async function verifyJoinCode(formData: FormData) {
       }, { merge: true })
 
       // 8. users 컬렉션 role을 부여된 역할로 승급
+      const userEmail = user.email.toLowerCase().trim()
       const userUpdate: any = {
         name: finalNickname,
         updated_at: now,
@@ -129,7 +130,7 @@ export async function verifyJoinCode(formData: FormData) {
       if (user.role !== 'admin') {
         userUpdate.role = grantedRole
       }
-      await adminDb.collection('users').doc(user.id).set(userUpdate, { merge: true })
+      await adminDb.collection('users').doc(userEmail).set(userUpdate, { merge: true })
     } else if (inviteClientRef) {
       // Client Firestore fallback
       await updateDoc(inviteClientRef, {
@@ -155,7 +156,8 @@ export async function verifyJoinCode(formData: FormData) {
         updated_at: now,
       }, { merge: true })
 
-      const userRef = doc(db, 'users', user.id)
+      const userEmail = user.email.toLowerCase().trim()
+      const userRef = doc(db, 'users', userEmail)
       const userUpdate: any = {
         name: finalNickname,
         updated_at: now,

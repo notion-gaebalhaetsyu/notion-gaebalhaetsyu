@@ -151,8 +151,8 @@ export async function updateProfileAction(payload: UpdateProfilePayload) {
       }
       await creatorRef.set(profileData, { merge: true })
 
-      // users 컬렉션 동기화
-      const userRef = adminDb.collection('users').doc(user.id)
+      // users 컬렉션 동기화 (문서 ID: 이메일)
+      const userRef = adminDb.collection('users').doc(userEmail)
       const userUpdatePayload: any = {
         name: nickname,
         avatar_url: payload.character_image_url || user.avatar_url || '',
@@ -170,7 +170,7 @@ export async function updateProfileAction(payload: UpdateProfilePayload) {
       }
       await setDoc(creatorRef, profileData, { merge: true })
 
-      const userRef = doc(db, 'users', user.id)
+      const userRef = doc(db, 'users', userEmail)
       const userUpdatePayload: any = {
         name: nickname,
         avatar_url: payload.character_image_url || user.avatar_url || '',
