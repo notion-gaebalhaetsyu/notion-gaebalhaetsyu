@@ -14,7 +14,7 @@ export default async function CreatorsPage() {
   for (const w of allWidgets) {
     if (w.creator_profile_id) {
       creatorWidgetCountMap.set(
-        w.creator_profile_id, 
+        w.creator_profile_id,
         (creatorWidgetCountMap.get(w.creator_profile_id) || 0) + 1
       );
     }
@@ -50,8 +50,8 @@ export default async function CreatorsPage() {
           {activeCreators.map((creator) => {
             const widgetCount = creatorWidgetCountMap.get(creator.id) || 0;
             return (
-              <Link 
-                key={creator.id} 
+              <Link
+                key={creator.id}
                 href={`/creators/${encodeURIComponent(creator.nickname)}`}
                 className="bg-white rounded-3xl p-6 border border-toast-brown/20 shadow-sm hover:shadow-md hover:border-forest-green/30 transition-all flex flex-col items-center text-center group"
               >
