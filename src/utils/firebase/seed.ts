@@ -126,7 +126,7 @@ export const INITIAL_INVITES = [
   },
   {
     id: 'invite_sample_3',
-    email: 'admin@gaebalhatsyu.com',
+    email: process.env.ADMIN_EMAILS?.split(',')[0]?.trim() || 'admin@example.com',
     nickname: '촌장님',
     code: 'admin_master_key',
     cohort: '운영진',
