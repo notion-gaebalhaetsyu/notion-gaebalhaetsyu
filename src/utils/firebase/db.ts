@@ -289,6 +289,20 @@ export async function getWidgetById(id: string): Promise<Widget | null> {
   }
 }
 
+export async function deleteWidget(id: string): Promise<boolean> {
+  try {
+    if (adminDb) {
+      await adminDb.collection('widgets').doc(id).delete();
+    } else {
+      await deleteDoc(doc(db, 'widgets', id));
+    }
+    return true;
+  } catch (error) {
+    console.error('deleteWidget error:', error);
+    return false;
+  }
+}
+
 // ==========================================
 // 3. 제빵사 프로필 (Creator Profiles)
 // ==========================================

@@ -1,6 +1,6 @@
 'use server'
 
-import { getCategories as fetchCategories, getCreatorProfileByUserId, getWidgetById } from '@/utils/firebase/db'
+import { getCategories as fetchCategories, getCreatorProfileByUserId, getWidgetById, deleteWidget } from '@/utils/firebase/db'
 import { getCurrentUser } from '@/utils/firebase/server-auth'
 import { adminDb } from '@/utils/firebase/admin'
 import { db } from '@/utils/firebase/client'
@@ -20,6 +20,7 @@ export async function updateWidget(widgetId: string, formData: FormData) {
   const creator_comment = (formData.get('creator_comment') as string)?.trim()
   const embed_url = (formData.get('embed_url') as string)?.trim()
   const tagsString = (formData.get('tags') as string)?.trim()
+  const thumbnail_url = (formData.get('thumbnail_url') as string)?.trim() || ''
 
   // 필수 값 검증
   if (!name || !short_description || !embed_url) {
@@ -44,7 +45,10 @@ export async function updateWidget(widgetId: string, formData: FormData) {
     }
 
     const creatorProfile = await getCreatorProfileByUserId(user.id)
-    const isOwner = widget.creator_profile_id === user.id || (creatorProfile && widget.creator_profile_id === creatorProfile.id)
+    const isOwner = 
+      widget.creator_profile_id === user.id || 
+      (creatorProfile && widget.creator_profile_id === creatorProfile.id) ||
+      (user.email && widget.creator_profile_id === user.email.toLowerCase().trim())
     const isAdmin = user.role === 'admin'
 
     if (!isOwner && !isAdmin) {
@@ -79,6 +83,7 @@ export async function updateWidget(widgetId: string, formData: FormData) {
       long_description: long_description || '',
       creator_comment: creator_comment || '',
       embed_url,
+      thumbnail_url,
       tags,
       updated_at: now,
     }
@@ -101,5 +106,47 @@ export async function updateWidget(widgetId: string, formData: FormData) {
   } catch (error: any) {
     console.error('Error updating widget:', error)
     return { error: error.message || '위젯 수정 중 오류가 발생했슈.' }
+  }
+}
+
+// 위젯 삭제 액션
+export async function deleteWidgetAction(widgetId: string) {
+  try {
+    const user = await getCurrentUser()
+    if (!user) {
+      return { error: '먼저 로그인을 진행해주세유!' }
+    }
+
+    const widget = await getWidgetById(widgetId)
+    if (!widget) {
+      return { error: '삭제하려는 위젯을 찾을 수 없슈.' }
+    }
+
+    const creatorProfile = await getCreatorProfileByUserId(user.id)
+    const isOwner = 
+      widget.creator_profile_id === user.id || 
+      (creatorProfile && widget.creator_profile_id === creatorProfile.id) ||
+      (user.email && widget.creator_profile_id === user.email.toLowerCase().trim())
+    const isAdmin = user.role === 'admin'
+
+    if (!isOwner && !isAdmin) {
+      return { error: '직접 등록한 위젯만 삭제할 수 있슈! (관리자 제외)' }
+    }
+
+    const success = await deleteWidget(widgetId)
+    if (!success) {
+      return { error: '위젯 삭제에 실패했습니다.' }
+    }
+
+    revalidatePath('/')
+    revalidatePath('/widgets')
+    revalidatePath('/mypage')
+    revalidatePath('/creators')
+    revalidatePath('/admin')
+
+    return { success: true }
+  } catch (error: any) {
+    console.error('deleteWidgetAction error:', error)
+    return { error: error.message || '위젯 삭제 중 오류가 발생했슈.' }
   }
 }

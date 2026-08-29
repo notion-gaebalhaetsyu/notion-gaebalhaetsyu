@@ -21,6 +21,7 @@ export async function createWidget(formData: FormData) {
   const short_description = formData.get('short_description') as string
   const embed_url = formData.get('embed_url') as string
   const tagsString = formData.get('tags') as string
+  const thumbnail_url = (formData.get('thumbnail_url') as string)?.trim() || ''
 
   // 필수 값 검증
   if (!name || !slug || !short_description || !embed_url) {
@@ -95,6 +96,7 @@ export async function createWidget(formData: FormData) {
       creator_profile_id: creatorProfile?.id || user.id,
       short_description,
       embed_url,
+      thumbnail_url,
       tags,
       status: 'published', // 기본 즉시 발행
       view_count: 0,

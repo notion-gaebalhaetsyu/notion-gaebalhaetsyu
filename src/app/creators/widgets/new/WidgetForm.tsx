@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createWidget } from './actions'
+import ThumbnailUploadInput from '@/components/ThumbnailUploadInput'
 
 type Category = {
   id: string
@@ -133,7 +134,10 @@ export default function WidgetForm({ categories }: { categories: Category[] }) {
         />
       </div>
 
-      {/* 5. 임베드 URL */}
+      {/* 5. 썸네일 이미지 업로드 */}
+      <ThumbnailUploadInput />
+
+      {/* 6. 임베드 URL */}
       <div>
         <label htmlFor="embed_url" className="block text-sm font-bold text-ink mb-2">임베드용 URL (배포 주소) <span className="text-strawberry-pink">*</span></label>
         <input 
@@ -149,7 +153,7 @@ export default function WidgetForm({ categories }: { categories: Category[] }) {
         </p>
       </div>
 
-      {/* 6. 태그 */}
+      {/* 7. 태그 */}
       <div>
         <label htmlFor="tags" className="block text-sm font-bold text-ink mb-2">태그 (선택)</label>
         <input 
