@@ -29,7 +29,7 @@ function initAuth() {
   }
 }
 
-const databaseId = process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID || process.env.FIREBASE_DATABASE_ID || 'gaebalhatsyu';
+const databaseId = process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID || process.env.FIREBASE_DATABASE_ID || 'gaebalhatsyu-members';
 
 function initFirestore() {
   try {
