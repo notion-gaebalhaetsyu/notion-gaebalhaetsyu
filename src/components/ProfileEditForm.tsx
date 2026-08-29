@@ -2,9 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { db } from '@/utils/firebase/client'
-import { doc, setDoc, updateDoc } from 'firebase/firestore'
-import { verifyJoinCode } from '@/app/creators/join/actions'
+import { updateProfileAction } from '@/app/mypage/edit/actions'
 
 export default function ProfileEditForm({ 
   userId, 
@@ -75,57 +73,24 @@ export default function ProfileEditForm({
         .map((s: string) => s.trim())
         .filter((s: string) => s !== '')
 
-      const docId = initialProfile?.id || userId
-      const now = new Date().toISOString()
-
-      // 1기 해시코드 확인
-      const trimmedCode = formData.cohort_code.trim()
-      let shouldSetCohort = is1stGen
-
-      if (!is1stGen && trimmedCode && trimmedCode !== '개발했슈 1기 인증됨') {
-        const verifyData = new FormData()
-        verifyData.append('code', trimmedCode)
-        verifyData.append('nickname', formData.nickname.trim())
-        
-        const verifyResult = await verifyJoinCode(verifyData)
-        if (verifyResult?.error) {
-          alert('가입 해시코드 인증 실패: ' + verifyResult.error)
-          setIsSubmitting(false)
-          return
-        }
-        shouldSetCohort = true
-      }
-
-      const dataToSave: any = {
-        id: docId,
-        user_id: userId,
-        nickname: formData.nickname,
-        bio_short: formData.bio_short,
-        bio_long: formData.bio_long,
+      const payload = {
+        nickname: formData.nickname.trim(),
+        bio_short: formData.bio_short.trim(),
+        bio_long: formData.bio_long.trim(),
         character_image_url: formData.character_image_url,
         skills: skillsArray,
-        updated_at: now,
-        created_at: initialProfile?.created_at || now,
+        cohort_code: formData.cohort_code.trim(),
       }
 
-      if (shouldSetCohort) {
-        dataToSave.cohort = '개발했슈 1기'
+      const res = await updateProfileAction(payload)
+
+      if (res.error) {
+        alert('프로필 저장/인증 실패: ' + res.error)
+        setIsSubmitting(false)
+        return
       }
 
-      await setDoc(doc(db, 'creator_profiles', docId), dataToSave, { merge: true })
-
-      if (shouldSetCohort) {
-        try {
-          await updateDoc(doc(db, 'users', userId), {
-            role: 'creator',
-            updated_at: now,
-          })
-        } catch (e) {
-          console.warn('Could not update user role client-side:', e)
-        }
-      }
-
-      alert('프로필이 성공적으로 저장되었슈! 🍕')
+      alert(res.message || '프로필이 성공적으로 저장되었슈! 🍕')
       router.push('/mypage')
       router.refresh()
     } catch (error: any) {

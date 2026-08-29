@@ -10,8 +10,8 @@ export async function verifyJoinCode(formData: FormData) {
   const code = (formData.get('code') as string)?.trim()
   const nickname = (formData.get('nickname') as string)?.trim()
 
-  if (!code || !nickname) {
-    return { error: '닉네임과 가입 해시코드를 모두 입력해 주세유!' }
+  if (!code) {
+    return { error: '가입 해시코드를 입력해 주세유!' }
   }
 
   // 1. 현재 구글 로그인된 유저 확인
@@ -33,6 +33,16 @@ export async function verifyJoinCode(formData: FormData) {
         if (!snapshot.empty) {
           inviteAdminRef = snapshot.docs[0].ref
           inviteData = snapshot.docs[0].data()
+        } else {
+          const allSnap = await invitesRef.get()
+          for (const d of allSnap.docs) {
+            const data = d.data()
+            if (data.code?.trim().toLowerCase() === code.toLowerCase()) {
+              inviteAdminRef = d.ref
+              inviteData = data
+              break
+            }
+          }
         }
       } catch (e) {
         console.warn('adminDb query failed, falling back to client db:', e)
@@ -52,7 +62,7 @@ export async function verifyJoinCode(formData: FormData) {
           const allSnap = await getDocs(invitesRef)
           for (const docSnap of allSnap.docs) {
             const data = docSnap.data()
-            if (data.code?.trim() === code) {
+            if (data.code?.trim().toLowerCase() === code.toLowerCase()) {
               inviteClientRef = doc(db, 'cohort_invites', docSnap.id)
               inviteData = data
               break
@@ -69,27 +79,21 @@ export async function verifyJoinCode(formData: FormData) {
     }
 
     // 3. 중복 사용 여부 검증 (이미 다른 사용자가 인증한 코드인지 확인)
-    if (inviteData.is_used && inviteData.used_by !== user.id) {
+    if (inviteData.is_used && inviteData.used_by && inviteData.used_by !== user.id) {
       return { error: '이미 다른 사용자가 인증에 사용 완료한 해시코드입니다.' }
     }
 
     // 4. 구글 이메일 일치 여부 검증 (대소문자 무시)
     if (inviteData.email?.toLowerCase().trim() !== userEmail) {
       return { 
-        error: `로그인된 구글 계정(${user.email})과 사전 등록된 이메일(${inviteData.email})이 일치하지 않습니다.` 
-      }
-    }
-
-    // 5. 닉네임 일치 여부 검증 (공백 제거 후 비교)
-    if (inviteData.nickname?.trim() !== nickname) {
-      return { 
-        error: `사전 등록된 닉네임(${inviteData.nickname})과 입력한 닉네임(${nickname})이 일치하지 않습니다.` 
+        error: `해당 코드는 [${inviteData.email}] 계정으로 발급되었습니다. 현재 로그인된 구글 계정(${user.email})과 일치하지 않습니다.` 
       }
     }
 
     const now = new Date().toISOString()
     const cohortName = inviteData.cohort || '개발했슈 1기'
     const grantedRole = inviteData.role || 'provider'
+    const finalNickname = nickname || inviteData.nickname || user.name || user.email.split('@')[0]
 
     if (adminDb && inviteAdminRef) {
       // 6. 초대 코드 사용 처리 (중복 방지)
@@ -106,7 +110,7 @@ export async function verifyJoinCode(formData: FormData) {
       await creatorRef.set({
         id: user.id,
         user_id: user.id,
-        nickname: inviteData.nickname,
+        nickname: finalNickname,
         cohort: cohortName,
         bio_short: existingProfile.exists && existingProfile.data()?.bio_short 
           ? existingProfile.data()?.bio_short 
@@ -118,11 +122,14 @@ export async function verifyJoinCode(formData: FormData) {
       }, { merge: true })
 
       // 8. users 컬렉션 role을 부여된 역할로 승급
-      await adminDb.collection('users').doc(user.id).set({
-        role: grantedRole,
-        name: inviteData.nickname,
+      const userUpdate: any = {
+        name: finalNickname,
         updated_at: now,
-      }, { merge: true })
+      }
+      if (user.role !== 'admin') {
+        userUpdate.role = grantedRole
+      }
+      await adminDb.collection('users').doc(user.id).set(userUpdate, { merge: true })
     } else if (inviteClientRef) {
       // Client Firestore fallback
       await updateDoc(inviteClientRef, {
@@ -137,7 +144,7 @@ export async function verifyJoinCode(formData: FormData) {
       await setDoc(creatorRef, {
         id: user.id,
         user_id: user.id,
-        nickname: inviteData.nickname,
+        nickname: finalNickname,
         cohort: cohortName,
         bio_short: existingProfile.exists() && existingProfile.data()?.bio_short 
           ? existingProfile.data()?.bio_short 
@@ -149,11 +156,14 @@ export async function verifyJoinCode(formData: FormData) {
       }, { merge: true })
 
       const userRef = doc(db, 'users', user.id)
-      await setDoc(userRef, {
-        role: grantedRole,
-        name: inviteData.nickname,
+      const userUpdate: any = {
+        name: finalNickname,
         updated_at: now,
-      }, { merge: true })
+      }
+      if (user.role !== 'admin') {
+        userUpdate.role = grantedRole
+      }
+      await setDoc(userRef, userUpdate, { merge: true })
     }
 
     revalidatePath('/')

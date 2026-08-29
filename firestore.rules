@@ -56,5 +56,11 @@ service cloud.firestore {
       allow create: if true;
       allow read: if isAdmin();
     }
+
+    // 7. Cohort Invites
+    match /cohort_invites/{inviteId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
   }
 }
