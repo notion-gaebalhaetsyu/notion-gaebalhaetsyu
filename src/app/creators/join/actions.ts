@@ -86,7 +86,7 @@ export async function verifyJoinCode(formData: FormData) {
     // 4. 구글 이메일 일치 여부 검증 (대소문자 무시)
     if (inviteData.email?.toLowerCase().trim() !== userEmail) {
       return { 
-        error: `해당 코드는 [${inviteData.email}] 계정으로 발급되었습니다. 현재 로그인된 구글 계정(${user.email})과 일치하지 않습니다.` 
+        error: '코드가 일치하지 않으니 관리자에게 문의해주세요.' 
       }
     }
 

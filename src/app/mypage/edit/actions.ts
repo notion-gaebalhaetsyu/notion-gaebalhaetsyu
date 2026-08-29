@@ -103,7 +103,7 @@ export async function updateProfileAction(payload: UpdateProfilePayload) {
       // 이메일 검증
       if (inviteData.email?.toLowerCase().trim() !== userEmail) {
         return {
-          error: `해당 코드는 [${inviteData.email}] 계정으로 발급되었습니다. 현재 로그인된 계정(${user.email})과 일치하지 않습니다.`
+          error: '코드가 일치하지 않으니 관리자에게 문의해주세요.'
         }
       }
 
