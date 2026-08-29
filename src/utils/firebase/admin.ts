@@ -36,7 +36,7 @@ function getAdminApp() {
 }
 
 const adminApp = getAdminApp();
-const databaseId = process.env.FIREBASE_DATABASE_ID || process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID;
+const databaseId = process.env.FIREBASE_DATABASE_ID || process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID || 'gaebalhatsyu';
 
 export const adminAuth = adminApp ? admin.auth(adminApp) : null;
 export const adminDb = adminApp

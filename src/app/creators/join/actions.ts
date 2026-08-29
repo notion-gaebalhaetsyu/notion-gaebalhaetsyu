@@ -27,19 +27,40 @@ export async function verifyJoinCode(formData: FormData) {
     let inviteClientRef: any = null
 
     if (adminDb) {
-      const invitesRef = adminDb.collection('cohort_invites')
-      const snapshot = await invitesRef.where('code', '==', code).get()
-      if (!snapshot.empty) {
-        inviteAdminRef = snapshot.docs[0].ref
-        inviteData = snapshot.docs[0].data()
+      try {
+        const invitesRef = adminDb.collection('cohort_invites')
+        const snapshot = await invitesRef.where('code', '==', code).get()
+        if (!snapshot.empty) {
+          inviteAdminRef = snapshot.docs[0].ref
+          inviteData = snapshot.docs[0].data()
+        }
+      } catch (e) {
+        console.warn('adminDb query failed, falling back to client db:', e)
       }
-    } else {
-      const invitesRef = collection(db, 'cohort_invites')
-      const q = query(invitesRef, where('code', '==', code))
-      const snapshot = await getDocs(q)
-      if (!snapshot.empty) {
-        inviteClientRef = doc(db, 'cohort_invites', snapshot.docs[0].id)
-        inviteData = snapshot.docs[0].data()
+    }
+
+    if (!inviteData) {
+      try {
+        const invitesRef = collection(db, 'cohort_invites')
+        const q = query(invitesRef, where('code', '==', code))
+        const snapshot = await getDocs(q)
+        if (!snapshot.empty) {
+          inviteClientRef = doc(db, 'cohort_invites', snapshot.docs[0].id)
+          inviteData = snapshot.docs[0].data()
+        } else {
+          // Fallback: 전체 문서를 조회하여 공백 무시 비교
+          const allSnap = await getDocs(invitesRef)
+          for (const docSnap of allSnap.docs) {
+            const data = docSnap.data()
+            if (data.code?.trim() === code) {
+              inviteClientRef = doc(db, 'cohort_invites', docSnap.id)
+              inviteData = data
+              break
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('client db query failed:', e)
       }
     }
 
