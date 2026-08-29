@@ -53,9 +53,9 @@ export async function addInviteAction(formData: FormData) {
 
   try {
     if (adminDb) {
-      await adminDb.collection('cohort_invites').add(payload)
+      await adminDb.collection('cohort_invites').doc(email).set(payload, { merge: true })
     } else {
-      await addDoc(collection(db, 'cohort_invites'), payload)
+      await setDoc(doc(db, 'cohort_invites', email), payload, { merge: true })
     }
 
     revalidatePath('/admin')
@@ -110,9 +110,9 @@ export async function bulkAddInvitesAction(
 
     try {
       if (adminDb) {
-        await adminDb.collection('cohort_invites').add(payload)
+        await adminDb.collection('cohort_invites').doc(email).set(payload, { merge: true })
       } else {
-        await addDoc(collection(db, 'cohort_invites'), payload)
+        await setDoc(doc(db, 'cohort_invites', email), payload, { merge: true })
       }
       successCount++
       results.push(`${nickname} (${email}): ${code}`)

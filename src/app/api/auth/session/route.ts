@@ -56,14 +56,22 @@ export async function POST(request: Request) {
           // 신규 유저인 경우 초대 목록에 admin/provider가 있는지 확인
           if (!isAdmin) {
             try {
-              const inviteSnap = await adminDb.collection('cohort_invites')
-                .where('email', '==', normalizedEmail)
-                .limit(1)
-                .get();
-              if (!inviteSnap.empty) {
-                const inviteData = inviteSnap.docs[0].data();
-                if (inviteData.role) {
+              const directSnap = await adminDb.collection('cohort_invites').doc(normalizedEmail).get();
+              if (directSnap.exists) {
+                const inviteData = directSnap.data();
+                if (inviteData?.role) {
                   assignedRole = inviteData.role as UserRole;
+                }
+              } else {
+                const inviteSnap = await adminDb.collection('cohort_invites')
+                  .where('email', '==', normalizedEmail)
+                  .limit(1)
+                  .get();
+                if (!inviteSnap.empty) {
+                  const inviteData = inviteSnap.docs[0].data();
+                  if (inviteData.role) {
+                    assignedRole = inviteData.role as UserRole;
+                  }
                 }
               }
             } catch (e) {
@@ -107,12 +115,20 @@ export async function POST(request: Request) {
         } else {
           if (!isAdmin) {
             try {
-              const inviteQ = query(collection(db, 'cohort_invites'), where('email', '==', normalizedEmail));
-              const inviteSnap = await getDocs(inviteQ);
-              if (!inviteSnap.empty) {
-                const inviteData = inviteSnap.docs[0].data();
-                if (inviteData.role) {
+              const directSnap = await getDoc(doc(db, 'cohort_invites', normalizedEmail));
+              if (directSnap.exists()) {
+                const inviteData = directSnap.data();
+                if (inviteData?.role) {
                   assignedRole = inviteData.role as UserRole;
+                }
+              } else {
+                const inviteQ = query(collection(db, 'cohort_invites'), where('email', '==', normalizedEmail));
+                const inviteSnap = await getDocs(inviteQ);
+                if (!inviteSnap.empty) {
+                  const inviteData = inviteSnap.docs[0].data();
+                  if (inviteData.role) {
+                    assignedRole = inviteData.role as UserRole;
+                  }
                 }
               }
             } catch (e) {

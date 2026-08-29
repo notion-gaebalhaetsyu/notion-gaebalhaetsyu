@@ -586,11 +586,11 @@ export async function createCohortInvite(invite: Omit<CohortInvite, 'id'>): Prom
     };
 
     if (adminDb) {
-      const docRef = await adminDb.collection('cohort_invites').add(payload);
-      return { success: true, id: docRef.id };
+      await adminDb.collection('cohort_invites').doc(payload.email).set(payload, { merge: true });
+      return { success: true, id: payload.email };
     } else {
-      const docRef = await addDoc(collection(db, 'cohort_invites'), payload);
-      return { success: true, id: docRef.id };
+      await setDoc(doc(db, 'cohort_invites', payload.email), payload, { merge: true });
+      return { success: true, id: payload.email };
     }
   } catch (e: any) {
     console.error('createCohortInvite error:', e);
