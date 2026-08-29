@@ -22,6 +22,7 @@ import {
   DbUser, 
   WidgetStatus, 
   UserRole,
+  CohortInvite,
 } from './types';
 
 // 타임아웃 헬퍼 (지연 방지용)
@@ -542,3 +543,72 @@ export async function toggleFavorite(userId: string, widgetId: string, isFavorit
     throw e;
   }
 }
+
+// ==========================================
+// 8. 초대 코드 관리 (Cohort Invites)
+// ==========================================
+
+export async function getAllCohortInvites(): Promise<CohortInvite[]> {
+  try {
+    if (adminDb) {
+      const snap = await adminDb.collection('cohort_invites').get();
+      return snap.docs.map((d) => ({
+        id: d.id,
+        ...(d.data() as Omit<CohortInvite, 'id'>),
+      }));
+    } else {
+      const snap = await getDocs(collection(db, 'cohort_invites'));
+      return snap.docs.map((d) => ({
+        id: d.id,
+        ...(d.data() as Omit<CohortInvite, 'id'>),
+      }));
+    }
+  } catch (e) {
+    console.error('getAllCohortInvites error:', e);
+    return [];
+  }
+}
+
+export async function createCohortInvite(invite: Omit<CohortInvite, 'id'>): Promise<{ success: boolean; id?: string; error?: string }> {
+  try {
+    const now = new Date().toISOString();
+    const payload = {
+      ...invite,
+      email: invite.email.toLowerCase().trim(),
+      nickname: invite.nickname.trim(),
+      code: invite.code.trim(),
+      cohort: invite.cohort?.trim() || '개발했슈 1기',
+      role: invite.role || 'provider',
+      is_used: false,
+      used_by: null,
+      used_at: null,
+      created_at: now,
+    };
+
+    if (adminDb) {
+      const docRef = await adminDb.collection('cohort_invites').add(payload);
+      return { success: true, id: docRef.id };
+    } else {
+      const docRef = await addDoc(collection(db, 'cohort_invites'), payload);
+      return { success: true, id: docRef.id };
+    }
+  } catch (e: any) {
+    console.error('createCohortInvite error:', e);
+    return { success: false, error: e.message || '초대 코드 등록 실패' };
+  }
+}
+
+export async function deleteCohortInvite(id: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    if (adminDb) {
+      await adminDb.collection('cohort_invites').doc(id).delete();
+    } else {
+      await deleteDoc(doc(db, 'cohort_invites', id));
+    }
+    return { success: true };
+  } catch (e: any) {
+    console.error('deleteCohortInvite error:', e);
+    return { success: false, error: e.message || '초대 코드 삭제 실패' };
+  }
+}
+
