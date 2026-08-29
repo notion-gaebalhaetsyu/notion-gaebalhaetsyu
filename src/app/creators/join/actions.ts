@@ -2,6 +2,8 @@
 
 import { getCurrentUser } from '@/utils/firebase/server-auth'
 import { adminDb } from '@/utils/firebase/admin'
+import { db } from '@/utils/firebase/client'
+import { collection, query, where, getDocs, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore'
 import { revalidatePath } from 'next/cache'
 
 export async function verifyJoinCode(formData: FormData) {
@@ -18,23 +20,32 @@ export async function verifyJoinCode(formData: FormData) {
     return { error: '먼저 구글 로그인을 진행해 주세유!' }
   }
 
-  if (!adminDb) {
-    return { error: '데이터베이스 연결에 실패했슈. 관리자 설정을 확인해 주세유.' }
-  }
-
   try {
     const userEmail = user.email.toLowerCase().trim()
+    let inviteData: any = null
+    let inviteAdminRef: any = null
+    let inviteClientRef: any = null
 
-    // 2. Firestore의 cohort_invites 컬렉션에서 해시코드로 조회
-    const invitesRef = adminDb.collection('cohort_invites')
-    const snapshot = await invitesRef.where('code', '==', code).get()
-
-    if (snapshot.empty) {
-      return { error: '유효하지 않은 가입 해시코드입니다. 코드를 다시 확인해 주세유!' }
+    if (adminDb) {
+      const invitesRef = adminDb.collection('cohort_invites')
+      const snapshot = await invitesRef.where('code', '==', code).get()
+      if (!snapshot.empty) {
+        inviteAdminRef = snapshot.docs[0].ref
+        inviteData = snapshot.docs[0].data()
+      }
+    } else {
+      const invitesRef = collection(db, 'cohort_invites')
+      const q = query(invitesRef, where('code', '==', code))
+      const snapshot = await getDocs(q)
+      if (!snapshot.empty) {
+        inviteClientRef = doc(db, 'cohort_invites', snapshot.docs[0].id)
+        inviteData = snapshot.docs[0].data()
+      }
     }
 
-    const inviteDoc = snapshot.docs[0]
-    const inviteData = inviteDoc.data()
+    if (!inviteData) {
+      return { error: '유효하지 않은 가입 해시코드입니다. 코드를 다시 확인해 주세유!' }
+    }
 
     // 3. 중복 사용 여부 검증 (이미 다른 사용자가 인증한 코드인지 확인)
     if (inviteData.is_used && inviteData.used_by !== user.id) {
@@ -44,7 +55,7 @@ export async function verifyJoinCode(formData: FormData) {
     // 4. 구글 이메일 일치 여부 검증 (대소문자 무시)
     if (inviteData.email?.toLowerCase().trim() !== userEmail) {
       return { 
-        error: `로그인된 구글 계정(${user.email})과 사전 등록된 이메일이 일치하지 않습니다.` 
+        error: `로그인된 구글 계정(${user.email})과 사전 등록된 이메일(${inviteData.email})이 일치하지 않습니다.` 
       }
     }
 
@@ -57,39 +68,72 @@ export async function verifyJoinCode(formData: FormData) {
 
     const now = new Date().toISOString()
     const cohortName = inviteData.cohort || '개발했슈 1기'
-
-    // 6. 초대 코드 사용 처리 (중복 방지)
-    await inviteDoc.ref.update({
-      is_used: true,
-      used_by: user.id,
-      used_at: now,
-    })
-
-    // 7. creator_profiles 생성 및 기수 등록
-    const creatorRef = adminDb.collection('creator_profiles').doc(user.id)
-    const existingProfile = await creatorRef.get()
-
-    await creatorRef.set({
-      id: user.id,
-      user_id: user.id,
-      nickname: inviteData.nickname,
-      cohort: cohortName,
-      bio_short: existingProfile.exists && existingProfile.data()?.bio_short 
-        ? existingProfile.data()?.bio_short 
-        : `${cohortName} 제작자입니다 🍕`,
-      created_at: existingProfile.exists && existingProfile.data()?.created_at 
-        ? existingProfile.data()?.created_at 
-        : now,
-      updated_at: now,
-    }, { merge: true })
-
-    // 8. users 컬렉션 role을 부여된 역할 (기본: 'provider')로 승급
     const grantedRole = inviteData.role || 'provider'
-    await adminDb.collection('users').doc(user.id).set({
-      role: grantedRole,
-      name: inviteData.nickname,
-      updated_at: now,
-    }, { merge: true })
+
+    if (adminDb && inviteAdminRef) {
+      // 6. 초대 코드 사용 처리 (중복 방지)
+      await inviteAdminRef.update({
+        is_used: true,
+        used_by: user.id,
+        used_at: now,
+      })
+
+      // 7. creator_profiles 생성 및 기수 등록
+      const creatorRef = adminDb.collection('creator_profiles').doc(user.id)
+      const existingProfile = await creatorRef.get()
+
+      await creatorRef.set({
+        id: user.id,
+        user_id: user.id,
+        nickname: inviteData.nickname,
+        cohort: cohortName,
+        bio_short: existingProfile.exists && existingProfile.data()?.bio_short 
+          ? existingProfile.data()?.bio_short 
+          : `${cohortName} 제작자입니다 🍕`,
+        created_at: existingProfile.exists && existingProfile.data()?.created_at 
+          ? existingProfile.data()?.created_at 
+          : now,
+        updated_at: now,
+      }, { merge: true })
+
+      // 8. users 컬렉션 role을 부여된 역할로 승급
+      await adminDb.collection('users').doc(user.id).set({
+        role: grantedRole,
+        name: inviteData.nickname,
+        updated_at: now,
+      }, { merge: true })
+    } else if (inviteClientRef) {
+      // Client Firestore fallback
+      await updateDoc(inviteClientRef, {
+        is_used: true,
+        used_by: user.id,
+        used_at: now,
+      })
+
+      const creatorRef = doc(db, 'creator_profiles', user.id)
+      const existingProfile = await getDoc(creatorRef)
+
+      await setDoc(creatorRef, {
+        id: user.id,
+        user_id: user.id,
+        nickname: inviteData.nickname,
+        cohort: cohortName,
+        bio_short: existingProfile.exists() && existingProfile.data()?.bio_short 
+          ? existingProfile.data()?.bio_short 
+          : `${cohortName} 제작자입니다 🍕`,
+        created_at: existingProfile.exists() && existingProfile.data()?.created_at 
+          ? existingProfile.data()?.created_at 
+          : now,
+        updated_at: now,
+      }, { merge: true })
+
+      const userRef = doc(db, 'users', user.id)
+      await setDoc(userRef, {
+        role: grantedRole,
+        name: inviteData.nickname,
+        updated_at: now,
+      }, { merge: true })
+    }
 
     revalidatePath('/')
     revalidatePath('/mypage')
@@ -101,4 +145,5 @@ export async function verifyJoinCode(formData: FormData) {
     return { error: error.message || '인증 처리 중 오류가 발생했슈.' }
   }
 }
+
 

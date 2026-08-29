@@ -29,9 +29,13 @@ function initAuth() {
   }
 }
 
+const databaseId = process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID;
+
 function initFirestore() {
   try {
-    return getFirestore(app);
+    return databaseId && databaseId !== '(default)'
+      ? getFirestore(app, databaseId)
+      : getFirestore(app);
   } catch {
     return {} as any;
   }
