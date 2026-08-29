@@ -127,10 +127,11 @@ export async function updateProfileAction(payload: UpdateProfilePayload) {
       }
     }
 
-    // 2. creator_profiles 생성 / 업데이트
+    // 2. creator_profiles 생성 / 업데이트 (문서 ID: 이메일)
     const profileData: any = {
-      id: user.id,
+      id: userEmail,
       user_id: user.id,
+      email: userEmail,
       nickname,
       bio_short: payload.bio_short?.trim() || '',
       bio_long: payload.bio_long?.trim() || '',
@@ -144,7 +145,7 @@ export async function updateProfileAction(payload: UpdateProfilePayload) {
     }
 
     if (adminDb) {
-      const creatorRef = adminDb.collection('creator_profiles').doc(user.id)
+      const creatorRef = adminDb.collection('creator_profiles').doc(userEmail)
       const existingCreator = await creatorRef.get()
       if (!existingCreator.exists) {
         profileData.created_at = now
@@ -163,7 +164,7 @@ export async function updateProfileAction(payload: UpdateProfilePayload) {
       }
       await userRef.set(userUpdatePayload, { merge: true })
     } else {
-      const creatorRef = doc(db, 'creator_profiles', user.id)
+      const creatorRef = doc(db, 'creator_profiles', userEmail)
       const existingCreator = await getDoc(creatorRef)
       if (!existingCreator.exists()) {
         profileData.created_at = now

@@ -16,8 +16,9 @@ export interface DbUser {
 }
 
 export interface CreatorProfile {
-  id: string; // Document ID (usually same as user_id or unique ID)
+  id: string; // Document ID (email or UID)
   user_id: string;
+  email?: string;
   nickname: string;
   bio_short?: string;
   bio_long?: string;

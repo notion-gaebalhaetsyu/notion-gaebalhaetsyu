@@ -315,16 +315,40 @@ export async function getAllCreatorProfiles(): Promise<CreatorProfile[]> {
 export async function getCreatorProfileByUserId(userId: string): Promise<CreatorProfile | null> {
   const fetchPromise = (async () => {
     try {
+      const key = userId.toLowerCase().trim();
       if (adminDb) {
-        const snap = await adminDb.collection('creator_profiles').where('user_id', '==', userId).limit(1).get();
-        if (!snap.empty) {
-          return { id: snap.docs[0]!.id, ...snap.docs[0]!.data() } as CreatorProfile;
+        // 1. Direct doc lookup by email or id
+        const directSnap = await adminDb.collection('creator_profiles').doc(key).get();
+        if (directSnap.exists) {
+          return { id: directSnap.id, ...directSnap.data() } as CreatorProfile;
+        }
+        // 2. Query by user_id
+        const snapByUserId = await adminDb.collection('creator_profiles').where('user_id', '==', userId).limit(1).get();
+        if (!snapByUserId.empty) {
+          return { id: snapByUserId.docs[0]!.id, ...snapByUserId.docs[0]!.data() } as CreatorProfile;
+        }
+        // 3. Query by email
+        const snapByEmail = await adminDb.collection('creator_profiles').where('email', '==', key).limit(1).get();
+        if (!snapByEmail.empty) {
+          return { id: snapByEmail.docs[0]!.id, ...snapByEmail.docs[0]!.data() } as CreatorProfile;
         }
       } else {
-        const q = query(collection(db, 'creator_profiles'), where('user_id', '==', userId), limit(1));
-        const snap = await getDocs(q);
-        if (!snap.empty) {
-          return { id: snap.docs[0]!.id, ...snap.docs[0]!.data() } as CreatorProfile;
+        // 1. Direct doc lookup by email or id
+        const directSnap = await getDoc(doc(db, 'creator_profiles', key));
+        if (directSnap.exists()) {
+          return { id: directSnap.id, ...directSnap.data() } as CreatorProfile;
+        }
+        // 2. Query by user_id
+        const qUserId = query(collection(db, 'creator_profiles'), where('user_id', '==', userId), limit(1));
+        const snapByUserId = await getDocs(qUserId);
+        if (!snapByUserId.empty) {
+          return { id: snapByUserId.docs[0]!.id, ...snapByUserId.docs[0]!.data() } as CreatorProfile;
+        }
+        // 3. Query by email
+        const qEmail = query(collection(db, 'creator_profiles'), where('email', '==', key), limit(1));
+        const snapByEmail = await getDocs(qEmail);
+        if (!snapByEmail.empty) {
+          return { id: snapByEmail.docs[0]!.id, ...snapByEmail.docs[0]!.data() } as CreatorProfile;
         }
       }
       return null;

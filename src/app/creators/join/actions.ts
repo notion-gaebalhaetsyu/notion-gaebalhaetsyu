@@ -103,13 +103,14 @@ export async function verifyJoinCode(formData: FormData) {
         used_at: now,
       })
 
-      // 7. creator_profiles 생성 및 기수 등록
-      const creatorRef = adminDb.collection('creator_profiles').doc(user.id)
+      // 7. creator_profiles 생성 및 기수 등록 (문서 ID: 이메일)
+      const creatorRef = adminDb.collection('creator_profiles').doc(userEmail)
       const existingProfile = await creatorRef.get()
 
       await creatorRef.set({
-        id: user.id,
+        id: userEmail,
         user_id: user.id,
+        email: userEmail,
         nickname: finalNickname,
         cohort: cohortName,
         bio_short: existingProfile.exists && existingProfile.data()?.bio_short 
@@ -122,7 +123,6 @@ export async function verifyJoinCode(formData: FormData) {
       }, { merge: true })
 
       // 8. users 컬렉션 role을 부여된 역할로 승급
-      const userEmail = user.email.toLowerCase().trim()
       const userUpdate: any = {
         name: finalNickname,
         updated_at: now,
@@ -139,12 +139,13 @@ export async function verifyJoinCode(formData: FormData) {
         used_at: now,
       })
 
-      const creatorRef = doc(db, 'creator_profiles', user.id)
+      const creatorRef = doc(db, 'creator_profiles', userEmail)
       const existingProfile = await getDoc(creatorRef)
 
       await setDoc(creatorRef, {
-        id: user.id,
+        id: userEmail,
         user_id: user.id,
+        email: userEmail,
         nickname: finalNickname,
         cohort: cohortName,
         bio_short: existingProfile.exists() && existingProfile.data()?.bio_short 
@@ -156,7 +157,6 @@ export async function verifyJoinCode(formData: FormData) {
         updated_at: now,
       }, { merge: true })
 
-      const userEmail = user.email.toLowerCase().trim()
       const userRef = doc(db, 'users', userEmail)
       const userUpdate: any = {
         name: finalNickname,

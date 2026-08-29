@@ -47,11 +47,13 @@ export async function createWidget(formData: FormData) {
     let creatorProfile = await getCreatorProfileByUserId(user.id)
     const now = new Date().toISOString()
 
-    // 프로필이 없는 경우 기본 프로필 생성
+    // 프로필이 없는 경우 기본 프로필 생성 (문서 ID: 이메일)
     if (!creatorProfile) {
+      const userEmail = user.email.toLowerCase().trim()
       const defaultProfile = {
-        id: user.id,
+        id: userEmail,
         user_id: user.id,
+        email: userEmail,
         nickname: user.name || (user.email ? user.email.split('@')[0] : `제빵사_${user.id.slice(0, 4)}`),
         bio_short: '개발했슈 1기 제빵사입니다 🍕',
         cohort: '개발했슈 1기',
@@ -59,9 +61,9 @@ export async function createWidget(formData: FormData) {
         updated_at: now,
       }
       if (adminDb) {
-        await adminDb.collection('creator_profiles').doc(user.id).set(defaultProfile, { merge: true })
+        await adminDb.collection('creator_profiles').doc(userEmail).set(defaultProfile, { merge: true })
       } else {
-        await setDoc(doc(db, 'creator_profiles', user.id), defaultProfile, { merge: true })
+        await setDoc(doc(db, 'creator_profiles', userEmail), defaultProfile, { merge: true })
       }
       creatorProfile = defaultProfile as any
     }
