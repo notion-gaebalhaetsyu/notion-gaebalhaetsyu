@@ -89,7 +89,13 @@ export async function createWidget(formData: FormData) {
       finalCategoryId = catDocId
     }
 
+    const creatorNickname = creatorProfile?.nickname || user.name || (user.email ? user.email.split('@')[0] : 'creator')
+    const safeWidgetSlug = slug.trim().replace(/[\/\\]/g, '-')
+    const safeNickname = creatorNickname.trim().replace(/[\/\\]/g, '-')
+    const widgetDocId = `${safeWidgetSlug}_${safeNickname}`
+
     const widgetData = {
+      id: widgetDocId,
       name,
       slug,
       category_id: finalCategoryId || 'cat_cohort_1',
@@ -107,16 +113,16 @@ export async function createWidget(formData: FormData) {
       published_at: now,
     }
 
-    // 3. 위젯 Firestore에 저장
+    // 3. 위젯 Firestore에 저장 (문서 ID: {widget}_{nickname})
     if (adminDb) {
       // Slug 중복 체크
       const existing = await adminDb.collection('widgets').where('slug', '==', slug).get()
       if (!existing.empty) {
         return { error: '이미 사용 중인 주소(Slug)에유. 다른 주소를 입력해주세유!' }
       }
-      await adminDb.collection('widgets').add(widgetData)
+      await adminDb.collection('widgets').doc(widgetDocId).set(widgetData)
     } else {
-      await addDoc(collection(db, 'widgets'), widgetData)
+      await setDoc(doc(db, 'widgets', widgetDocId), widgetData)
     }
 
     // 4. 메인 홈 진열대(목록) 갱신
