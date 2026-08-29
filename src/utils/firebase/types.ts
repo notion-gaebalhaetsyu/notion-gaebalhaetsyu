@@ -92,3 +92,15 @@ export interface WidgetEvent {
   event_type: EventType;
   created_at: string;
 }
+
+export interface CohortInvite {
+  id?: string;
+  email: string;
+  nickname: string;
+  code: string;
+  cohort: string;
+  is_used: boolean;
+  used_by?: string | null;
+  used_at?: string | null;
+  created_at?: string;
+}

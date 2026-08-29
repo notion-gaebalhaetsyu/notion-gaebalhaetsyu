@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { db } from '@/utils/firebase/client'
 import { doc, setDoc, updateDoc } from 'firebase/firestore'
+import { verifyJoinCode } from '@/app/creators/join/actions'
 
 export default function ProfileEditForm({ 
   userId, 
@@ -79,8 +80,21 @@ export default function ProfileEditForm({
 
       // 1기 해시코드 확인
       const trimmedCode = formData.cohort_code.trim()
-      const validCodes = ['dev1234', '개발했슈1기', 'gaebalhatsyu1', '1기', '개발했슈 1기 인증됨']
-      const isCodeValid = validCodes.includes(trimmedCode) || is1stGen
+      let shouldSetCohort = is1stGen
+
+      if (!is1stGen && trimmedCode && trimmedCode !== '개발했슈 1기 인증됨') {
+        const verifyData = new FormData()
+        verifyData.append('code', trimmedCode)
+        verifyData.append('nickname', formData.nickname.trim())
+        
+        const verifyResult = await verifyJoinCode(verifyData)
+        if (verifyResult?.error) {
+          alert('가입 해시코드 인증 실패: ' + verifyResult.error)
+          setIsSubmitting(false)
+          return
+        }
+        shouldSetCohort = true
+      }
 
       const dataToSave: any = {
         id: docId,
@@ -94,14 +108,13 @@ export default function ProfileEditForm({
         created_at: initialProfile?.created_at || now,
       }
 
-      if (isCodeValid) {
+      if (shouldSetCohort) {
         dataToSave.cohort = '개발했슈 1기'
       }
 
       await setDoc(doc(db, 'creator_profiles', docId), dataToSave, { merge: true })
 
-      // 1기 코드가 유효할 경우 user role을 creator로 승급
-      if (isCodeValid) {
+      if (shouldSetCohort) {
         try {
           await updateDoc(doc(db, 'users', userId), {
             role: 'creator',
