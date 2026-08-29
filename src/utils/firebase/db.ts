@@ -244,6 +244,50 @@ export async function getWidgetBySlug(slug: string): Promise<Widget | null> {
   }
 }
 
+export async function getWidgetById(id: string): Promise<Widget | null> {
+  try {
+    const fetchWidgetPromise = (async (): Promise<Widget | null> => {
+      try {
+        if (adminDb) {
+          const snap = await adminDb.collection('widgets').doc(id).get();
+          if (snap.exists) {
+            return { id: snap.id, ...snap.data() } as Widget;
+          }
+        } else {
+          const snap = await getDoc(doc(db, 'widgets', id));
+          if (snap.exists()) {
+            return { id: snap.id, ...snap.data() } as Widget;
+          }
+        }
+        return null;
+      } catch (err) {
+        console.warn('getWidgetById fetch warning:', err);
+        return null;
+      }
+    })();
+
+    const [widget, categories, creatorProfiles] = await Promise.all([
+      withTimeout(fetchWidgetPromise, 3000, null),
+      getCategories(),
+      getAllCreatorProfiles()
+    ]);
+
+    if (!widget) return null;
+
+    const cat = categories.find(c => c.id === widget.category_id);
+    const creator = creatorProfiles.find(cp => cp.id === widget.creator_profile_id);
+
+    return {
+      ...widget,
+      categories: cat ? { id: cat.id, name: cat.name, slug: cat.slug } : { name: '기타' },
+      creator_profiles: creator ? { id: creator.id, nickname: creator.nickname, character_image_url: creator.character_image_url } : { nickname: '제빵사' },
+    };
+  } catch (error) {
+    console.error('getWidgetById error:', error);
+    return null;
+  }
+}
+
 // ==========================================
 // 3. 제빵사 프로필 (Creator Profiles)
 // ==========================================

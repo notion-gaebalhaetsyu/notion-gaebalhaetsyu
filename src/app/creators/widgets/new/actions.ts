@@ -34,10 +34,14 @@ export async function createWidget(formData: FormData) {
   const tags = tagsString ? tagsString.split(',').map(tag => tag.trim()).filter(Boolean) : []
 
   try {
-    // 1. 로그인 유저 확인 및 제빵사(Creator) 프로필 조회
+    // 1. 로그인 유저 확인 및 제작자/관리자 권한 검증
     const user = await getCurrentUser()
     if (!user) {
       return { error: '먼저 로그인을 진행해주세유!' }
+    }
+
+    if (user.role !== 'creator' && user.role !== 'admin') {
+      return { error: '위젯을 등록할 수 있는 제작자(또는 관리자) 권한이 없슈! 먼저 제작자 인증을 진행해 주세유.' }
     }
 
     let creatorProfile = await getCreatorProfileByUserId(user.id)

@@ -79,7 +79,11 @@ export default async function MyPage() {
       </section>
 
       {/* 탭 기반 작업대 (클라이언트 컴포넌트) */}
-      <MyWorkbench bakedWidgets={bakedWidgets} favoriteWidgets={favoriteWidgets} />
+      <MyWorkbench 
+        bakedWidgets={bakedWidgets} 
+        favoriteWidgets={favoriteWidgets} 
+        role={user.role}
+      />
     </div>
   )
 }

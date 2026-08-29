@@ -1,7 +1,22 @@
+import { redirect } from 'next/navigation'
+import { getCurrentUser } from '@/utils/firebase/server-auth'
 import { getCategories } from './actions'
 import WidgetForm from './WidgetForm'
 
+export const dynamic = 'force-dynamic'
+
 export default async function NewWidgetPage() {
+  const user = await getCurrentUser()
+  
+  if (!user) {
+    redirect('/')
+  }
+
+  // 제작자 또는 관리자만 위젯 등록 가능
+  if (user.role !== 'creator' && user.role !== 'admin') {
+    redirect('/creators/join')
+  }
+
   const categories = await getCategories()
 
   return (

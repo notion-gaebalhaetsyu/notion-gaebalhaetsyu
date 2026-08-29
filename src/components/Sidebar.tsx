@@ -37,14 +37,18 @@ export default async function Sidebar() {
       <div className="p-4 border-t border-toast-brown/30 flex flex-col gap-2">
         {user ? (
           <>
-            {(role === 'creator' || role === 'admin') && (
-              <Link href="/creators/widgets/new" className="w-full text-center py-3 rounded-xl bg-forest-green text-white font-bold hover:bg-forest-green/90 transition-colors">
-                🍕 새 위젯 굽기
-              </Link>
-            )}
             {role === 'admin' && (
               <Link href="/admin" className="w-full text-center py-3 rounded-xl bg-toast-brown text-white font-bold hover:bg-toast-brown/90 transition-colors">
                 🛠️ 관리자 페이지
+              </Link>
+            )}
+            {(role === 'creator' || role === 'admin') ? (
+              <Link href="/creators/widgets/new" className="w-full text-center py-3 rounded-xl bg-forest-green text-white font-bold hover:bg-forest-green/90 transition-colors">
+                🍕 새 위젯 굽기
+              </Link>
+            ) : (
+              <Link href="/creators/join" className="w-full text-center py-3 rounded-xl bg-custard-cream/60 border border-toast-brown/30 text-ink font-bold hover:bg-custard-cream transition-colors text-sm">
+                🧑‍🍳 1기 제작자 인증하기
               </Link>
             )}
             <Link href="/mypage" className="w-full text-center py-3 rounded-xl border-2 border-forest-green text-forest-green font-bold hover:bg-forest-green/5 transition-colors">

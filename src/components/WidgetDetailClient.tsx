@@ -7,11 +7,13 @@ import { Widget } from "@/utils/firebase/types";
 export default function WidgetDetailClient({ 
   widget, 
   initialIsFavorited,
-  userId
+  userId,
+  canEdit = false
 }: { 
   widget: Widget;
   initialIsFavorited: boolean;
   userId?: string;
+  canEdit?: boolean;
 }) {
   const [isToastVisible, setIsToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("노션에 담을 준비가 됐슈! 🍕");
@@ -176,15 +178,23 @@ export default function WidgetDetailClient({
             </div>
           </div>
 
-          {/* 노션에 담기 / 링크 복사 버튼 */}
-          <div className="pt-4 border-t border-toast-brown/20">
+          {/* 노션에 담기 / 링크 복사 버튼 & 수정 버튼 */}
+          <div className="pt-4 border-t border-toast-brown/20 flex flex-col gap-3">
+            {canEdit && (
+              <Link
+                href={`/creators/widgets/${widget.id}/edit`}
+                className="w-full py-3 rounded-xl bg-white border-2 border-forest-green text-forest-green font-bold text-center hover:bg-forest-green/5 transition-colors flex items-center justify-center gap-2 text-sm"
+              >
+                <span>✏️</span> 위젯 정보 수정하기
+              </Link>
+            )}
             <button 
               onClick={handleCopyLink}
               className="w-full bg-forest-green text-white py-4 rounded-2xl font-bold text-lg shadow-md hover:bg-forest-green/90 transition-all shadow-[0_3px_0_#1c452b] active:shadow-none active:translate-y-[3px] flex items-center justify-center gap-2"
             >
               <span>📋</span> 노션에 담기 · 링크 복사
             </button>
-            <p className="text-center text-xs text-ink/50 mt-2">
+            <p className="text-center text-xs text-ink/50 mt-1">
               복사한 링크를 노션 페이지에 붙여넣고 [임베드 생성]을 누르면 바로 작동해요! 🍕
             </p>
           </div>

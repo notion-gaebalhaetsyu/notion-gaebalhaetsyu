@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getWidgetBySlug, incrementWidgetViewCount, checkIsFavorited } from "@/utils/firebase/db";
+import { getWidgetBySlug, incrementWidgetViewCount, checkIsFavorited, getCreatorProfileByUserId } from "@/utils/firebase/db";
 import { getCurrentUser } from "@/utils/firebase/server-auth";
 import WidgetDetailClient from "@/components/WidgetDetailClient";
 
@@ -27,14 +27,23 @@ export default async function WidgetDetailPage({
   let isFavorited = false;
   
   if (user) {
-    isFavorited = await checkIsFavorited(user.id, widget.id);
+    isFavorited = !!(await checkIsFavorited(user.id, widget.id));
   }
+
+  const creatorProfile = user ? await getCreatorProfileByUserId(user.id) : null;
+  const isOwner = !!user && (
+    widget.creator_profile_id === user.id || 
+    Boolean(creatorProfile && widget.creator_profile_id === creatorProfile.id)
+  );
+  const canEdit = Boolean(user && (user.role === 'admin' || (user.role === 'creator' && isOwner)));
 
   return (
     <WidgetDetailClient 
       widget={widget} 
       initialIsFavorited={isFavorited} 
       userId={user?.id} 
+      canEdit={canEdit}
     />
   );
 }
+
