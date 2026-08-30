@@ -7,7 +7,8 @@ export default function GuidePage() {
       {/* 헤더 */}
       <section className="text-center pt-8 pb-4">
         <h1 className="text-4xl font-extrabold text-ink mb-4 flex items-center justify-center gap-3">
-          <span>📖</span> 노션에 위젯 굽는 방법 (설치 가이드)
+          <img src="/pizza_icon.png" alt="피자" className="w-9 h-9 object-contain" />
+          <span>노션에 위젯 굽는 방법 (설치 가이드)</span>
         </h1>
         <p className="text-lg text-ink/70 font-medium max-w-2xl mx-auto leading-relaxed">
           노션을 처음 쓰시는 분들도 1분 만에 따라 할 수 있을 만큼 아주 쉬워요!<br/>
