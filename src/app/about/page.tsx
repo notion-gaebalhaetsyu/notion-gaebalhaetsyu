@@ -33,11 +33,11 @@ export default function AboutPage() {
               </div>
             </div>
             <ul className="space-y-3 text-ink/80 text-sm font-medium">
-              <li className="flex gap-2"><span>🍕</span> AI대학원 박사과정 재학 중 (수료)</li>
-              <li className="flex gap-2"><span>🍕</span> 노션 앰버서더 / 공식 템플릿 제작자</li>
-              <li className="flex gap-2"><span>🍕</span> 기술 개발 및 창업 관련 경진대회 다수 수상<br/>(한국항공우주연구원 창업 아카데미 최우수)</li>
-              <li className="flex gap-2"><span>🍕</span> 네이버 테크 분야 블로거 (지수: 최적 2+)<br/>(블로그 이웃: 2,961명)</li>
-              <li className="flex gap-2"><span>🍕</span> Microsoft 광주전남 테크 커뮤니티 회원</li>
+              <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> AI대학원 박사과정 재학 중 (수료)</li>
+              <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 노션 앰버서더 / 공식 템플릿 제작자</li>
+              <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 기술 개발 및 창업 관련 경진대회 다수 수상<br/>(한국항공우주연구원 창업 아카데미 최우수)</li>
+              <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 네이버 테크 분야 블로거 (지수: 최적 2+)<br/>(블로그 이웃: 2,961명)</li>
+              <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> Microsoft 광주전남 테크 커뮤니티 회원</li>
             </ul>
           </div>
 
@@ -53,10 +53,10 @@ export default function AboutPage() {
               </div>
             </div>
             <ul className="space-y-3 text-ink/80 text-sm font-medium">
-              <li className="flex gap-2"><span>🍕</span> AI 엔지니어 재직중<br/>(정부부처 NLP·LLM 기반 서비스 개발 및 운영)</li>
-              <li className="flex gap-2"><span>🍕</span> 노션 공식 템플릿 제작자</li>
-              <li className="flex gap-2"><span>🍕</span> 네이버 커넥트재단, 알파코, 줄라마코리아 등<br/>코딩 교육 코치</li>
-              <li className="flex gap-2"><span>🍕</span> 네이버 커넥트재단 부스트캠프 AI Tech 7기<br/>(네이버클라우드 기업 해커톤 1위)</li>
+              <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> AI 엔지니어 재직중<br/>(정부부처 NLP·LLM 기반 서비스 개발 및 운영)</li>
+              <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 노션 공식 템플릿 제작자</li>
+              <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 네이버 커넥트재단, 알파코, 줄라마코리아 등<br/>코딩 교육 코치</li>
+              <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 네이버 커넥트재단 부스트캠프 AI Tech 7기<br/>(네이버클라우드 기업 해커톤 1위)</li>
             </ul>
           </div>
         </div>
