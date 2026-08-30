@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/utils/firebase/server-auth';
 import { toggleFavorite, getUserFavorites } from '@/utils/firebase/db';
 
@@ -34,6 +35,11 @@ export async function POST(request: Request) {
     }
 
     await toggleFavorite(user.id, widgetId, isFavorited);
+
+    revalidatePath('/mypage');
+    revalidatePath('/widgets');
+    revalidatePath(`/widgets/${widgetId}`);
+    revalidatePath('/');
 
     return NextResponse.json({ 
       success: true, 

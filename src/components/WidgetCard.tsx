@@ -27,7 +27,7 @@ export default function WidgetCard({
           {widget.thumbnail_url ? (
             <img src={widget.thumbnail_url} alt={widget.name} className="w-full h-full object-cover rounded-xl" />
           ) : (
-            '🍕'
+            <img src="/pizza_icon.png" alt="피자 위젯" className="w-16 h-16 object-contain" />
           )}
         </div>
         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-forest-green rounded-full shadow-sm z-10">

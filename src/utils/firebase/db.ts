@@ -472,8 +472,9 @@ export async function getUserFavorites(userId: string): Promise<Widget[]> {
 
     if (favoriteWidgetIds.length === 0) return [];
 
+    const uniqueIds = Array.from(new Set(favoriteWidgetIds));
     const allWidgets = await getWidgets({ status: 'all' });
-    return allWidgets.filter(w => favoriteWidgetIds.includes(w.id));
+    return allWidgets.filter(w => uniqueIds.includes(w.id));
   } catch (error) {
     console.error('getUserFavorites error:', error);
     return [];
@@ -559,33 +560,49 @@ export async function toggleFavorite(userId: string, widgetId: string, isFavorit
           user_id: userId,
           widget_id: widgetId,
           created_at: now,
-        });
-        await adminDb.collection('widgets').doc(widgetId).update({
-          like_count: adminModule.firestore.FieldValue.increment(1),
-        });
+        }, { merge: true });
+        try {
+          await adminDb.collection('widgets').doc(widgetId).set({
+            like_count: adminModule.firestore.FieldValue.increment(1),
+          }, { merge: true });
+        } catch (e) {
+          console.warn('widget like_count update warning:', e);
+        }
       } else {
         await setDoc(doc(db, 'favorites', favId), {
           user_id: userId,
           widget_id: widgetId,
           created_at: now,
-        });
-        await updateDoc(doc(db, 'widgets', widgetId), {
-          like_count: increment(1),
-        });
+        }, { merge: true });
+        try {
+          await setDoc(doc(db, 'widgets', widgetId), {
+            like_count: increment(1),
+          }, { merge: true });
+        } catch (e) {
+          console.warn('widget like_count update warning:', e);
+        }
       }
     } else {
       // 제거
       if (adminDb) {
         const adminModule = await import('firebase-admin');
         await adminDb.collection('favorites').doc(favId).delete();
-        await adminDb.collection('widgets').doc(widgetId).update({
-          like_count: adminModule.firestore.FieldValue.increment(-1),
-        });
+        try {
+          await adminDb.collection('widgets').doc(widgetId).set({
+            like_count: adminModule.firestore.FieldValue.increment(-1),
+          }, { merge: true });
+        } catch (e) {
+          console.warn('widget like_count update warning:', e);
+        }
       } else {
         await deleteDoc(doc(db, 'favorites', favId));
-        await updateDoc(doc(db, 'widgets', widgetId), {
-          like_count: increment(-1),
-        });
+        try {
+          await setDoc(doc(db, 'widgets', widgetId), {
+            like_count: increment(-1),
+          }, { merge: true });
+        } catch (e) {
+          console.warn('widget like_count update warning:', e);
+        }
       }
     }
   } catch (e) {

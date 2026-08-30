@@ -105,7 +105,7 @@ export default function WidgetDetailClient({
             </div>
           ) : (
             <div className="p-8 rounded-[20px] shadow-md border border-toast-brown/20 bg-bakery-beige/80 backdrop-blur-sm z-10 text-center max-w-sm">
-              <div className="text-6xl mb-4">🍕</div>
+              <img src="/pizza_icon.png" alt="피자" className="w-16 h-16 mx-auto object-contain mb-3" />
               <h3 className="text-xl font-bold text-ink mb-2">{widget.name}</h3>
               <p className="text-sm text-ink/70 font-medium mb-4">{widget.short_description}</p>
               <div className="inline-block bg-forest-green text-white text-xs font-bold px-3 py-1 rounded-full">

@@ -36,7 +36,10 @@ export default async function WidgetsPage({
     <div className="pb-24">
       {/* 헤더 영역 */}
       <section className="mb-8">
-        <h1 className="text-3xl font-extrabold text-ink mb-2">🍕 위젯 진열대</h1>
+        <h1 className="text-3xl font-extrabold text-ink mb-2 flex items-center gap-2">
+          <img src="/pizza_icon.png" alt="피자" className="w-8 h-8 object-contain" />
+          <span>위젯 진열대</span>
+        </h1>
         <p className="text-ink/60 font-medium">
           내 노션을 다채롭게 꾸며줄 개발했슈 위젯들을 만나보세요.
         </p>
