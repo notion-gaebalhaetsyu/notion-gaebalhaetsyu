@@ -42,7 +42,7 @@ export default async function CreatorProfilePage({
         
         <div className="relative z-10 text-center md:text-left flex-1">
           <div className="inline-block bg-forest-green/10 text-forest-green text-sm font-bold px-3 py-1 rounded-full mb-3">
-            개발했슈 1기, 2기 제작자
+            개발했슈 1기 제작자
           </div>
           <h1 className="text-3xl font-extrabold text-ink mb-2">
             {creator.nickname}의 작업대
@@ -66,13 +66,13 @@ export default async function CreatorProfilePage({
       {/* 구워낸 위젯 목록 */}
       <section>
         <h2 className="text-2xl font-bold text-ink mb-6 flex items-center gap-2">
-          <span>🍞</span> 구워낸 위젯 <span className="text-forest-green">{widgets?.length || 0}</span>
+          <span>🍕</span> 구워낸 위젯 <span className="text-forest-green">{widgets?.length || 0}</span>
         </h2>
         
         {!widgets || widgets.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-toast-brown/20 shadow-sm">
-            <div className="text-6xl mb-4">🧺</div>
-            <h3 className="text-xl font-bold text-ink mb-2">아직 구워낸 빵이 없슈!</h3>
+            <img src="/pizza_icon.png" alt="피자" className="w-16 h-16 mx-auto object-contain mb-3" />
+            <h3 className="text-xl font-bold text-ink mb-2">아직 구워낸 피자가 없슈!</h3>
             <p className="text-ink/60 font-medium">제작자가 열심히 레시피를 연구하고 있어요.</p>
           </div>
         ) : (
