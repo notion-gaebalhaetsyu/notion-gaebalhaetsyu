@@ -24,7 +24,7 @@ export const homeBanners = [
     desc: "개발했슈 1기 제빵사들이 바이브코딩으로 정성껏 구운\n무료 노션 위젯을 구경하고 내 노션에 바로 담아보세요.",
     btnText: "갓 구운 위젯 진열대 구경하기",
     href: "/widgets",
-    mascotImg: "/hero_pizza_mascot.jpg",
+    mascotImg: "/pizza_slice_chef.jpg",
   },
   {
     id: "creators",
