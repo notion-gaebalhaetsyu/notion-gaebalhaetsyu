@@ -3,7 +3,30 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 
-export const homeBanners = [
+export type BannerItem =
+  | {
+      id: string;
+      type: "image-banner";
+      image: string;
+      alt?: string;
+      href: string;
+      badge: string;
+      title: string;
+      desc: string;
+      btnText: string;
+    }
+  | {
+      id: string;
+      type: "creators";
+      label: string;
+      title: string;
+      titleHighlight: string;
+      desc: string;
+      btnText: string;
+      href: string;
+    };
+
+export const homeBanners: BannerItem[] = [
   {
     id: "new-widgets",
     type: "image-banner",
@@ -14,17 +37,6 @@ export const homeBanners = [
     title: "새로운 위젯이 도착했어요 🍕",
     desc: "개발했슈 1기 제빵사들의 톡톡 튀는 아이디어 위젯을 만나보세요.",
     btnText: "위젯 진열대 바로가기",
-  },
-  {
-    id: "hero",
-    type: "hero",
-    label: "DEVELOPED BY 개발했슈 ✦ FREE NOTION WIDGETS",
-    title: "노션에 필요한 기능,",
-    titleHighlight: "우리가 직접 구웠슈! 🍕",
-    desc: "개발했슈 1기 제빵사들이 바이브코딩으로 정성껏 구운\n무료 노션 위젯을 구경하고 내 노션에 바로 담아보세요.",
-    btnText: "갓 구운 위젯 진열대 구경하기",
-    href: "/widgets",
-    mascotImg: "/pizza_slice_chef.jpg",
   },
   {
     id: "creators",
@@ -76,64 +88,7 @@ export default function HeroBanner() {
                 isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
               }`}
             >
-              {/* SLIDE 1: Hero Banner (Default) */}
-              {slide.type === "hero" && (
-                <div className="w-full h-full relative flex flex-col-reverse lg:flex-row items-center justify-between gap-6 lg:gap-12 px-6 sm:px-10 lg:px-14 py-8 lg:py-10 bg-[radial-gradient(ellipse_at_top_left,#fff8eb_0%,#f7f1e8_55%,#eddcc7_100%)] overflow-hidden">
-                  {/* Subtle decorative elements */}
-                  <div className="absolute top-0 right-0 w-96 h-96 bg-custard-cream/60 rounded-full blur-3xl pointer-events-none" />
-                  <div className="absolute -bottom-10 left-1/3 w-80 h-80 bg-strawberry-pink/15 rounded-full blur-2xl pointer-events-none" />
-
-                  {/* Left Content */}
-                  <div className="flex-1 relative z-10 min-w-0 flex flex-col items-start justify-center">
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 border border-toast-brown/20 shadow-xs mb-3.5">
-                      <span className="font-mono text-xs font-bold tracking-[1px] text-toast-brown">
-                        {slide.label}
-                      </span>
-                    </div>
-
-                    <h1 className="text-2xl sm:text-4xl lg:text-[clamp(32px,2.8vw,48px)] font-extrabold text-ink mb-3.5 leading-[1.25] tracking-[-1px] break-keep">
-                      {slide.title} <br className="hidden sm:inline" />
-                      <span className="text-forest-green font-normal italic">
-                        {slide.titleHighlight}
-                      </span>
-                    </h1>
-
-                    <p className="text-sm sm:text-base lg:text-lg text-ink/75 mb-6 font-medium leading-[1.65] whitespace-pre-line break-keep">
-                      {slide.desc}
-                    </p>
-
-                    <div>
-                      <Link
-                        href={slide.href}
-                        className="inline-flex items-center gap-2.5 bg-forest-green text-white font-bold py-3 px-6 rounded-xl hover:bg-forest-green/90 transition-all shadow-[0_3px_0_#1c452b] active:shadow-none active:translate-y-[3px] text-sm sm:text-base group"
-                      >
-                        <span>{slide.btnText}</span>
-                        <span className="group-hover:translate-x-1 transition-transform">→</span>
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/* Right Mascot */}
-                  <div className="relative w-[180px] sm:w-[240px] lg:w-[320px] aspect-square flex-shrink-0 z-10">
-                    <div className="w-full h-full rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-white relative group">
-                      <img
-                        src={slide.mascotImg}
-                        alt="개발했슈 피자 마스코트"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute top-2.5 left-2.5 bg-[#f9dce2] text-[#a95368] font-bold px-2.5 py-0.5 text-xs rounded-full shadow-xs">
-                        100% 무료! 🍕
-                      </div>
-                      <div className="absolute bottom-2.5 right-2.5 bg-custard-cream/95 text-toast-brown font-extrabold px-2.5 py-1 text-[11px] sm:text-xs rounded-xl shadow-md border border-toast-brown/20 text-center leading-tight">
-                        오늘도 따끈하게<br />
-                        <span className="text-forest-green text-xs sm:text-sm">구워냈슈!</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* SLIDE 2: Image Banner */}
+              {/* SLIDE 1: Image Banner */}
               {slide.type === "image-banner" && (
                 <div className="w-full h-full relative">
                   <img
