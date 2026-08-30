@@ -46,7 +46,7 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets, role = 'vis
               {widget.thumbnail_url ? (
                 <img src={widget.thumbnail_url} alt={widget.name} className="w-full h-full object-cover rounded-xl" />
               ) : (
-                '🍕'
+                <img src="/pizza_icon.png" alt="피자" className="w-14 h-14 object-contain" />
               )}
             </div>
             <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-forest-green rounded-full shadow-sm">
@@ -89,13 +89,15 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets, role = 'vis
       <div className="flex gap-4 mb-8 border-b border-toast-brown/20 pb-4 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveTab('favorites')}
-          className={`px-6 py-3 rounded-full font-bold transition-colors whitespace-nowrap ${
+          className={`px-6 py-3 rounded-full font-bold transition-colors whitespace-nowrap flex items-center gap-1.5 ${
             activeTab === 'favorites' 
               ? 'bg-ink text-white shadow-md' 
               : 'bg-white text-ink/60 hover:bg-bakery-beige'
           }`}
         >
-          🍕 내가 찜한 피자 <span className="ml-1 opacity-70">({favoriteWidgets.length})</span>
+          <img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain" />
+          <span>내가 찜한 피자</span>
+          <span className="ml-1 opacity-70">({favoriteWidgets.length})</span>
         </button>
         <button
           onClick={() => setActiveTab('baked')}
@@ -115,7 +117,7 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets, role = 'vis
           <div>
             {favoriteWidgets.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-3xl border border-toast-brown/20 shadow-sm border-dashed">
-                <div className="text-5xl mb-4 opacity-50">🛒</div>
+                <img src="/pizza_icon.png" alt="피자" className="w-16 h-16 mx-auto object-contain mb-3 opacity-60" />
                 <h3 className="text-xl font-bold text-ink mb-2">아직 찜한 피자가 없슈!</h3>
                 <p className="text-ink/60 font-medium mb-6">마음에 드는 위젯을 찾아 하트(❤️)를 눌러보세요.</p>
                 <Link href="/widgets" className="inline-block bg-forest-green text-white font-bold py-3 px-6 rounded-xl hover:bg-forest-green/90 transition-colors">
@@ -149,7 +151,7 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets, role = 'vis
               </div>
             ) : bakedWidgets.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-3xl border border-toast-brown/20 shadow-sm border-dashed">
-                <div className="text-5xl mb-4 opacity-50">🍕</div>
+                <img src="/pizza_icon.png" alt="피자" className="w-16 h-16 mx-auto object-contain mb-3 opacity-60" />
                 <h3 className="text-xl font-bold text-ink mb-2">아직 구워낸 피자 위젯이 없네유.</h3>
                 <p className="text-ink/60 font-medium mb-6">첫 위젯을 만들어 개발했슈 진열대에 공유해 보세요!</p>
                 <Link href="/creators/widgets/new" className="inline-block bg-forest-green text-white font-bold py-3 px-6 rounded-xl hover:bg-forest-green/90 transition-colors">

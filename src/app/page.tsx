@@ -31,7 +31,10 @@ export default async function Home() {
       <section id="widgets">
         <div className="flex items-end justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-bold text-ink mb-2">갓 구운 위젯 🍕</h2>
+            <h2 className="text-2xl font-bold text-ink mb-2 flex items-center gap-2">
+              <span>갓 구운 위젯</span>
+              <img src="/pizza_icon.png" alt="피자" className="w-6 h-6 object-contain" />
+            </h2>
             <p className="text-ink/60 font-medium">따끈따끈하게 갓 구워진 개발했슈 위젯을 맛보세요.</p>
           </div>
           <Link href="/widgets" className="text-forest-green font-bold text-sm hover:underline">
@@ -41,7 +44,7 @@ export default async function Home() {
 
         {!widgets || widgets.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-toast-brown/20 shadow-sm">
-            <div className="text-6xl mb-4">🍕</div>
+            <img src="/pizza_icon.png" alt="피자" className="w-16 h-16 mx-auto object-contain mb-3 opacity-60" />
             <h3 className="text-xl font-bold text-ink mb-2">아직 진열된 피자가 없슈!</h3>
             <p className="text-ink/60 font-medium">
               첫 번째 위젯 제작자가 되어 위젯을 구워보세요.

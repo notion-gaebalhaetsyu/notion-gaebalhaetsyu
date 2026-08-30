@@ -11,7 +11,8 @@ export default async function Sidebar() {
     <aside className="w-64 h-screen fixed left-0 top-0 bg-white border-r border-toast-brown/30 flex flex-col z-50">
       <div className="p-6">
         <h1 className="text-2xl font-bold text-forest-green flex items-center gap-2">
-          <span>🍕</span> 개발했슈
+          <img src="/pizza_icon.png" alt="개발했슈" className="w-7 h-7 object-contain" />
+          <span>개발했슈</span>
         </h1>
         <p className="text-xs text-toast-brown mt-1">노션 바이브 코딩 동아리</p>
       </div>
@@ -21,7 +22,8 @@ export default async function Sidebar() {
           🏠 홈
         </Link>
         <Link href="/widgets" className="px-4 py-3 rounded-xl hover:bg-bakery-beige text-ink font-medium flex items-center gap-2 transition-colors">
-          🍕 위젯 진열대
+          <img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain" />
+          <span>위젯 진열대</span>
         </Link>
         <Link href="/creators" className="px-4 py-3 rounded-xl hover:bg-bakery-beige text-ink font-medium flex items-center gap-2 transition-colors">
           🧑‍🍳 제작자 소개
@@ -43,8 +45,9 @@ export default async function Sidebar() {
               </Link>
             )}
             {(role === 'provider' || role === 'creator' || role === 'admin') ? (
-              <Link href="/creators/widgets/new" className="w-full text-center py-3 rounded-xl bg-forest-green text-white font-bold hover:bg-forest-green/90 transition-colors">
-                🍕 새 위젯 굽기
+              <Link href="/creators/widgets/new" className="w-full text-center py-3 rounded-xl bg-forest-green text-white font-bold hover:bg-forest-green/90 transition-colors flex items-center justify-center gap-1.5">
+                <img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain brightness-0 invert" />
+                <span>새 위젯 굽기</span>
               </Link>
             ) : (
               <Link href="/creators/join" className="w-full text-center py-3 rounded-xl bg-custard-cream/60 border border-toast-brown/30 text-ink font-bold hover:bg-custard-cream transition-colors text-sm">

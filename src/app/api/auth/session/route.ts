@@ -177,7 +177,7 @@ export async function POST(request: Request) {
       maxAge: 60 * 60 * 24 * 14, // 14 days
     });
 
-    const redirectUrl = assignedRole === 'admin' ? '/admin' : '/mypage';
+    const redirectUrl = assignedRole === 'admin' ? '/admin' : '/mypage/edit';
 
     return NextResponse.json({ 
       success: true, 
