@@ -5,6 +5,17 @@ import Link from 'next/link';
 
 export const homeBanners = [
   {
+    id: "new-widgets",
+    type: "image-banner",
+    image: "/banner_widgets.jpg",
+    alt: "노션에 필요한 기능, 우리가 직접 구웠슈!",
+    href: "/widgets",
+    badge: "✦ 개발했슈 1기 갓 구운 위젯",
+    title: "새로운 위젯이 도착했어요 🍕",
+    desc: "개발했슈 1기 제빵사들의 톡톡 튀는 아이디어 위젯을 만나보세요.",
+    btnText: "위젯 진열대 바로가기",
+  },
+  {
     id: "hero",
     type: "hero",
     label: "DEVELOPED BY 개발했슈 ✦ FREE NOTION WIDGETS",
@@ -14,17 +25,6 @@ export const homeBanners = [
     btnText: "갓 구운 위젯 진열대 구경하기",
     href: "/widgets",
     mascotImg: "/hero_pizza_mascot.jpg",
-  },
-  {
-    id: "new-widgets",
-    type: "image-banner",
-    image: "/banner_widgets.jpg",
-    alt: "노션에 필요한 기능, 우리가 직접 구웠슈!",
-    href: "/widgets",
-    badge: "✦ 개발했슈 1기 갓 구운 위젯",
-    title: "새로운 위젯이 도착했어요 🥐",
-    desc: "개발했슈 1기 제빵사들의 톡톡 튀는 아이디어 위젯을 만나보세요.",
-    btnText: "위젯 진열대 바로가기",
   },
   {
     id: "creators",
