@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation'
 import { getCurrentUser } from '@/utils/firebase/server-auth'
-import { getWidgetById, getCreatorProfileByUserId } from '@/utils/firebase/db'
+import { getWidgetById, getWidgetBySlug, getCreatorProfileByUserId } from '@/utils/firebase/db'
 import { getCategories } from './actions'
 import WidgetEditForm from './WidgetEditForm'
 
@@ -12,19 +12,24 @@ export default async function EditWidgetPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
+  const decodedId = decodeURIComponent(id || '')
   const user = await getCurrentUser()
 
   if (!user) {
     redirect('/')
   }
 
-  const widget = await getWidgetById(id)
+  const widget = (await getWidgetById(decodedId)) || (await getWidgetById(id)) || (await getWidgetBySlug(decodedId)) || (await getWidgetBySlug(id))
   if (!widget) {
     notFound()
   }
 
   const creatorProfile = await getCreatorProfileByUserId(user.id)
-  const isOwner = widget.creator_profile_id === user.id || (creatorProfile && widget.creator_profile_id === creatorProfile.id)
+  const userEmail = user.email ? user.email.toLowerCase().trim() : ''
+  const isOwner = 
+    widget.creator_profile_id === user.id || 
+    (creatorProfile && widget.creator_profile_id === creatorProfile.id) ||
+    (userEmail && widget.creator_profile_id === userEmail)
   const isAdmin = user.role === 'admin'
 
   // 관리자이거나 본인이 등록한 위젯인 경우만 수정 페이지 접근 가능

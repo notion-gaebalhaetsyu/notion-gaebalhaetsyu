@@ -92,9 +92,9 @@ export async function updateWidget(widgetId: string, formData: FormData) {
 
     // 4. Firestore 업데이트
     if (adminDb) {
-      await adminDb.collection('widgets').doc(widgetId).update(updateData)
+      await adminDb.collection('widgets').doc(widget.id).update(updateData)
     } else {
-      await updateDoc(doc(db, 'widgets', widgetId), updateData)
+      await updateDoc(doc(db, 'widgets', widget.id), updateData)
     }
 
     // 5. 캐시 갱신
@@ -103,11 +103,12 @@ export async function updateWidget(widgetId: string, formData: FormData) {
     revalidatePath(`/widgets/${widget.slug}`)
     revalidatePath('/mypage')
     revalidatePath('/creators')
+    revalidatePath('/admin')
 
     return { success: true, slug: widget.slug }
   } catch (error: any) {
-    console.error('Error updating widget:', error)
-    return { error: error.message || '위젯 수정 중 오류가 발생했슈.' }
+    console.error('updateWidget error:', error)
+    return { error: error.message || '위젯 수정 중 문제가 발생했습니다.' }
   }
 }
 
@@ -135,7 +136,7 @@ export async function deleteWidgetAction(widgetId: string) {
       return { error: '직접 등록한 위젯만 삭제할 수 있슈! (관리자 제외)' }
     }
 
-    const success = await deleteWidget(widgetId)
+    const success = await deleteWidget(widget.id)
     if (!success) {
       return { error: '위젯 삭제에 실패했습니다.' }
     }

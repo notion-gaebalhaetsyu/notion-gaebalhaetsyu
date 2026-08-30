@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getWidgetBySlug, incrementWidgetViewCount, checkIsFavorited, getCreatorProfileByUserId } from "@/utils/firebase/db";
+import { getWidgetBySlug, getWidgetById, incrementWidgetViewCount, checkIsFavorited, getCreatorProfileByUserId } from "@/utils/firebase/db";
 import { getCurrentUser } from "@/utils/firebase/server-auth";
 import WidgetDetailClient from "@/components/WidgetDetailClient";
 
@@ -11,9 +11,10 @@ export default async function WidgetDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params;
+  const decodedSlug = decodeURIComponent(slug || '');
 
   // 1. 위젯 데이터 가져오기 (제작자 프로필 포함)
-  const widget = await getWidgetBySlug(slug);
+  const widget = (await getWidgetBySlug(decodedSlug)) || (await getWidgetBySlug(slug)) || (await getWidgetById(decodedSlug));
 
   if (!widget) {
     notFound();
@@ -31,9 +32,11 @@ export default async function WidgetDetailPage({
   }
 
   const creatorProfile = user ? await getCreatorProfileByUserId(user.id) : null;
+  const userEmail = user?.email ? user.email.toLowerCase().trim() : '';
   const isOwner = !!user && (
     widget.creator_profile_id === user.id || 
-    Boolean(creatorProfile && widget.creator_profile_id === creatorProfile.id)
+    Boolean(creatorProfile && widget.creator_profile_id === creatorProfile.id) ||
+    Boolean(userEmail && widget.creator_profile_id === userEmail)
   );
   const canEdit = Boolean(user && (
     user.role === 'admin' || 

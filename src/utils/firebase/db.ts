@@ -202,18 +202,39 @@ export async function getWidgets(options: GetWidgetsOptions = {}): Promise<Widge
 
 export async function getWidgetBySlug(slug: string): Promise<Widget | null> {
   try {
+    const rawSlug = (slug || '').trim();
+    let decodedSlug = rawSlug;
+    try {
+      decodedSlug = decodeURIComponent(rawSlug);
+    } catch (e) {}
+
     const fetchWidgetPromise = (async (): Promise<Widget | null> => {
       try {
         if (adminDb) {
-          const snap = await adminDb.collection('widgets').where('slug', '==', slug).limit(1).get();
+          const snap = await adminDb.collection('widgets').where('slug', '==', decodedSlug).limit(1).get();
           if (!snap.empty) {
             return { id: snap.docs[0]!.id, ...snap.docs[0]!.data() } as Widget;
           }
+          if (rawSlug !== decodedSlug) {
+            const rawSnap = await adminDb.collection('widgets').where('slug', '==', rawSlug).limit(1).get();
+            if (!rawSnap.empty) {
+              return { id: rawSnap.docs[0]!.id, ...rawSnap.docs[0]!.data() } as Widget;
+            }
+          }
+          // Doc ID fallback
+          const docSnap = await adminDb.collection('widgets').doc(decodedSlug).get();
+          if (docSnap.exists) {
+            return { id: docSnap.id, ...docSnap.data() } as Widget;
+          }
         } else {
-          const q = query(collection(db, 'widgets'), where('slug', '==', slug), limit(1));
+          const q = query(collection(db, 'widgets'), where('slug', '==', decodedSlug), limit(1));
           const snap = await getDocs(q);
           if (!snap.empty) {
             return { id: snap.docs[0]!.id, ...snap.docs[0]!.data() } as Widget;
+          }
+          const docSnap = await getDoc(doc(db, 'widgets', decodedSlug));
+          if (docSnap.exists()) {
+            return { id: docSnap.id, ...docSnap.data() } as Widget;
           }
         }
         return null;
@@ -247,17 +268,47 @@ export async function getWidgetBySlug(slug: string): Promise<Widget | null> {
 
 export async function getWidgetById(id: string): Promise<Widget | null> {
   try {
+    const rawId = (id || '').trim();
+    let decodedId = rawId;
+    try {
+      decodedId = decodeURIComponent(rawId);
+    } catch (e) {}
+
     const fetchWidgetPromise = (async (): Promise<Widget | null> => {
       try {
         if (adminDb) {
-          const snap = await adminDb.collection('widgets').doc(id).get();
+          // 1. Doc lookup with decodedId
+          let snap = await adminDb.collection('widgets').doc(decodedId).get();
           if (snap.exists) {
             return { id: snap.id, ...snap.data() } as Widget;
           }
+          // 2. Doc lookup with rawId
+          if (rawId !== decodedId) {
+            snap = await adminDb.collection('widgets').doc(rawId).get();
+            if (snap.exists) {
+              return { id: snap.id, ...snap.data() } as Widget;
+            }
+          }
+          // 3. Slug lookup fallback
+          const slugSnap = await adminDb.collection('widgets').where('slug', '==', decodedId).limit(1).get();
+          if (!slugSnap.empty) {
+            return { id: slugSnap.docs[0]!.id, ...slugSnap.docs[0]!.data() } as Widget;
+          }
         } else {
-          const snap = await getDoc(doc(db, 'widgets', id));
+          let snap = await getDoc(doc(db, 'widgets', decodedId));
           if (snap.exists()) {
             return { id: snap.id, ...snap.data() } as Widget;
+          }
+          if (rawId !== decodedId) {
+            snap = await getDoc(doc(db, 'widgets', rawId));
+            if (snap.exists()) {
+              return { id: snap.id, ...snap.data() } as Widget;
+            }
+          }
+          const q = query(collection(db, 'widgets'), where('slug', '==', decodedId), limit(1));
+          const qSnap = await getDocs(q);
+          if (!qSnap.empty) {
+            return { id: qSnap.docs[0]!.id, ...qSnap.docs[0]!.data() } as Widget;
           }
         }
         return null;
@@ -291,10 +342,22 @@ export async function getWidgetById(id: string): Promise<Widget | null> {
 
 export async function deleteWidget(id: string): Promise<boolean> {
   try {
+    const rawId = (id || '').trim();
+    let decodedId = rawId;
+    try {
+      decodedId = decodeURIComponent(rawId);
+    } catch (e) {}
+
     if (adminDb) {
-      await adminDb.collection('widgets').doc(id).delete();
+      await adminDb.collection('widgets').doc(decodedId).delete();
+      if (rawId !== decodedId) {
+        await adminDb.collection('widgets').doc(rawId).delete().catch(() => {});
+      }
     } else {
-      await deleteDoc(doc(db, 'widgets', id));
+      await deleteDoc(doc(db, 'widgets', decodedId));
+      if (rawId !== decodedId) {
+        await deleteDoc(doc(db, 'widgets', rawId)).catch(() => {});
+      }
     }
     return true;
   } catch (error) {
