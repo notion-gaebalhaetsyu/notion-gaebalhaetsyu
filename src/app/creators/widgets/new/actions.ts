@@ -28,10 +28,6 @@ export async function createWidget(formData: FormData) {
     return { error: '필수 항목(위젯 이름, 위젯 저장소 링크, 한 줄 소개, 임베드 링크)을 모두 입력해 주세유!' }
   }
 
-  if (!category_id && !new_category_name) {
-    return { error: '카테고리를 선택하거나 새로 입력해 주세유!' }
-  }
-
   const tags = tagsString ? tagsString.split(',').map(tag => tag.trim()).filter(Boolean) : []
 
   try {
@@ -69,25 +65,8 @@ export async function createWidget(formData: FormData) {
       creatorProfile = defaultProfile as any
     }
 
-    // 2. 신규 카테고리 등록 처리
-    let finalCategoryId = category_id
-    if (category_id === '__new__' && new_category_name && new_category_name.trim()) {
-      const trimmedName = new_category_name.trim()
-      const catDocId = `cat_${Date.now()}`
-      const newCat = {
-        id: catDocId,
-        name: trimmedName,
-        slug: trimmedName.toLowerCase().replace(/[^a-z0-9가-힣]/g, '-'),
-        display_order: 10,
-      }
-
-      if (adminDb) {
-        await adminDb.collection('categories').doc(catDocId).set(newCat)
-      } else {
-        await setDoc(doc(db, 'categories', catDocId), newCat)
-      }
-      finalCategoryId = catDocId
-    }
+    // 2. 카테고리는 개발했슈 1기로 기본 고정
+    const finalCategoryId = 'cat_cohort_1'
 
     // 3. 고유 슬러그 및 문서 ID 생성
     let baseSlug = ''

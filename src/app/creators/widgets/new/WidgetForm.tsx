@@ -10,15 +10,10 @@ type Category = {
   name: string
 }
 
-export default function WidgetForm({ categories }: { categories: Category[] }) {
+export default function WidgetForm({ categories }: { categories?: Category[] }) {
   const router = useRouter()
   const [isPending, setIsPending] = useState(false)
   const [toastMessage, setToastMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null)
-  
-  const [selectedCategory, setSelectedCategory] = useState<string>(
-    categories.length > 0 ? categories[0]!.id : '__new__'
-  )
-  const [newCategoryName, setNewCategoryName] = useState('')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -87,34 +82,16 @@ export default function WidgetForm({ categories }: { categories: Category[] }) {
             id="category_id" 
             name="category_id" 
             required
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full appearance-none bg-bakery-beige border border-toast-brown/30 text-ink rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-forest-green/50 font-medium"
+            defaultValue="cat_cohort_1"
+            className="w-full appearance-none bg-bakery-beige border border-toast-brown/30 text-ink rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-forest-green/50 font-medium cursor-pointer"
           >
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
-            ))}
-            <option value="__new__">➕ 새로운 카테고리 직접 등록</option>
+            <option value="cat_cohort_1">개발했슈 1기</option>
           </select>
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-toast-brown">
             ▼
           </div>
         </div>
-
-        {/* 새 카테고리 직접 등록 인풋 */}
-        {selectedCategory === '__new__' && (
-          <div className="mt-3">
-            <input 
-              type="text" 
-              name="new_category_name"
-              value={newCategoryName}
-              onChange={(e) => setNewCategoryName(e.target.value)}
-              placeholder="새로운 카테고리 이름을 입력하세요 (예: 개발했슈 1기, 생산성, 미니게임)"
-              required={selectedCategory === '__new__'}
-              className="w-full bg-white border-2 border-forest-green text-ink rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-forest-green/50 placeholder:text-ink/40 font-medium"
-            />
-          </div>
-        )}
+        <p className="text-xs text-ink/50 mt-1">현재 개발했슈 1기 위젯으로 등록됩니다.</p>
       </div>
 
       {/* 4. 짧은 설명 */}
