@@ -63,23 +63,20 @@ export default function WidgetForm({ categories }: { categories: Category[] }) {
         />
       </div>
 
-      {/* 2. 개발했슈 웹페이지 주소 설정 */}
+      {/* 2. 위젯 저장소 링크 (깃허브) */}
       <div>
-        <label htmlFor="slug" className="block text-sm font-bold text-ink mb-2">개발했슈 웹페이지 주소 설정 <span className="text-strawberry-pink">*</span></label>
-        <div className="flex items-center">
-          <span className="bg-bakery-beige border border-r-0 border-toast-brown/30 text-ink/50 rounded-l-xl px-4 py-3 font-medium text-sm">/widgets/</span>
-          <input 
-            type="text" 
-            id="slug" 
-            name="slug" 
-            placeholder="my-cute-timer"
-            required
-            pattern="[a-z0-9\-]+"
-            title="영문 소문자, 숫자, 하이픈(-)만 사용 가능합니다."
-            className="w-full bg-bakery-beige border border-toast-brown/30 text-ink rounded-r-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-forest-green/50 placeholder:text-ink/40 font-medium"
-          />
-        </div>
-        <p className="text-xs text-ink/50 mt-1">위젯 상세 페이지의 고유 URL 주소로 사용됩니다 (영문, 숫자, 하이픈 권장).</p>
+        <label htmlFor="github_url" className="block text-sm font-bold text-ink mb-2">
+          위젯 저장소 링크 (깃허브) <span className="text-strawberry-pink">*</span>
+        </label>
+        <input 
+          type="url" 
+          id="github_url" 
+          name="github_url" 
+          placeholder="https://github.com/username/my-widget-repo"
+          required
+          className="w-full bg-bakery-beige border border-toast-brown/30 text-ink rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-forest-green/50 placeholder:text-ink/40 font-medium"
+        />
+        <p className="text-xs text-ink/50 mt-1">위젯 코드가 관리되는 GitHub 저장소 전체 URL을 입력해 주세요.</p>
       </div>
 
       {/* 3. 카테고리 */}

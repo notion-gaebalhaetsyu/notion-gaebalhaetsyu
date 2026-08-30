@@ -43,6 +43,7 @@ export interface Widget {
   category_id: string;
   name: string;
   slug: string;
+  github_url?: string;
   short_description?: string;
   long_description?: string;
   creator_comment?: string;

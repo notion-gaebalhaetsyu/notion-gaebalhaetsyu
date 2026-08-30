@@ -99,15 +99,20 @@ export default function WidgetEditForm({
           />
         </div>
 
-        {/* 2. 주소 (Slug) 안내 */}
+        {/* 2. 위젯 저장소 링크 (깃허브) */}
         <div>
-          <label className="block text-sm font-bold text-ink mb-2">위젯 URL 주소</label>
-          <div className="flex items-center">
-            <span className="bg-gray-100 border border-toast-brown/30 text-ink/60 rounded-xl px-4 py-3 font-mono text-sm w-full">
-              /widgets/{widget.slug}
-            </span>
-          </div>
-          <p className="text-xs text-ink/50 mt-1">고유 링크 주소는 안정적인 노션 임베드를 위해 변경할 수 없습니다.</p>
+          <label htmlFor="github_url" className="block text-sm font-bold text-ink mb-2">
+            위젯 저장소 링크 (깃허브)
+          </label>
+          <input 
+            type="url" 
+            id="github_url" 
+            name="github_url" 
+            defaultValue={widget.github_url || ''}
+            placeholder="https://github.com/username/my-widget-repo"
+            className="w-full bg-bakery-beige border border-toast-brown/30 text-ink rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-forest-green/50 placeholder:text-ink/40 font-medium"
+          />
+          <p className="text-xs text-ink/50 mt-1">위젯 코드가 관리되는 GitHub 저장소 전체 URL을 입력해 주세요.</p>
         </div>
 
         {/* 3. 카테고리 */}

@@ -13,6 +13,7 @@ export async function getCategories() {
 
 export async function updateWidget(widgetId: string, formData: FormData) {
   const name = (formData.get('name') as string)?.trim()
+  const github_url = (formData.get('github_url') as string)?.trim() || ''
   const category_id = (formData.get('category_id') as string)?.trim()
   const new_category_name = (formData.get('new_category_name') as string)?.trim()
   const short_description = (formData.get('short_description') as string)?.trim()
@@ -78,6 +79,7 @@ export async function updateWidget(widgetId: string, formData: FormData) {
 
     const updateData: any = {
       name,
+      github_url,
       category_id: finalCategoryId || widget.category_id,
       short_description,
       long_description: long_description || '',

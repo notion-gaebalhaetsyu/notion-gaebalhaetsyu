@@ -14,18 +14,18 @@ export async function getCategories() {
 
 // 폼 데이터를 받아 위젯을 등록하는 함수
 export async function createWidget(formData: FormData) {
-  const name = formData.get('name') as string
-  const slug = formData.get('slug') as string
-  const category_id = formData.get('category_id') as string
-  const new_category_name = formData.get('new_category_name') as string
-  const short_description = formData.get('short_description') as string
-  const embed_url = formData.get('embed_url') as string
-  const tagsString = formData.get('tags') as string
+  const name = (formData.get('name') as string)?.trim()
+  const github_url = (formData.get('github_url') as string || formData.get('slug') as string)?.trim()
+  const category_id = (formData.get('category_id') as string)?.trim()
+  const new_category_name = (formData.get('new_category_name') as string)?.trim()
+  const short_description = (formData.get('short_description') as string)?.trim()
+  const embed_url = (formData.get('embed_url') as string)?.trim()
+  const tagsString = (formData.get('tags') as string)?.trim()
   const thumbnail_url = (formData.get('thumbnail_url') as string)?.trim() || ''
 
   // 필수 값 검증
-  if (!name || !slug || !short_description || !embed_url) {
-    return { error: '필수 항목을 모두 입력해 주세유!' }
+  if (!name || !github_url || !short_description || !embed_url) {
+    return { error: '필수 항목(위젯 이름, 위젯 저장소 링크, 한 줄 소개, 임베드 링크)을 모두 입력해 주세유!' }
   }
 
   if (!category_id && !new_category_name) {
@@ -89,15 +89,42 @@ export async function createWidget(formData: FormData) {
       finalCategoryId = catDocId
     }
 
+    // 3. 고유 슬러그 및 문서 ID 생성
+    let baseSlug = ''
+    try {
+      if (github_url.startsWith('http://') || github_url.startsWith('https://')) {
+        const urlObj = new URL(github_url)
+        const pathParts = urlObj.pathname.split('/').filter(Boolean)
+        if (pathParts.length > 0) {
+          baseSlug = pathParts[pathParts.length - 1]!.replace(/\.git$/i, '')
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+    if (!baseSlug) {
+      baseSlug = name.toLowerCase().replace(/[^a-z0-9가-힣]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || `widget-${Date.now()}`
+    }
+
     const creatorNickname = creatorProfile?.nickname || user.name || (user.email ? user.email.split('@')[0] : 'creator')
-    const safeWidgetSlug = slug.trim().replace(/[\/\\]/g, '-')
+    const safeWidgetSlug = baseSlug.trim().replace(/[\/\\]/g, '-')
     const safeNickname = creatorNickname.trim().replace(/[\/\\]/g, '-')
     const widgetDocId = `${safeWidgetSlug}_${safeNickname}`
+
+    // 슬러그 중복 방지
+    let finalSlug = safeWidgetSlug
+    if (adminDb) {
+      const existing = await adminDb.collection('widgets').where('slug', '==', finalSlug).get()
+      if (!existing.empty && existing.docs[0]!.id !== widgetDocId) {
+        finalSlug = `${safeWidgetSlug}-${Date.now().toString(36)}`
+      }
+    }
 
     const widgetData = {
       id: widgetDocId,
       name,
-      slug,
+      slug: finalSlug,
+      github_url,
       category_id: finalCategoryId || 'cat_cohort_1',
       creator_profile_id: creatorProfile?.id || user.id,
       short_description,
@@ -113,24 +140,19 @@ export async function createWidget(formData: FormData) {
       published_at: now,
     }
 
-    // 3. 위젯 Firestore에 저장 (문서 ID: {widget}_{nickname})
+    // 4. 위젯 Firestore에 저장 (문서 ID: {widget}_{nickname})
     if (adminDb) {
-      // Slug 중복 체크
-      const existing = await adminDb.collection('widgets').where('slug', '==', slug).get()
-      if (!existing.empty) {
-        return { error: '이미 사용 중인 주소(Slug)에유. 다른 주소를 입력해주세유!' }
-      }
-      await adminDb.collection('widgets').doc(widgetDocId).set(widgetData)
+      await adminDb.collection('widgets').doc(widgetDocId).set(widgetData, { merge: true })
     } else {
-      await setDoc(doc(db, 'widgets', widgetDocId), widgetData)
+      await setDoc(doc(db, 'widgets', widgetDocId), widgetData, { merge: true })
     }
 
-    // 4. 메인 홈 진열대(목록) 갱신
+    // 5. 메인 홈 진열대(목록) 갱신
     revalidatePath('/')
     revalidatePath('/widgets')
     revalidatePath('/creators')
 
-    return { success: true, slug }
+    return { success: true, slug: finalSlug }
 
   } catch (error: any) {
     console.error('Error creating widget:', error)

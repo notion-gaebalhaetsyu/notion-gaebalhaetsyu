@@ -188,6 +188,16 @@ export default function WidgetDetailClient({
                 <span>✏️</span> 위젯 정보 수정하기
               </Link>
             )}
+            {widget.github_url && (
+              <a
+                href={widget.github_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3 rounded-xl bg-bakery-beige border border-toast-brown/30 text-ink/80 font-bold text-center hover:bg-toast-brown/10 transition-colors flex items-center justify-center gap-2 text-sm"
+              >
+                <span>🐙</span> 깃허브(GitHub) 저장소 구경하기 ↗
+              </a>
+            )}
             <button 
               onClick={handleCopyLink}
               className="w-full bg-forest-green text-white py-4 rounded-2xl font-bold text-lg shadow-md hover:bg-forest-green/90 transition-all shadow-[0_3px_0_#1c452b] active:shadow-none active:translate-y-[3px] flex items-center justify-center gap-2"
