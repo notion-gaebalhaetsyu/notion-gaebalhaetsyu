@@ -40,16 +40,25 @@ let cachedCategories: { data: Category[]; expiry: number } | null = null;
 // 1. 카테고리 (Categories)
 // ==========================================
 
-export async function getCategories(): Promise<Category[]> {
-  const defaultCategories: Category[] = [
-    { id: 'cat_clock', name: '시계', slug: 'clock', display_order: 1, icon: '⏰' },
-    { id: 'cat_calendar', name: '달력', slug: 'calendar', display_order: 2, icon: '📅' },
-    { id: 'cat_weather', name: '날씨', slug: 'weather', display_order: 3, icon: '⛅' },
-    { id: 'cat_schedule', name: '일정', slug: 'schedule', display_order: 4, icon: '📌' },
-    { id: 'cat_memo', name: '메모', slug: 'memo', display_order: 5, icon: '📝' },
-    { id: 'cat_music', name: '음악', slug: 'music', display_order: 6, icon: '🎵' },
-  ];
+export const DEFAULT_CATEGORIES: Category[] = [
+  { id: 'cat_clock', name: '시계', slug: 'clock', display_order: 1, icon: '⏰' },
+  { id: 'cat_calendar', name: '달력', slug: 'calendar', display_order: 2, icon: '📅' },
+  { id: 'cat_weather', name: '날씨', slug: 'weather', display_order: 3, icon: '⛅' },
+  { id: 'cat_schedule', name: '일정', slug: 'schedule', display_order: 4, icon: '📌' },
+  { id: 'cat_memo', name: '메모', slug: 'memo', display_order: 5, icon: '📝' },
+  { id: 'cat_music', name: '음악', slug: 'music', display_order: 6, icon: '🎵' },
+];
 
+const CATEGORY_ICON_MAP: Record<string, string> = {
+  '시계': '⏰',
+  '달력': '📅',
+  '날씨': '⛅',
+  '일정': '📌',
+  '메모': '📝',
+  '음악': '🎵',
+};
+
+export async function getCategories(): Promise<Category[]> {
   const now = Date.now();
   if (cachedCategories && cachedCategories.expiry > now) {
     return cachedCategories.data;
@@ -70,20 +79,58 @@ export async function getCategories(): Promise<Category[]> {
           fetched = snap.docs.map(d => ({ id: d.id, ...d.data() } as Category));
         }
       }
+      
       // 기존 개발했슈 1기 카테고리는 제외
       fetched = fetched.filter(c => c.id !== 'cat_cohort_1' && c.slug !== 'cohort-1' && c.name !== '개발했슈 1기');
-      if (fetched.length === 0) {
-        return defaultCategories;
+
+      // 기본 카테고리 맵 구성 (시계, 달력, 날씨, 일정, 메모, 음악은 항상 포함 보장)
+      const map = new Map<string, Category>();
+      for (const def of DEFAULT_CATEGORIES) {
+        map.set(def.id, { ...def });
       }
-      return fetched;
+
+      // DB에 저장된 카테고리 병합 (추가 카테고리 포함)
+      for (const cat of fetched) {
+        const existing = map.get(cat.id);
+        map.set(cat.id, {
+          id: cat.id,
+          name: cat.name,
+          slug: cat.slug || existing?.slug || cat.name.toLowerCase(),
+          display_order: cat.display_order ?? existing?.display_order ?? 99,
+          icon: cat.icon || existing?.icon || CATEGORY_ICON_MAP[cat.name] || '🏷️',
+        });
+      }
+
+      // DB에 기본 카테고리가 누락된 경우 Firestore 자동 동기화
+      const missingDefaults = DEFAULT_CATEGORIES.filter(def => !fetched.some(f => f.id === def.id || f.name === def.name));
+      if (missingDefaults.length > 0) {
+        (async () => {
+          try {
+            if (adminDb) {
+              for (const def of missingDefaults) {
+                await adminDb.collection('categories').doc(def.id).set(def, { merge: true });
+              }
+            } else {
+              for (const def of missingDefaults) {
+                await setDoc(doc(db, 'categories', def.id), def, { merge: true });
+              }
+            }
+          } catch (err) {
+            console.warn('Auto-sync categories warning:', err);
+          }
+        })();
+      }
+
+      const merged = Array.from(map.values()).sort((a, b) => (a.display_order || 99) - (b.display_order || 99));
+      return merged;
     } catch (error) {
       console.warn('getCategories warning/timeout:', error);
-      return defaultCategories;
+      return DEFAULT_CATEGORIES;
     }
   })();
 
-  const categories = await withTimeout(fetchPromise, 2500, defaultCategories);
-  const result = categories.length > 0 ? categories : defaultCategories;
+  const categories = await withTimeout(fetchPromise, 2500, DEFAULT_CATEGORIES);
+  const result = categories.length > 0 ? categories : DEFAULT_CATEGORIES;
   cachedCategories = { data: result, expiry: now + 60000 }; // 1분 캐싱
   return result;
 }

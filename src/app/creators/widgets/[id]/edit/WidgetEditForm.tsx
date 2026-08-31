@@ -47,10 +47,26 @@ export default function WidgetEditForm({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [toastMessage, setToastMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null)
 
-  // 카테고리 옵션 병합 (기존 개발했슈 1기는 제외)
-  const categoryOptions = (categories && categories.length > 0) 
-    ? categories.filter(c => c.id !== 'cat_cohort_1' && c.name !== '개발했슈 1기')
-    : DEFAULT_CATEGORY_OPTIONS
+  // 카테고리 옵션 병합 (기본 6개는 항상 보장되고, 추가 카테고리도 병합)
+  const categoryOptions = (() => {
+    const map = new Map<string, Category>()
+    for (const def of DEFAULT_CATEGORY_OPTIONS) {
+      map.set(def.id, { ...def })
+    }
+    if (categories && categories.length > 0) {
+      for (const cat of categories) {
+        if (cat.id === 'cat_cohort_1' || cat.name === '개발했슈 1기') continue
+        const existing = map.get(cat.id)
+        map.set(cat.id, {
+          id: cat.id,
+          name: cat.name,
+          slug: cat.slug || existing?.slug,
+          icon: cat.icon || existing?.icon || CATEGORY_ICONS[cat.name] || '🏷️',
+        })
+      }
+    }
+    return Array.from(map.values())
+  })()
 
   // 다중 카테고리 초기값
   const initialCategoryIds = (widget.category_ids && widget.category_ids.length > 0)
