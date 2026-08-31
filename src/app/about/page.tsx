@@ -34,9 +34,10 @@ export default function AboutPage() {
             </div>
             <ul className="space-y-3 text-ink/80 text-sm font-medium">
               <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> AI대학원 박사과정 재학 중 (수료)</li>
+              <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 인간-컴퓨터 상호작용 (HCI) 분야 연구자</li>
               <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 노션 앰버서더 / 공식 템플릿 제작자</li>
               <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 기술 개발 및 창업 관련 경진대회 다수 수상<br/>(한국항공우주연구원 창업 아카데미 최우수)</li>
-              <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 네이버 테크 분야 블로거 (지수: 최적 2+)<br/>(블로그 이웃: 2,961명)</li>
+              <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 네이버 테크 분야 블로거 (블덱스 기준 상위 1%, 최적 2+)<br/>(블로그 이웃: 2,961명)</li>
               <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> Microsoft 광주전남 테크 커뮤니티 회원</li>
             </ul>
           </div>
