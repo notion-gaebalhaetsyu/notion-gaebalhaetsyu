@@ -83,26 +83,39 @@ export async function getCategories(): Promise<Category[]> {
       // 기존 개발했슈 1기 카테고리는 제외
       fetched = fetched.filter(c => c.id !== 'cat_cohort_1' && c.slug !== 'cohort-1' && c.name !== '개발했슈 1기');
 
-      // 기본 카테고리 맵 구성 (시계, 달력, 날씨, 일정, 메모, 음악은 항상 포함 보장)
-      const map = new Map<string, Category>();
+      // 기본 카테고리 맵 구성 (이름 기준으로 중복 완전 방지)
+      const nameMap = new Map<string, Category>();
       for (const def of DEFAULT_CATEGORIES) {
-        map.set(def.id, { ...def });
+        nameMap.set(def.name.trim().toLowerCase(), { ...def });
       }
 
-      // DB에 저장된 카테고리 병합 (추가 카테고리 포함)
+      // DB에 저장된 카테고리 병합 (동일한 이름이 있으면 덮어쓰고, 없으면 새로 추가)
       for (const cat of fetched) {
-        const existing = map.get(cat.id);
-        map.set(cat.id, {
-          id: cat.id,
-          name: cat.name,
-          slug: cat.slug || existing?.slug || cat.name.toLowerCase(),
-          display_order: cat.display_order ?? existing?.display_order ?? 99,
-          icon: cat.icon || existing?.icon || CATEGORY_ICON_MAP[cat.name] || '🏷️',
-        });
+        const normName = (cat.name || '').trim().toLowerCase();
+        if (!normName) continue;
+
+        if (nameMap.has(normName)) {
+          const existing = nameMap.get(normName)!;
+          nameMap.set(normName, {
+            id: existing.id, // 기본 표준 id 유지
+            name: existing.name,
+            slug: existing.slug || cat.slug || normName,
+            display_order: existing.display_order,
+            icon: cat.icon || existing.icon || CATEGORY_ICON_MAP[existing.name] || '🏷️',
+          });
+        } else {
+          nameMap.set(normName, {
+            id: cat.id,
+            name: cat.name,
+            slug: cat.slug || normName.replace(/[^a-z0-9가-힣]/g, '-'),
+            display_order: cat.display_order ?? 99,
+            icon: cat.icon || CATEGORY_ICON_MAP[cat.name] || '🏷️',
+          });
+        }
       }
 
       // DB에 기본 카테고리가 누락된 경우 Firestore 자동 동기화
-      const missingDefaults = DEFAULT_CATEGORIES.filter(def => !fetched.some(f => f.id === def.id || f.name === def.name));
+      const missingDefaults = DEFAULT_CATEGORIES.filter(def => !fetched.some(f => (f.name || '').trim() === def.name));
       if (missingDefaults.length > 0) {
         (async () => {
           try {
@@ -121,7 +134,7 @@ export async function getCategories(): Promise<Category[]> {
         })();
       }
 
-      const merged = Array.from(map.values()).sort((a, b) => (a.display_order || 99) - (b.display_order || 99));
+      const merged = Array.from(nameMap.values()).sort((a, b) => (a.display_order || 99) - (b.display_order || 99));
       return merged;
     } catch (error) {
       console.warn('getCategories warning/timeout:', error);

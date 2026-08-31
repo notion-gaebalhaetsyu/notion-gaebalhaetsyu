@@ -47,25 +47,38 @@ export default function WidgetEditForm({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [toastMessage, setToastMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null)
 
-  // 카테고리 옵션 병합 (기본 6개는 항상 보장되고, 추가 카테고리도 병합)
+  // 카테고리 옵션 병합 (이름 기준 중복 완전 방지)
   const categoryOptions = (() => {
-    const map = new Map<string, Category>()
+    const nameMap = new Map<string, Category>()
     for (const def of DEFAULT_CATEGORY_OPTIONS) {
-      map.set(def.id, { ...def })
+      nameMap.set(def.name.trim().toLowerCase(), { ...def })
     }
     if (categories && categories.length > 0) {
       for (const cat of categories) {
         if (cat.id === 'cat_cohort_1' || cat.name === '개발했슈 1기') continue
-        const existing = map.get(cat.id)
-        map.set(cat.id, {
-          id: cat.id,
-          name: cat.name,
-          slug: cat.slug || existing?.slug,
-          icon: cat.icon || existing?.icon || CATEGORY_ICONS[cat.name] || '🏷️',
-        })
+        const normName = (cat.name || '').trim().toLowerCase()
+        if (!normName) continue
+
+        if (nameMap.has(normName)) {
+          const existing = nameMap.get(normName)!
+          nameMap.set(normName, {
+            ...existing,
+            ...cat,
+            id: existing.id,
+            name: existing.name,
+            icon: cat.icon || existing.icon || CATEGORY_ICONS[existing.name] || '🏷️',
+          })
+        } else {
+          nameMap.set(normName, {
+            id: cat.id,
+            name: cat.name,
+            slug: cat.slug,
+            icon: cat.icon || CATEGORY_ICONS[cat.name] || '🏷️',
+          })
+        }
       }
     }
-    return Array.from(map.values())
+    return Array.from(nameMap.values())
   })()
 
   // 다중 카테고리 초기값
