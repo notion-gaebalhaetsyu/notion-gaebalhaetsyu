@@ -81,24 +81,17 @@ export default function WidgetEditForm({
     return Array.from(nameMap.values())
   })()
 
-  // 다중 카테고리 초기값
+  // 다중 카테고리 초기값 (선택 사항이므로 빈 배열 허용)
   const initialCategoryIds = (widget.category_ids && widget.category_ids.length > 0)
     ? widget.category_ids.filter(id => id !== 'cat_cohort_1')
-    : (widget.category_id && widget.category_id !== 'cat_cohort_1' ? [widget.category_id] : ['cat_clock'])
+    : (widget.category_id && widget.category_id !== 'cat_cohort_1' ? [widget.category_id] : [])
 
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>(
-    initialCategoryIds.length > 0 ? initialCategoryIds : ['cat_clock']
-  )
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>(initialCategoryIds)
 
   const toggleCategory = (id: string) => {
-    setSelectedCategoryIds(prev => {
-      if (prev.includes(id)) {
-        if (prev.length === 1) return prev // 최소 1개 유지
-        return prev.filter(c => c !== id)
-      } else {
-        return [...prev, id]
-      }
-    })
+    setSelectedCategoryIds(prev => 
+      prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
+    )
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -108,7 +101,7 @@ export default function WidgetEditForm({
 
     const formData = new FormData(e.currentTarget)
     formData.set('category_ids', selectedCategoryIds.join(','))
-    formData.set('category_id', selectedCategoryIds[0] || 'cat_clock')
+    formData.set('category_id', selectedCategoryIds[0] || '')
     formData.set('cohort', userCohort)
     
     try {
@@ -210,7 +203,7 @@ export default function WidgetEditForm({
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="block text-sm font-bold text-ink">
-              종류 (카테고리) <span className="text-strawberry-pink">*</span>
+              종류 (카테고리) <span className="text-ink/40 text-xs font-normal">(선택)</span>
             </label>
             <span className="text-xs font-medium text-forest-green">다중 선택 가능</span>
           </div>
@@ -239,8 +232,11 @@ export default function WidgetEditForm({
           </div>
           
           <input type="hidden" name="category_ids" value={selectedCategoryIds.join(',')} />
-          <input type="hidden" name="category_id" value={selectedCategoryIds[0] || 'cat_clock'} />
-          <p className="text-xs text-ink/50 mt-2">위젯의 기능에 해당하는 카테고리를 1개 이상 클릭하여 선택해 주세요.</p>
+          <input type="hidden" name="category_id" value={selectedCategoryIds[0] || ''} />
+          <div className="space-y-1 mt-2.5">
+            <p className="text-xs text-ink/60">위젯의 기능에 해당하는 카테고리를 1개 이상 클릭하여 선택해 주세요.</p>
+            <p className="text-xs text-toast-brown font-medium">💡 옵션에 없는 경우, 필버트 제빵사에게 요청해 주세요.</p>
+          </div>
         </div>
 
         {/* 4. 썸네일 이미지 업로드 & 미리보기 */}

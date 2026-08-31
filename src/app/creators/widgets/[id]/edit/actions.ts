@@ -57,18 +57,14 @@ export async function updateWidget(widgetId: string, formData: FormData) {
       return { error: '직접 등록한 위젯만 수정할 수 있슈! (관리자 제외)' }
     }
 
-    // 3. 카테고리 파싱 (다중 선택 지원)
+    // 3. 카테고리 파싱 (선택 사항)
     let category_ids: string[] = []
-    if (category_ids_raw) {
+    if (category_ids_raw !== null && category_ids_raw !== undefined) {
       category_ids = category_ids_raw.split(',').map(s => s.trim()).filter(Boolean)
-    }
-    if (category_ids.length === 0 && category_id_raw) {
+    } else if (category_id_raw) {
       category_ids = [category_id_raw]
     }
-    if (category_ids.length === 0) {
-      category_ids = widget.category_ids || (widget.category_id ? [widget.category_id] : ['cat_clock'])
-    }
-    const finalCategoryId = category_ids[0] || widget.category_id || 'cat_clock'
+    const finalCategoryId = category_ids[0] || ''
 
     const tags = tagsString ? tagsString.split(',').map(tag => tag.trim()).filter(Boolean) : []
     const now = new Date().toISOString()

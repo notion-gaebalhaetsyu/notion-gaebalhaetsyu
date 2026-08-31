@@ -29,7 +29,7 @@ export async function createWidget(formData: FormData) {
     return { error: '필수 항목(위젯 이름, 위젯 저장소 링크, 한 줄 소개, 임베드 링크)을 모두 입력해 주세유!' }
   }
 
-  // 카테고리 파싱 (다중 선택 지원)
+  // 카테고리 파싱 (선택 사항)
   let category_ids: string[] = []
   if (category_ids_raw) {
     category_ids = category_ids_raw.split(',').map(s => s.trim()).filter(Boolean)
@@ -37,10 +37,7 @@ export async function createWidget(formData: FormData) {
   if (category_ids.length === 0 && category_id_raw) {
     category_ids = [category_id_raw]
   }
-  if (category_ids.length === 0) {
-    category_ids = ['cat_clock']
-  }
-  const finalCategoryId = category_ids[0] || 'cat_clock'
+  const finalCategoryId = category_ids[0] || ''
 
   const tags = tagsString ? tagsString.split(',').map(tag => tag.trim()).filter(Boolean) : []
 
