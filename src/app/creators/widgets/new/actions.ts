@@ -16,8 +16,9 @@ export async function getCategories() {
 export async function createWidget(formData: FormData) {
   const name = (formData.get('name') as string)?.trim()
   const github_url = (formData.get('github_url') as string || formData.get('slug') as string)?.trim()
-  const category_id = (formData.get('category_id') as string)?.trim()
-  const new_category_name = (formData.get('new_category_name') as string)?.trim()
+  const category_ids_raw = (formData.get('category_ids') as string)?.trim()
+  const category_id_raw = (formData.get('category_id') as string)?.trim()
+  const cohort = (formData.get('cohort') as string)?.trim()
   const short_description = (formData.get('short_description') as string)?.trim()
   const embed_url = (formData.get('embed_url') as string)?.trim()
   const tagsString = (formData.get('tags') as string)?.trim()
@@ -27,6 +28,19 @@ export async function createWidget(formData: FormData) {
   if (!name || !github_url || !short_description || !embed_url) {
     return { error: '필수 항목(위젯 이름, 위젯 저장소 링크, 한 줄 소개, 임베드 링크)을 모두 입력해 주세유!' }
   }
+
+  // 카테고리 파싱 (다중 선택 지원)
+  let category_ids: string[] = []
+  if (category_ids_raw) {
+    category_ids = category_ids_raw.split(',').map(s => s.trim()).filter(Boolean)
+  }
+  if (category_ids.length === 0 && category_id_raw) {
+    category_ids = [category_id_raw]
+  }
+  if (category_ids.length === 0) {
+    category_ids = ['cat_clock']
+  }
+  const finalCategoryId = category_ids[0] || 'cat_clock'
 
   const tags = tagsString ? tagsString.split(',').map(tag => tag.trim()).filter(Boolean) : []
 
@@ -43,6 +57,7 @@ export async function createWidget(formData: FormData) {
 
     let creatorProfile = await getCreatorProfileByUserId(user.id)
     const now = new Date().toISOString()
+    const finalCohort = cohort || creatorProfile?.cohort || (user.role === 'admin' ? '운영진' : '개발했슈 1기')
 
     // 프로필이 없는 경우 기본 프로필 생성 (문서 ID: 이메일)
     if (!creatorProfile) {
@@ -51,9 +66,9 @@ export async function createWidget(formData: FormData) {
         id: userEmail,
         user_id: user.id,
         email: userEmail,
-        nickname: user.name || (user.email ? user.email.split('@')[0] : `제빵사_${user.id.slice(0, 4)}`),
-        bio_short: '개발했슈 1기 제빵사입니다 🍕',
-        cohort: '개발했슈 1기',
+        nickname: user.name || (user.email ? user.email.split('@')[0] : `제작자_${user.id.slice(0, 4)}`),
+        bio_short: `${finalCohort} 제작자입니다 🍕`,
+        cohort: finalCohort,
         created_at: now,
         updated_at: now,
       }
@@ -65,10 +80,7 @@ export async function createWidget(formData: FormData) {
       creatorProfile = defaultProfile as any
     }
 
-    // 2. 카테고리는 개발했슈 1기로 기본 고정
-    const finalCategoryId = 'cat_cohort_1'
-
-    // 3. 고유 슬러그 및 문서 ID 생성
+    // 2. 고유 슬러그 및 문서 ID 생성
     let baseSlug = ''
     try {
       if (github_url.startsWith('http://') || github_url.startsWith('https://')) {
@@ -104,7 +116,9 @@ export async function createWidget(formData: FormData) {
       name,
       slug: finalSlug,
       github_url,
-      category_id: finalCategoryId || 'cat_cohort_1',
+      category_id: finalCategoryId,
+      category_ids: category_ids,
+      cohort: finalCohort,
       creator_profile_id: creatorProfile?.id || user.id,
       short_description,
       embed_url,

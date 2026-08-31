@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/utils/firebase/server-auth'
+import { getCreatorProfileByUserId } from '@/utils/firebase/db'
 import { getCategories } from './actions'
 import WidgetForm from './WidgetForm'
 
@@ -17,7 +18,12 @@ export default async function NewWidgetPage() {
     redirect('/creators/join')
   }
 
-  const categories = await getCategories()
+  const [categories, creatorProfile] = await Promise.all([
+    getCategories(),
+    getCreatorProfileByUserId(user.id)
+  ])
+
+  const userCohort = creatorProfile?.cohort || (user.role === 'admin' ? '운영진' : '개발했슈 1기')
 
   return (
     <div className="max-w-2xl mx-auto mt-12 pb-24">
@@ -33,7 +39,7 @@ export default async function NewWidgetPage() {
             </p>
           </div>
 
-          <WidgetForm categories={categories} />
+          <WidgetForm categories={categories} userCohort={userCohort} />
         </div>
       </div>
     </div>

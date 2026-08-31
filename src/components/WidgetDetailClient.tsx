@@ -123,9 +123,25 @@ export default function WidgetDetailClient({
           <div>
             <div className="flex justify-between items-start mb-4">
               <div>
-                <span className="inline-block bg-forest-green/10 text-forest-green text-xs font-bold px-3 py-1 rounded-full mb-2">
-                  {widget.categories?.name || '개발했슈 1기'}
-                </span>
+                <div className="flex flex-wrap items-center gap-1.5 mb-2">
+                  {widget.categories_list && widget.categories_list.length > 0 ? (
+                    widget.categories_list.map((cat: any) => (
+                      <span key={cat.id || cat.name} className="inline-flex items-center gap-1 bg-forest-green/10 text-forest-green text-xs font-bold px-3 py-1 rounded-full">
+                        {cat.icon && <span>{cat.icon}</span>}
+                        <span>{cat.name}</span>
+                      </span>
+                    ))
+                  ) : (
+                    <span className="inline-block bg-forest-green/10 text-forest-green text-xs font-bold px-3 py-1 rounded-full">
+                      {widget.categories?.name || '위젯'}
+                    </span>
+                  )}
+                  {widget.cohort && (
+                    <span className="inline-block bg-toast-brown/10 text-toast-brown text-xs font-bold px-3 py-1 rounded-full border border-toast-brown/20">
+                      {widget.cohort}
+                    </span>
+                  )}
+                </div>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-ink">{widget.name}</h1>
               </div>
               <button 
@@ -141,7 +157,7 @@ export default function WidgetDetailClient({
               {widget.creator_profiles?.character_image_url ? (
                 <img 
                   src={widget.creator_profiles.character_image_url} 
-                  alt={widget.creator_profiles?.nickname || '제빵사'} 
+                  alt={widget.creator_profiles?.nickname || '제작자'} 
                   className="w-10 h-10 rounded-full object-cover border border-toast-brown/20"
                 />
               ) : (
@@ -149,9 +165,11 @@ export default function WidgetDetailClient({
               )}
               <div>
                 <Link href={`/creators/${widget.creator_profiles?.nickname || ''}`} className="font-bold text-ink hover:underline hover:text-forest-green block">
-                  {widget.creator_profiles?.nickname || '익명의 제빵사'}
+                  {widget.creator_profiles?.nickname || '익명의 제작자'}
                 </Link>
-                <span className="text-xs text-ink/50">개발했슈 1기 제작자</span>
+                <span className="text-xs text-ink/50">
+                  {widget.creator_profiles?.cohort || widget.cohort || '개발했슈 1기'} 제작자
+                </span>
               </div>
             </div>
 

@@ -14,8 +14,9 @@ export async function getCategories() {
 export async function updateWidget(widgetId: string, formData: FormData) {
   const name = (formData.get('name') as string)?.trim()
   const github_url = (formData.get('github_url') as string)?.trim() || ''
-  const category_id = (formData.get('category_id') as string)?.trim()
-  const new_category_name = (formData.get('new_category_name') as string)?.trim()
+  const category_ids_raw = (formData.get('category_ids') as string)?.trim()
+  const category_id_raw = (formData.get('category_id') as string)?.trim()
+  const cohort = (formData.get('cohort') as string)?.trim()
   const short_description = (formData.get('short_description') as string)?.trim()
   const long_description = (formData.get('long_description') as string)?.trim()
   const creator_comment = (formData.get('creator_comment') as string)?.trim()
@@ -56,31 +57,29 @@ export async function updateWidget(widgetId: string, formData: FormData) {
       return { error: '직접 등록한 위젯만 수정할 수 있슈! (관리자 제외)' }
     }
 
-    // 3. 신규 카테고리 처리
-    let finalCategoryId = category_id
-    if (category_id === '__new__' && new_category_name) {
-      const catDocId = `cat_${Date.now()}`
-      const newCat = {
-        id: catDocId,
-        name: new_category_name,
-        slug: new_category_name.toLowerCase().replace(/[^a-z0-9가-힣]/g, '-'),
-        display_order: 10,
-      }
-      if (adminDb) {
-        await adminDb.collection('categories').doc(catDocId).set(newCat)
-      } else {
-        await setDoc(doc(db, 'categories', catDocId), newCat)
-      }
-      finalCategoryId = catDocId
+    // 3. 카테고리 파싱 (다중 선택 지원)
+    let category_ids: string[] = []
+    if (category_ids_raw) {
+      category_ids = category_ids_raw.split(',').map(s => s.trim()).filter(Boolean)
     }
+    if (category_ids.length === 0 && category_id_raw) {
+      category_ids = [category_id_raw]
+    }
+    if (category_ids.length === 0) {
+      category_ids = widget.category_ids || (widget.category_id ? [widget.category_id] : ['cat_clock'])
+    }
+    const finalCategoryId = category_ids[0] || widget.category_id || 'cat_clock'
 
     const tags = tagsString ? tagsString.split(',').map(tag => tag.trim()).filter(Boolean) : []
     const now = new Date().toISOString()
+    const finalCohort = cohort || widget.cohort || creatorProfile?.cohort || (user.role === 'admin' ? '운영진' : '개발했슈 1기')
 
     const updateData: any = {
       name,
       github_url,
-      category_id: finalCategoryId || widget.category_id,
+      category_id: finalCategoryId,
+      category_ids: category_ids,
+      cohort: finalCohort,
       short_description,
       long_description: long_description || '',
       creator_comment: creator_comment || '',

@@ -59,9 +59,10 @@ export default async function WidgetsPage({
             <Link 
               key={cat.id} 
               href={`/widgets?category=${cat.slug}&sort=${sortBy}${searchQuery ? `&q=${searchQuery}` : ''}`}
-              className={`px-4 py-2 rounded-full text-sm font-bold transition-colors ${categoryFilter === cat.slug ? 'bg-forest-green text-white shadow-sm' : 'bg-bakery-beige text-ink/70 hover:bg-forest-green/10 hover:text-forest-green'}`}
+              className={`px-4 py-2 rounded-full text-sm font-bold transition-colors flex items-center gap-1 ${categoryFilter === cat.slug ? 'bg-forest-green text-white shadow-sm' : 'bg-bakery-beige text-ink/70 hover:bg-forest-green/10 hover:text-forest-green'}`}
             >
-              {cat.name}
+              {cat.icon && <span>{cat.icon}</span>}
+              <span>{cat.name}</span>
             </Link>
           ))}
         </div>

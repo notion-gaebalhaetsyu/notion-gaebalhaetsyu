@@ -35,12 +35,15 @@ export interface Category {
   name: string;
   slug: string;
   display_order: number;
+  icon?: string;
 }
 
 export interface Widget {
   id: string;
   creator_profile_id: string;
   category_id: string;
+  category_ids?: string[];
+  cohort?: string;
   name: string;
   slug: string;
   github_url?: string;
@@ -72,11 +75,19 @@ export interface Widget {
     id?: string;
     name: string;
     slug?: string;
+    icon?: string;
   };
+  categories_list?: {
+    id?: string;
+    name: string;
+    slug?: string;
+    icon?: string;
+  }[];
   creator_profiles?: {
     id?: string;
     nickname: string;
     character_image_url?: string;
+    cohort?: string;
   };
 }
 

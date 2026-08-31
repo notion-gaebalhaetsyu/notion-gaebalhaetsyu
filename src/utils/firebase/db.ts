@@ -42,7 +42,12 @@ let cachedCategories: { data: Category[]; expiry: number } | null = null;
 
 export async function getCategories(): Promise<Category[]> {
   const defaultCategories: Category[] = [
-    { id: 'cat_cohort_1', name: '개발했슈 1기', slug: 'cohort-1', display_order: 1 }
+    { id: 'cat_clock', name: '시계', slug: 'clock', display_order: 1, icon: '⏰' },
+    { id: 'cat_calendar', name: '달력', slug: 'calendar', display_order: 2, icon: '📅' },
+    { id: 'cat_weather', name: '날씨', slug: 'weather', display_order: 3, icon: '⛅' },
+    { id: 'cat_schedule', name: '일정', slug: 'schedule', display_order: 4, icon: '📌' },
+    { id: 'cat_memo', name: '메모', slug: 'memo', display_order: 5, icon: '📝' },
+    { id: 'cat_music', name: '음악', slug: 'music', display_order: 6, icon: '🎵' },
   ];
 
   const now = Date.now();
@@ -52,19 +57,25 @@ export async function getCategories(): Promise<Category[]> {
 
   const fetchPromise = (async () => {
     try {
+      let fetched: Category[] = [];
       if (adminDb) {
         const snap = await adminDb.collection('categories').orderBy('display_order', 'asc').get();
         if (!snap.empty) {
-          return snap.docs.map(d => ({ id: d.id, ...d.data() } as Category));
+          fetched = snap.docs.map(d => ({ id: d.id, ...d.data() } as Category));
         }
       } else {
         const q = query(collection(db, 'categories'), orderBy('display_order', 'asc'));
         const snap = await getDocs(q);
         if (!snap.empty) {
-          return snap.docs.map(d => ({ id: d.id, ...d.data() } as Category));
+          fetched = snap.docs.map(d => ({ id: d.id, ...d.data() } as Category));
         }
       }
-      return defaultCategories;
+      // 기존 개발했슈 1기 카테고리는 제외
+      fetched = fetched.filter(c => c.id !== 'cat_cohort_1' && c.slug !== 'cohort-1' && c.name !== '개발했슈 1기');
+      if (fetched.length === 0) {
+        return defaultCategories;
+      }
+      return fetched;
     } catch (error) {
       console.warn('getCategories warning/timeout:', error);
       return defaultCategories;
@@ -153,7 +164,10 @@ export async function getWidgets(options: GetWidgetsOptions = {}): Promise<Widge
     // 카테고리 필터링 (메모리 필터링)
     if (categorySlug && categorySlug !== 'all') {
       if (categoryBySlug) {
-        rawWidgets = rawWidgets.filter(w => w.category_id === categoryBySlug.id);
+        rawWidgets = rawWidgets.filter(w => 
+          w.category_id === categoryBySlug.id || 
+          (Array.isArray(w.category_ids) && w.category_ids.includes(categoryBySlug.id))
+        );
       }
     }
 
@@ -185,13 +199,18 @@ export async function getWidgets(options: GetWidgetsOptions = {}): Promise<Widge
 
     // 관계 데이터 조인
     return rawWidgets.map(widget => {
-      const cat = categoryMap.get(widget.category_id);
+      const catIds = Array.isArray(widget.category_ids) && widget.category_ids.length > 0 
+        ? widget.category_ids 
+        : (widget.category_id ? [widget.category_id] : []);
+      const matchedCats = catIds.map(cid => categoryMap.get(cid)).filter(Boolean) as Category[];
+      const primaryCat = matchedCats[0] || categoryMap.get(widget.category_id);
       const creator = creatorMap.get(widget.creator_profile_id);
 
       return {
         ...widget,
-        categories: cat ? { id: cat.id, name: cat.name, slug: cat.slug } : widget.categories || { name: '기타' },
-        creator_profiles: creator ? { id: creator.id, nickname: creator.nickname, character_image_url: creator.character_image_url } : widget.creator_profiles || { nickname: '제빵사' },
+        categories: primaryCat ? { id: primaryCat.id, name: primaryCat.name, slug: primaryCat.slug, icon: primaryCat.icon } : widget.categories || { name: '기타' },
+        categories_list: matchedCats.length > 0 ? matchedCats.map(c => ({ id: c.id, name: c.name, slug: c.slug, icon: c.icon })) : (primaryCat ? [{ id: primaryCat.id, name: primaryCat.name, slug: primaryCat.slug, icon: primaryCat.icon }] : []),
+        creator_profiles: creator ? { id: creator.id, nickname: creator.nickname, character_image_url: creator.character_image_url, cohort: creator.cohort } : widget.creator_profiles || { nickname: '제빵사' },
       };
     });
   } catch (error) {
@@ -252,13 +271,18 @@ export async function getWidgetBySlug(slug: string): Promise<Widget | null> {
 
     if (!widget) return null;
 
-    const cat = categories.find(c => c.id === widget.category_id);
+    const catIds = Array.isArray(widget.category_ids) && widget.category_ids.length > 0 
+      ? widget.category_ids 
+      : (widget.category_id ? [widget.category_id] : []);
+    const matchedCats = catIds.map(cid => categories.find(c => c.id === cid)).filter(Boolean) as Category[];
+    const primaryCat = matchedCats[0] || categories.find(c => c.id === widget.category_id);
     const creator = creatorProfiles.find(cp => cp.id === widget.creator_profile_id);
 
     return {
       ...widget,
-      categories: cat ? { id: cat.id, name: cat.name, slug: cat.slug } : { name: '기타' },
-      creator_profiles: creator ? { id: creator.id, nickname: creator.nickname, character_image_url: creator.character_image_url } : { nickname: '제빵사' },
+      categories: primaryCat ? { id: primaryCat.id, name: primaryCat.name, slug: primaryCat.slug, icon: primaryCat.icon } : { name: '기타' },
+      categories_list: matchedCats.length > 0 ? matchedCats.map(c => ({ id: c.id, name: c.name, slug: c.slug, icon: c.icon })) : (primaryCat ? [{ id: primaryCat.id, name: primaryCat.name, slug: primaryCat.slug, icon: primaryCat.icon }] : []),
+      creator_profiles: creator ? { id: creator.id, nickname: creator.nickname, character_image_url: creator.character_image_url, cohort: creator.cohort } : { nickname: '제빵사' },
     };
   } catch (error) {
     console.error('getWidgetBySlug error:', error);
@@ -326,13 +350,18 @@ export async function getWidgetById(id: string): Promise<Widget | null> {
 
     if (!widget) return null;
 
-    const cat = categories.find(c => c.id === widget.category_id);
+    const catIds = Array.isArray(widget.category_ids) && widget.category_ids.length > 0 
+      ? widget.category_ids 
+      : (widget.category_id ? [widget.category_id] : []);
+    const matchedCats = catIds.map(cid => categories.find(c => c.id === cid)).filter(Boolean) as Category[];
+    const primaryCat = matchedCats[0] || categories.find(c => c.id === widget.category_id);
     const creator = creatorProfiles.find(cp => cp.id === widget.creator_profile_id);
 
     return {
       ...widget,
-      categories: cat ? { id: cat.id, name: cat.name, slug: cat.slug } : { name: '기타' },
-      creator_profiles: creator ? { id: creator.id, nickname: creator.nickname, character_image_url: creator.character_image_url } : { nickname: '제빵사' },
+      categories: primaryCat ? { id: primaryCat.id, name: primaryCat.name, slug: primaryCat.slug, icon: primaryCat.icon } : { name: '기타' },
+      categories_list: matchedCats.length > 0 ? matchedCats.map(c => ({ id: c.id, name: c.name, slug: c.slug, icon: c.icon })) : (primaryCat ? [{ id: primaryCat.id, name: primaryCat.name, slug: primaryCat.slug, icon: primaryCat.icon }] : []),
+      creator_profiles: creator ? { id: creator.id, nickname: creator.nickname, character_image_url: creator.character_image_url, cohort: creator.cohort } : { nickname: '제빵사' },
     };
   } catch (error) {
     console.error('getWidgetById error:', error);

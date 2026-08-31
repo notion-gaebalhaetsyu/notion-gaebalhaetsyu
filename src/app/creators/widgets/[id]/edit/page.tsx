@@ -38,6 +38,7 @@ export default async function EditWidgetPage({
   }
 
   const categories = await getCategories()
+  const userCohort = widget.cohort || creatorProfile?.cohort || (user.role === 'admin' ? '운영진' : '개발했슈 1기')
 
   return (
     <div className="max-w-2xl mx-auto mt-12 pb-24">
@@ -53,7 +54,7 @@ export default async function EditWidgetPage({
             </p>
           </div>
 
-          <WidgetEditForm widget={widget} categories={categories} />
+          <WidgetEditForm widget={widget} categories={categories} userCohort={userCohort} />
         </div>
       </div>
     </div>

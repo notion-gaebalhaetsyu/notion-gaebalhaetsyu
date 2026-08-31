@@ -30,8 +30,10 @@ export default function WidgetCard({
             <img src="/pizza_icon.png" alt="피자 위젯" className="w-16 h-16 object-contain" />
           )}
         </div>
-        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-forest-green rounded-full shadow-sm z-10">
-          {widget.categories?.name || '개발했슈 1기'}
+        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-forest-green rounded-full shadow-sm z-10 flex items-center gap-1">
+          {widget.categories_list && widget.categories_list.length > 0 
+            ? widget.categories_list.map((c: any) => c.name).join(' · ') 
+            : widget.categories?.name || '위젯'}
         </div>
       </div>
       
@@ -49,13 +51,13 @@ export default function WidgetCard({
             {widget.creator_profiles?.character_image_url ? (
               <img 
                 src={widget.creator_profiles.character_image_url} 
-                alt={widget.creator_profiles?.nickname || '제빵사'} 
+                alt={widget.creator_profiles?.nickname || '제작자'} 
                 className="w-5 h-5 rounded-full object-cover border border-toast-brown/20"
               />
             ) : (
               <span className="text-base">🧑‍🍳</span>
             )}
-            <span className="line-clamp-1">{widget.creator_profiles?.nickname || '익명의 제빵사'}</span>
+            <span className="line-clamp-1">{widget.creator_profiles?.nickname || '익명의 제작자'}</span>
           </div>
           <WidgetCardCopy widget={widget} />
         </div>

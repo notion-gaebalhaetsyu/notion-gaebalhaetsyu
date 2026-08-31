@@ -8,12 +8,57 @@ import ThumbnailUploadInput from '@/components/ThumbnailUploadInput'
 type Category = {
   id: string
   name: string
+  slug?: string
+  icon?: string
 }
 
-export default function WidgetForm({ categories }: { categories?: Category[] }) {
+const DEFAULT_CATEGORY_OPTIONS: Category[] = [
+  { id: 'cat_clock', name: '시계', icon: '⏰' },
+  { id: 'cat_calendar', name: '달력', icon: '📅' },
+  { id: 'cat_weather', name: '날씨', icon: '⛅' },
+  { id: 'cat_schedule', name: '일정', icon: '📌' },
+  { id: 'cat_memo', name: '메모', icon: '📝' },
+  { id: 'cat_music', name: '음악', icon: '🎵' },
+]
+
+const CATEGORY_ICONS: Record<string, string> = {
+  시계: '⏰',
+  달력: '📅',
+  날씨: '⛅',
+  일정: '📌',
+  메모: '📝',
+  음악: '🎵',
+}
+
+export default function WidgetForm({ 
+  categories, 
+  userCohort = '개발했슈 1기' 
+}: { 
+  categories?: Category[]
+  userCohort?: string
+}) {
   const router = useRouter()
   const [isPending, setIsPending] = useState(false)
   const [toastMessage, setToastMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null)
+
+  // 카테고리 옵션 병합 (기존 개발했슈 1기는 제외)
+  const categoryOptions = (categories && categories.length > 0) 
+    ? categories.filter(c => c.id !== 'cat_cohort_1' && c.name !== '개발했슈 1기')
+    : DEFAULT_CATEGORY_OPTIONS
+
+  // 다중 카테고리 선택 상태
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>(['cat_clock'])
+
+  const toggleCategory = (id: string) => {
+    setSelectedCategoryIds(prev => {
+      if (prev.includes(id)) {
+        if (prev.length === 1) return prev // 최소 1개는 선택 유지
+        return prev.filter(c => c !== id)
+      } else {
+        return [...prev, id]
+      }
+    })
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -21,6 +66,9 @@ export default function WidgetForm({ categories }: { categories?: Category[] }) 
     setToastMessage(null)
 
     const formData = new FormData(e.currentTarget)
+    formData.set('category_ids', selectedCategoryIds.join(','))
+    formData.set('category_id', selectedCategoryIds[0] || 'cat_clock')
+    formData.set('cohort', userCohort)
     
     try {
       const result = await createWidget(formData)
@@ -44,6 +92,23 @@ export default function WidgetForm({ categories }: { categories?: Category[] }) 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       
+      {/* 0. 활동 기수 */}
+      <div className="bg-bakery-beige/50 border border-toast-brown/20 rounded-2xl p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="text-sm font-bold text-ink">활동 기수</span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-forest-green text-white text-xs font-bold rounded-full shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-custard-cream animate-pulse"></span>
+              {userCohort} 인증됨 ✔
+            </span>
+          </div>
+        </div>
+        <p className="text-xs text-ink/60 mt-1.5">
+          인증된 활동 기수({userCohort})로 위젯이 진열대에 등록됩니다.
+        </p>
+        <input type="hidden" name="cohort" value={userCohort} />
+      </div>
+
       {/* 1. 위젯 이름 */}
       <div>
         <label htmlFor="name" className="block text-sm font-bold text-ink mb-2">위젯 이름 <span className="text-strawberry-pink">*</span></label>
@@ -74,24 +139,41 @@ export default function WidgetForm({ categories }: { categories?: Category[] }) 
         <p className="text-xs text-ink/50 mt-1">위젯 코드가 관리되는 GitHub 저장소 전체 URL을 입력해 주세요.</p>
       </div>
 
-      {/* 3. 카테고리 */}
+      {/* 3. 종류 (카테고리) - 다중 선택 칩 */}
       <div>
-        <label htmlFor="category_id" className="block text-sm font-bold text-ink mb-2">종류 (카테고리) <span className="text-strawberry-pink">*</span></label>
-        <div className="relative">
-          <select 
-            id="category_id" 
-            name="category_id" 
-            required
-            defaultValue="cat_cohort_1"
-            className="w-full appearance-none bg-bakery-beige border border-toast-brown/30 text-ink rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-forest-green/50 font-medium cursor-pointer"
-          >
-            <option value="cat_cohort_1">개발했슈 1기</option>
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-toast-brown">
-            ▼
-          </div>
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-sm font-bold text-ink">
+            종류 (카테고리) <span className="text-strawberry-pink">*</span>
+          </label>
+          <span className="text-xs font-medium text-forest-green">다중 선택 가능</span>
         </div>
-        <p className="text-xs text-ink/50 mt-1">현재 개발했슈 1기 위젯으로 등록됩니다.</p>
+        
+        <div className="flex flex-wrap gap-2.5">
+          {categoryOptions.map((cat) => {
+            const isSelected = selectedCategoryIds.includes(cat.id)
+            const icon = cat.icon || CATEGORY_ICONS[cat.name] || '🏷️'
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => toggleCategory(cat.id)}
+                className={`px-4 py-2.5 rounded-2xl text-sm font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer border ${
+                  isSelected
+                    ? 'bg-forest-green text-white border-forest-green shadow-xs scale-[1.02]'
+                    : 'bg-bakery-beige/70 text-ink/75 border-toast-brown/20 hover:bg-forest-green/10 hover:border-forest-green/40 hover:text-forest-green'
+                }`}
+              >
+                <span>{icon}</span>
+                <span>{cat.name}</span>
+                {isSelected && <span className="ml-0.5 text-xs opacity-90">✔</span>}
+              </button>
+            )
+          })}
+        </div>
+        
+        <input type="hidden" name="category_ids" value={selectedCategoryIds.join(',')} />
+        <input type="hidden" name="category_id" value={selectedCategoryIds[0] || 'cat_clock'} />
+        <p className="text-xs text-ink/50 mt-2">위젯의 기능에 해당하는 카테고리를 1개 이상 클릭하여 선택해 주세요.</p>
       </div>
 
       {/* 4. 짧은 설명 */}

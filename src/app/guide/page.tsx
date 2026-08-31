@@ -28,7 +28,7 @@ export default function GuidePage() {
             <h2 className="text-2xl font-bold text-ink mb-3">마음에 드는 피자(위젯) 고르기</h2>
             <p className="text-ink/80 font-medium leading-relaxed mb-4">
               먼저 <Link href="/widgets" className="text-forest-green font-bold hover:underline">위젯 진열대</Link>에 가서 내 노션에 어울릴 만한 위젯을 선택해 주세요.<br/>
-              개발했슈 1기 제빵사들이 구워낸 다양한 피자 위젯들이 기다리고 있슈!
+              개발했슈 1기 제작자들이 구워낸 다양한 피자 위젯들이 기다리고 있슈!
             </p>
             <Link href="/widgets" className="inline-block bg-bakery-beige text-ink font-bold px-5 py-2.5 rounded-xl hover:bg-toast-brown/20 transition-colors">
               진열대 구경가기 🏃‍♀️

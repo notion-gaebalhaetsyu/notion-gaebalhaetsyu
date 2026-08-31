@@ -3,7 +3,12 @@ import { db } from './client';
 import { collection, doc, setDoc, getDocs } from 'firebase/firestore';
 
 export const INITIAL_CATEGORIES = [
-  { id: 'cat_cohort_1', name: '개발했슈 1기', slug: 'cohort-1', display_order: 1 },
+  { id: 'cat_clock', name: '시계', slug: 'clock', display_order: 1, icon: '⏰' },
+  { id: 'cat_calendar', name: '달력', slug: 'calendar', display_order: 2, icon: '📅' },
+  { id: 'cat_weather', name: '날씨', slug: 'weather', display_order: 3, icon: '⛅' },
+  { id: 'cat_schedule', name: '일정', slug: 'schedule', display_order: 4, icon: '📌' },
+  { id: 'cat_memo', name: '메모', slug: 'memo', display_order: 5, icon: '📝' },
+  { id: 'cat_music', name: '음악', slug: 'music', display_order: 6, icon: '🎵' },
 ];
 
 export const INITIAL_CREATORS = [
@@ -142,6 +147,7 @@ export async function seedInitialData(): Promise<{ success: boolean; message: st
   try {
     if (adminDb) {
       // 1. Categories
+      await adminDb.collection('categories').doc('cat_cohort_1').delete().catch(() => {});
       for (const cat of INITIAL_CATEGORIES) {
         await adminDb.collection('categories').doc(cat.id).set(cat, { merge: true });
       }
