@@ -19,6 +19,8 @@ const DEFAULT_CATEGORY_OPTIONS: Category[] = [
   { id: 'cat_schedule', name: '일정', icon: '📌' },
   { id: 'cat_memo', name: '메모', icon: '📝' },
   { id: 'cat_music', name: '음악', icon: '🎵' },
+  { id: 'cat_todo', name: 'To-Do List', icon: '✅' },
+  { id: 'cat_productivity', name: '생산성', icon: '⚡' },
 ]
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -28,6 +30,11 @@ const CATEGORY_ICONS: Record<string, string> = {
   일정: '📌',
   메모: '📝',
   음악: '🎵',
+  'To-Do List': '✅',
+  'to-do list': '✅',
+  '투두': '✅',
+  'todo': '✅',
+  생산성: '⚡',
 }
 
 export default function WidgetForm({ 

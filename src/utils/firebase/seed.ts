@@ -9,6 +9,8 @@ export const INITIAL_CATEGORIES = [
   { id: 'cat_schedule', name: '일정', slug: 'schedule', display_order: 4, icon: '📌' },
   { id: 'cat_memo', name: '메모', slug: 'memo', display_order: 5, icon: '📝' },
   { id: 'cat_music', name: '음악', slug: 'music', display_order: 6, icon: '🎵' },
+  { id: 'cat_todo', name: 'To-Do List', slug: 'todo', display_order: 7, icon: '✅' },
+  { id: 'cat_productivity', name: '생산성', slug: 'productivity', display_order: 8, icon: '⚡' },
 ];
 
 export const INITIAL_CREATORS = [

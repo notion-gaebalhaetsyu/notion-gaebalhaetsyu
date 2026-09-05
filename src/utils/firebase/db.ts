@@ -47,6 +47,8 @@ export const DEFAULT_CATEGORIES: Category[] = [
   { id: 'cat_schedule', name: '일정', slug: 'schedule', display_order: 4, icon: '📌' },
   { id: 'cat_memo', name: '메모', slug: 'memo', display_order: 5, icon: '📝' },
   { id: 'cat_music', name: '음악', slug: 'music', display_order: 6, icon: '🎵' },
+  { id: 'cat_todo', name: 'To-Do List', slug: 'todo', display_order: 7, icon: '✅' },
+  { id: 'cat_productivity', name: '생산성', slug: 'productivity', display_order: 8, icon: '⚡' },
 ];
 
 const CATEGORY_ICON_MAP: Record<string, string> = {
@@ -56,6 +58,11 @@ const CATEGORY_ICON_MAP: Record<string, string> = {
   '일정': '📌',
   '메모': '📝',
   '음악': '🎵',
+  'To-Do List': '✅',
+  'to-do list': '✅',
+  'todo': '✅',
+  '투두': '✅',
+  '생산성': '⚡',
 };
 
 export async function getCategories(): Promise<Category[]> {
