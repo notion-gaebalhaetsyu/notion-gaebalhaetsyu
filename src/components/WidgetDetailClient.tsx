@@ -136,11 +136,6 @@ export default function WidgetDetailClient({
                       {widget.categories?.name || '위젯'}
                     </span>
                   )}
-                  {widget.cohort && (
-                    <span className="inline-block bg-toast-brown/10 text-toast-brown text-xs font-bold px-3 py-1 rounded-full border border-toast-brown/20">
-                      {widget.cohort}
-                    </span>
-                  )}
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-ink">{widget.name}</h1>
               </div>
