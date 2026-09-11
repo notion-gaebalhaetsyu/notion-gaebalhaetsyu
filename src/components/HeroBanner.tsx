@@ -77,7 +77,7 @@ export default function HeroBanner() {
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Banner Carousel Container */}
-      <div className="relative w-full min-h-[380px] sm:min-h-[420px] lg:h-[460px] rounded-[32px] overflow-hidden border border-toast-brown/15 shadow-sm bg-bakery-beige">
+      <div className="relative w-full min-h-[340px] sm:min-h-[420px] lg:h-[460px] rounded-2xl sm:rounded-[32px] overflow-hidden border border-toast-brown/15 shadow-sm bg-bakery-beige">
         {homeBanners.map((slide, index) => {
           const isActive = index === currentIndex;
 
@@ -96,20 +96,20 @@ export default function HeroBanner() {
                     alt={slide.alt || "배너 이미지"}
                     className="w-full h-full object-cover object-center"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-black/75 via-black/40 to-transparent flex items-end sm:items-center p-6 sm:p-12 lg:p-16">
+                  <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-black/85 via-black/50 to-transparent flex items-end sm:items-center p-5 sm:p-12 lg:p-16">
                     <div className="text-white max-w-xl">
-                      <span className="inline-block bg-forest-green text-white text-xs font-bold px-3 py-1 rounded-full mb-3 shadow-xs">
+                      <span className="inline-block bg-forest-green text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1 rounded-full mb-2.5 shadow-xs">
                         {slide.badge}
                       </span>
-                      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2.5 drop-shadow-md">
+                      <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold mb-2 drop-shadow-md">
                         {slide.title}
                       </h2>
-                      <p className="text-sm sm:text-base text-white/90 font-medium mb-6 leading-relaxed">
+                      <p className="text-xs sm:text-base text-white/90 font-medium mb-5 sm:mb-6 leading-relaxed line-clamp-2 sm:line-clamp-none">
                         {slide.desc}
                       </p>
                       <Link
                         href={slide.href || "/widgets"}
-                        className="inline-flex items-center gap-2 bg-white text-ink font-bold py-2.5 px-5 rounded-xl hover:bg-white/90 transition-all shadow-md text-sm sm:text-base group"
+                        className="inline-flex items-center gap-1.5 sm:gap-2 bg-white text-ink font-bold py-2 sm:py-2.5 px-4 sm:px-5 rounded-xl hover:bg-white/90 transition-all shadow-md text-xs sm:text-base group"
                       >
                         <span>{slide.btnText}</span>
                         <span className="group-hover:translate-x-1 transition-transform">→</span>
@@ -121,27 +121,27 @@ export default function HeroBanner() {
 
               {/* SLIDE 3: Meet the Bakers Banner */}
               {slide.type === "creators" && (
-                <div className="w-full h-full relative flex flex-col justify-center px-6 sm:px-12 lg:px-16 py-8 bg-[radial-gradient(ellipse_at_bottom_right,#fff2c7_0%,#fbf6ee_50%,#f0e3d2_100%)] overflow-hidden">
+                <div className="w-full h-full relative flex flex-col justify-center px-5 sm:px-12 lg:px-16 py-6 sm:py-8 bg-[radial-gradient(ellipse_at_bottom_right,#fff2c7_0%,#fbf6ee_50%,#f0e3d2_100%)] overflow-hidden">
                   {/* Decorative Circles */}
-                  <div className="absolute -top-12 -right-12 w-64 h-64 border-4 border-strawberry-pink/30 rounded-full blur-[1px] pointer-events-none" />
-                  <div className="absolute bottom-6 right-1/4 w-48 h-48 border-4 border-forest-green/20 rounded-full blur-[1px] pointer-events-none" />
+                  <div className="absolute -top-12 -right-12 w-48 sm:w-64 h-48 sm:h-64 border-4 border-strawberry-pink/30 rounded-full blur-[1px] pointer-events-none" />
+                  <div className="absolute bottom-6 right-1/4 w-36 sm:w-48 h-36 sm:h-48 border-4 border-forest-green/20 rounded-full blur-[1px] pointer-events-none" />
 
                   <div className="relative z-10 max-w-xl">
-                    <span className="font-mono text-xs font-bold tracking-[1.5px] text-toast-brown/80 mb-2 inline-block">
+                    <span className="font-mono text-[10px] sm:text-xs font-bold tracking-[1.5px] text-toast-brown/80 mb-1.5 sm:mb-2 inline-block">
                       {slide.label}
                     </span>
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-forest-green mb-1.5 leading-tight">
+                    <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold text-forest-green mb-1 sm:mb-1.5 leading-tight">
                       {slide.title}
                     </h2>
-                    <h3 className="text-xl sm:text-2xl font-bold text-ink mb-3">
+                    <h3 className="text-lg sm:text-2xl font-bold text-ink mb-2 sm:mb-3">
                       {slide.titleHighlight}
                     </h3>
-                    <p className="text-sm sm:text-base text-toast-brown font-medium mb-6 whitespace-pre-line leading-relaxed">
+                    <p className="text-xs sm:text-base text-toast-brown font-medium mb-5 sm:mb-6 whitespace-pre-line leading-relaxed line-clamp-2 sm:line-clamp-none">
                       {slide.desc}
                     </p>
                     <Link
                       href={slide.href || "/creators"}
-                      className="inline-flex items-center gap-2 bg-toast-brown text-white font-bold py-3 px-6 rounded-xl hover:bg-toast-brown/90 transition-all shadow-[0_3px_0_#5e3c23] active:shadow-none active:translate-y-[3px] text-sm sm:text-base group"
+                      className="inline-flex items-center gap-1.5 sm:gap-2 bg-toast-brown text-white font-bold py-2.5 sm:py-3 px-5 sm:px-6 rounded-xl hover:bg-toast-brown/90 transition-all shadow-[0_3px_0_#5e3c23] active:shadow-none active:translate-y-[3px] text-xs sm:text-base group"
                     >
                       <span>{slide.btnText}</span>
                       <span className="group-hover:translate-x-1 transition-transform">→</span>
@@ -158,9 +158,9 @@ export default function HeroBanner() {
           type="button"
           onClick={prevSlide}
           aria-label="이전 슬라이드"
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/80 hover:bg-white text-ink/80 hover:text-ink shadow-md flex items-center justify-center backdrop-blur-xs transition-all opacity-80 hover:opacity-100 hover:scale-105 active:scale-95"
+          className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/80 hover:bg-white text-ink/80 hover:text-ink shadow-md flex items-center justify-center backdrop-blur-xs transition-all opacity-80 hover:opacity-100 hover:scale-105 active:scale-95"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
@@ -168,9 +168,9 @@ export default function HeroBanner() {
           type="button"
           onClick={nextSlide}
           aria-label="다음 슬라이드"
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/80 hover:bg-white text-ink/80 hover:text-ink shadow-md flex items-center justify-center backdrop-blur-xs transition-all opacity-80 hover:opacity-100 hover:scale-105 active:scale-95"
+          className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/80 hover:bg-white text-ink/80 hover:text-ink shadow-md flex items-center justify-center backdrop-blur-xs transition-all opacity-80 hover:opacity-100 hover:scale-105 active:scale-95"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
           </svg>
         </button>

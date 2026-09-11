@@ -41,10 +41,10 @@ export default async function MyPage() {
   return (
     <div className="pb-24">
       {/* 상단 프로필 헤더 */}
-      <section className="bg-white rounded-[32px] p-8 sm:p-12 mb-8 shadow-sm border border-toast-brown/20 relative overflow-hidden flex flex-col md:flex-row items-center gap-8">
+      <section className="bg-white rounded-2xl sm:rounded-[32px] p-6 sm:p-12 mb-8 shadow-sm border border-toast-brown/20 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 sm:gap-8">
         <div className="absolute inset-0 bg-paper-texture opacity-10 pointer-events-none"></div>
         
-        <div className="relative z-10 w-32 h-32 bg-bakery-beige rounded-full border-4 border-white shadow-md flex items-center justify-center text-5xl flex-shrink-0 overflow-hidden">
+        <div className="relative z-10 w-24 h-24 sm:w-32 sm:h-32 bg-bakery-beige rounded-full border-4 border-white shadow-md flex items-center justify-center text-4xl sm:text-5xl flex-shrink-0 overflow-hidden">
           {creatorProfile?.character_image_url || user.avatar_url ? (
             <img 
               src={creatorProfile?.character_image_url || user.avatar_url} 
@@ -57,13 +57,13 @@ export default async function MyPage() {
         </div>
         
         <div className="relative z-10 text-center md:text-left flex-1">
-          <div className="inline-block bg-forest-green/10 text-forest-green text-sm font-bold px-3 py-1 rounded-full mb-3">
+          <div className="inline-block bg-forest-green/10 text-forest-green text-xs sm:text-sm font-bold px-3 py-1 rounded-full mb-2 sm:mb-3">
             {profile.role}
           </div>
-          <h1 className="text-3xl font-extrabold text-ink mb-2">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-ink mb-2">
             {profile.nickname}의 작업대
           </h1>
-          <p className="text-ink/70 font-medium">
+          <p className="text-sm sm:text-base text-ink/70 font-medium">
             {profile.bio}
           </p>
         </div>
@@ -71,7 +71,7 @@ export default async function MyPage() {
         <div className="relative z-10">
           <Link 
             href="/mypage/edit"
-            className="inline-block bg-white border-2 border-toast-brown/20 text-ink font-bold py-2 px-6 rounded-xl hover:bg-toast-brown/5 transition-colors"
+            className="inline-block bg-white border-2 border-toast-brown/20 text-ink font-bold py-2 px-5 sm:px-6 rounded-xl hover:bg-toast-brown/5 transition-colors text-sm sm:text-base"
           >
             프로필 수정
           </Link>

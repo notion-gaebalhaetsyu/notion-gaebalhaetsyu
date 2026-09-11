@@ -35,23 +35,23 @@ export default async function WidgetsPage({
   return (
     <div className="pb-24">
       {/* 헤더 영역 */}
-      <section className="mb-8">
-        <h1 className="text-3xl font-extrabold text-ink mb-2 flex items-center gap-2">
-          <img src="/pizza_icon.png" alt="피자" className="w-8 h-8 object-contain" />
+      <section className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-ink mb-2 flex items-center gap-2">
+          <img src="/pizza_icon.png" alt="피자" className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
           <span>위젯 진열대</span>
         </h1>
-        <p className="text-ink/60 font-medium">
+        <p className="text-sm sm:text-base text-ink/60 font-medium">
           내 노션을 다채롭게 꾸며줄 개발했슈 위젯들을 만나보세요.
         </p>
       </section>
 
       {/* 필터 및 검색 바 */}
-      <section className="bg-white rounded-2xl p-4 border border-toast-brown/20 shadow-sm mb-8 flex flex-col md:flex-row gap-4 justify-between items-center">
-        {/* 카테고리 탭 */}
-        <div className="flex flex-wrap gap-2 w-full md:w-auto">
+      <section className="bg-white rounded-2xl p-3 sm:p-4 border border-toast-brown/20 shadow-sm mb-8 flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
+        {/* 카테고리 탭 (모바일에서 부드러운 가로 스크롤) */}
+        <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1.5 md:pb-0 scrollbar-none flex-nowrap md:flex-wrap">
           <Link 
             href={`/widgets?category=all&sort=${sortBy}${searchQuery ? `&q=${searchQuery}` : ''}`}
-            className={`px-4 py-2 rounded-full text-sm font-bold transition-colors ${categoryFilter === 'all' ? 'bg-forest-green text-white shadow-sm' : 'bg-bakery-beige text-ink/70 hover:bg-forest-green/10 hover:text-forest-green'}`}
+            className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-colors whitespace-nowrap flex-shrink-0 ${categoryFilter === 'all' ? 'bg-forest-green text-white shadow-sm' : 'bg-bakery-beige text-ink/70 hover:bg-forest-green/10 hover:text-forest-green'}`}
           >
             전체
           </Link>
@@ -59,7 +59,7 @@ export default async function WidgetsPage({
             <Link 
               key={cat.id} 
               href={`/widgets?category=${cat.slug}&sort=${sortBy}${searchQuery ? `&q=${searchQuery}` : ''}`}
-              className={`px-4 py-2 rounded-full text-sm font-bold transition-colors flex items-center gap-1 ${categoryFilter === cat.slug ? 'bg-forest-green text-white shadow-sm' : 'bg-bakery-beige text-ink/70 hover:bg-forest-green/10 hover:text-forest-green'}`}
+              className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-colors whitespace-nowrap flex-shrink-0 flex items-center gap-1 ${categoryFilter === cat.slug ? 'bg-forest-green text-white shadow-sm' : 'bg-bakery-beige text-ink/70 hover:bg-forest-green/10 hover:text-forest-green'}`}
             >
               {cat.icon && <span>{cat.icon}</span>}
               <span>{cat.name}</span>
@@ -68,16 +68,16 @@ export default async function WidgetsPage({
         </div>
 
         {/* 정렬 옵션 */}
-        <div className="flex gap-2 w-full md:w-auto">
+        <div className="flex gap-2 justify-end border-t border-toast-brown/10 pt-2.5 md:pt-0 md:border-t-0 flex-shrink-0">
           <Link 
             href={`/widgets?category=${categoryFilter}&sort=latest${searchQuery ? `&q=${searchQuery}` : ''}`}
-            className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-colors ${sortBy === 'latest' ? 'text-forest-green underline decoration-2 underline-offset-4' : 'text-ink/50 hover:text-ink'}`}
+            className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-colors ${sortBy === 'latest' ? 'text-forest-green underline decoration-2 underline-offset-4' : 'text-ink/50 hover:text-ink'}`}
           >
             최신순
           </Link>
           <Link 
             href={`/widgets?category=${categoryFilter}&sort=popular${searchQuery ? `&q=${searchQuery}` : ''}`}
-            className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-colors ${sortBy === 'popular' ? 'text-forest-green underline decoration-2 underline-offset-4' : 'text-ink/50 hover:text-ink'}`}
+            className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-colors ${sortBy === 'popular' ? 'text-forest-green underline decoration-2 underline-offset-4' : 'text-ink/50 hover:text-ink'}`}
           >
             인기순
           </Link>

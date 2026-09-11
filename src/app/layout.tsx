@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
@@ -18,6 +18,12 @@ export const metadata: Metadata = {
   description: "노션에 필요한 기능, 우리가 직접 구웠슈!",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 import { ToastProvider } from "@/components/Toast";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -26,10 +32,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col pl-64">
+      <body className="min-h-full flex flex-col lg:pl-64">
         <ToastProvider>
           <Sidebar />
-          <main className="flex-1 p-8">
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-full">
             {children}
           </main>
         </ToastProvider>

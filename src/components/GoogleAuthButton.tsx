@@ -32,7 +32,7 @@ export default function GoogleAuthButton() {
       }
 
       const data = await res.json();
-      window.location.href = data.redirectUrl || '/mypage/edit';
+      window.location.href = data.redirectUrl || '/mypage';
     } catch (error: any) {
       console.error('Google login error:', error);
       if (error.code === 'auth/popup-closed-by-user') {

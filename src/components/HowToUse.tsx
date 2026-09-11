@@ -2,17 +2,17 @@ import React from 'react';
 
 export default function HowToUse() {
   return (
-    <section className="mt-20 px-8 py-12 md:p-12 flex flex-col md:flex-row justify-between gap-12 bg-[#eee2d3] rounded-[16px]">
+    <section className="mt-14 sm:mt-20 px-5 py-8 sm:p-8 md:p-12 flex flex-col md:flex-row justify-between gap-8 md:gap-12 bg-[#eee2d3] rounded-2xl sm:rounded-[24px]">
       <div className="flex-1">
         <span className="inline-flex gap-4 font-mono text-xs tracking-[1.2px] text-[#9f866c] mb-2">
           HOW TO USE
         </span>
-        <h2 className="text-[25px] leading-[1.4] font-extrabold text-toast-brown font-jua">
+        <h2 className="text-xl sm:text-[25px] leading-[1.4] font-extrabold text-toast-brown font-jua">
           마음에 드는 위젯,<br />
           세 단계면 충분해요.
         </h2>
       </div>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-8 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-6">
         <Step number="01" title="구경하기" desc="내게 필요한 위젯을 찾아요" />
         <Step number="02" title="미리보기" desc="내 노션에 어울리는지 써봐요" />
         <Step number="03" title="담아가기" desc="링크를 복사해 노션에 붙여요" />

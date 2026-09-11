@@ -30,21 +30,21 @@ export default async function CreatorsPage() {
   return (
     <div className="pb-24">
       {/* 헤더 영역 */}
-      <section className="mb-10 text-center">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-ink mb-4 flex items-center justify-center gap-2">
+      <section className="mb-8 sm:mb-10 text-center">
+        <h1 className="text-2xl sm:text-4xl font-extrabold text-ink mb-3 sm:mb-4 flex items-center justify-center gap-2">
           <span>👨‍🍳</span> 개발했슈 1기 제작자들
         </h1>
-        <p className="text-lg text-ink/70 font-medium max-w-2xl mx-auto leading-relaxed">
-          노션을 더 따뜻하게 만들어주는 위젯 제작자들을 소개합니다.<br />
+        <p className="text-sm sm:text-lg text-ink/70 font-medium max-w-2xl mx-auto leading-relaxed">
+          노션을 더 따뜻하게 만들어주는 위젯 제작자들을 소개합니다.<br className="hidden sm:inline"/>
           각 제작자의 작업대에 방문해서 어떤 위젯을 구웠는지 확인해보세요.
         </p>
       </section>
 
       {!activeCreators || activeCreators.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-toast-brown/20 shadow-sm">
-          <img src="/pizza_icon.png" alt="피자" className="w-16 h-16 mx-auto object-contain mb-3" />
-          <h3 className="text-xl font-bold text-ink mb-2">아직 위젯을 진열한 제작자가 없슈!</h3>
-          <p className="text-ink/60 font-medium">첫 번째 위젯을 등록해 제작자 진열대에 이름을 올려보세요.</p>
+        <div className="text-center py-16 sm:py-20 bg-white rounded-2xl border border-toast-brown/20 shadow-sm p-4">
+          <img src="/pizza_icon.png" alt="피자" className="w-14 h-14 sm:w-16 sm:h-16 mx-auto object-contain mb-3" />
+          <h3 className="text-lg sm:text-xl font-bold text-ink mb-2">아직 위젯을 진열한 제작자가 없슈!</h3>
+          <p className="text-sm sm:text-base text-ink/60 font-medium">첫 번째 위젯을 등록해 제작자 진열대에 이름을 올려보세요.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -54,9 +54,9 @@ export default async function CreatorsPage() {
               <Link
                 key={creator.id}
                 href={`/creators/${encodeURIComponent(creator.nickname)}`}
-                className="bg-white rounded-3xl p-6 border border-toast-brown/20 shadow-sm hover:shadow-md hover:border-forest-green/30 transition-all flex flex-col items-center text-center group"
+                className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-toast-brown/20 shadow-sm hover:shadow-md hover:border-forest-green/30 transition-all flex flex-col items-center text-center group"
               >
-                <div className="w-24 h-24 bg-bakery-beige rounded-full border-4 border-white shadow-sm flex items-center justify-center text-4xl mb-4 group-hover:scale-110 transition-transform overflow-hidden">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-bakery-beige rounded-full border-4 border-white shadow-sm flex items-center justify-center text-3xl sm:text-4xl mb-4 group-hover:scale-110 transition-transform overflow-hidden">
                   {creator.character_image_url ? (
                     <img src={creator.character_image_url} alt={creator.nickname} className="w-full h-full object-cover rounded-full" />
                   ) : (

@@ -2,21 +2,21 @@ import React from 'react'
 
 export default function AboutPage() {
   return (
-    <div className="pb-24 max-w-4xl mx-auto space-y-12">
+    <div className="pb-24 max-w-4xl mx-auto space-y-8 sm:space-y-12">
       {/* 헤더 */}
-      <section className="text-center pt-8 pb-4">
-        <h1 className="text-4xl font-extrabold text-ink mb-4 flex items-center justify-center gap-3">
+      <section className="text-center pt-4 sm:pt-8 pb-2 sm:pb-4">
+        <h1 className="text-2xl sm:text-4xl font-extrabold text-ink mb-3 sm:mb-4 flex items-center justify-center gap-2 sm:gap-3">
           <span>🏢</span> 개발했슈 소개
         </h1>
-        <p className="text-lg text-ink/70 font-medium max-w-2xl mx-auto">
-          노션에 필요하고 내가 만들고 싶은 기능을 <br/>실제로 구현하고 검증하는 공간, '개발했슈'를 소개합니다.
+        <p className="text-sm sm:text-lg text-ink/70 font-medium max-w-2xl mx-auto leading-relaxed">
+          노션에 필요하고 내가 만들고 싶은 기능을 <br className="hidden sm:inline"/>실제로 구현하고 검증하는 공간, '개발했슈'를 소개합니다.
         </p>
       </section>
 
       {/* 1. 운영진 (관리자) 소개 */}
-      <section className="bg-white rounded-[32px] p-8 border border-toast-brown/20 shadow-sm relative overflow-hidden">
+      <section className="bg-white rounded-2xl sm:rounded-[32px] p-5 sm:p-8 border border-toast-brown/20 shadow-sm relative overflow-hidden">
         <div className="absolute inset-0 bg-paper-texture opacity-5 pointer-events-none"></div>
-        <h2 className="text-2xl font-bold text-ink mb-8 flex items-center gap-2 relative z-10">
+        <h2 className="text-xl sm:text-2xl font-bold text-ink mb-6 sm:mb-8 flex items-center gap-2 relative z-10">
           <span>🧑‍🍳</span> 운영진 (관리자) 소개
         </h2>
         
@@ -63,48 +63,48 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
         {/* 2. 활동 목적 */}
-        <section className="bg-white rounded-[32px] p-8 border border-toast-brown/20 shadow-sm">
-          <h2 className="text-xl font-bold text-ink mb-6 flex items-center gap-2">
+        <section className="bg-white rounded-2xl sm:rounded-[32px] p-5 sm:p-8 border border-toast-brown/20 shadow-sm">
+          <h2 className="text-lg sm:text-xl font-bold text-ink mb-4 sm:mb-6 flex items-center gap-2">
             <span>🎯</span> 활동 목적
           </h2>
-          <ul className="space-y-4 text-ink/80 font-medium">
+          <ul className="space-y-3 sm:space-y-4 text-ink/80 text-sm sm:text-base font-medium">
             <li className="flex gap-3 items-start">
-              <span className="text-forest-green mt-1 font-bold">✔</span>
+              <span className="text-forest-green mt-0.5 font-bold">✔</span>
               <span className="leading-relaxed">
-                노션에 필요하고 내가 만들고 싶은 기능을<br/>
+                노션에 필요하고 내가 만들고 싶은 기능을<br className="hidden sm:inline"/>
                 실제로 구현하고 검증하면서 실전 경험 만들기
               </span>
             </li>
             <li className="flex gap-3 items-start">
-              <span className="text-forest-green mt-1 font-bold">✔</span>
+              <span className="text-forest-green mt-0.5 font-bold">✔</span>
               <span>노션 기능 탐구 및 커스텀 노션 위젯 생태계 확장</span>
             </li>
           </ul>
         </section>
 
         {/* 3. 활동 목표 */}
-        <section className="bg-white rounded-[32px] p-8 border border-toast-brown/20 shadow-sm">
-          <h2 className="text-xl font-bold text-ink mb-6 flex items-center gap-2">
+        <section className="bg-white rounded-2xl sm:rounded-[32px] p-5 sm:p-8 border border-toast-brown/20 shadow-sm">
+          <h2 className="text-lg sm:text-xl font-bold text-ink mb-4 sm:mb-6 flex items-center gap-2">
             <span>🚀</span> 활동 목표
           </h2>
-          <ul className="space-y-4 text-ink/80 font-medium">
+          <ul className="space-y-3 sm:space-y-4 text-ink/80 text-sm sm:text-base font-medium">
             <li className="flex gap-3 items-start">
-              <span className="text-forest-green mt-1 font-bold">✔</span>
+              <span className="text-forest-green mt-0.5 font-bold">✔</span>
               <span className="leading-relaxed">
-                아이디어를 기획하고 프로토타입을 거쳐<br/>
+                아이디어를 기획하고 프로토타입을 거쳐<br className="hidden sm:inline"/>
                 최종 버전까지 완성/배포
               </span>
             </li>
             <li className="flex gap-3 items-start">
-              <span className="text-forest-green mt-1 font-bold">✔</span>
+              <span className="text-forest-green mt-0.5 font-bold">✔</span>
               <span>2개월에 1회 베타테스터 피드백 5건 이상 수집해 품질 개선</span>
             </li>
             <li className="flex gap-3 items-start">
-              <span className="text-forest-green mt-1 font-bold">✔</span>
+              <span className="text-forest-green mt-0.5 font-bold">✔</span>
               <span className="leading-relaxed">
-                프로젝트 결과물 문서화/아카이빙<br/>
+                프로젝트 결과물 문서화/아카이빙<br className="hidden sm:inline"/>
                 (재사용 가능한 자산화)
               </span>
             </li>
@@ -113,43 +113,43 @@ export default function AboutPage() {
       </div>
 
       {/* 4. 활동 내용 */}
-      <section className="bg-forest-green text-white rounded-[32px] p-8 md:p-10 shadow-md relative overflow-hidden">
+      <section className="bg-forest-green text-white rounded-2xl sm:rounded-[32px] p-5 sm:p-8 md:p-10 shadow-md relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
         <div className="relative z-10">
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
             <span>🛠️</span> 활동 내용
           </h2>
           
-          <div className="bg-white/10 rounded-2xl p-6 mb-8 backdrop-blur-sm border border-white/20">
-            <h3 className="font-bold text-lg mb-2">사전 제작 워크북 기준 실전 바이브 코딩(Vibe Coding)</h3>
-            <p className="text-white/90 leading-relaxed">
-              사전 제작 워크북 기준으로 활동하며, 바이브 코딩을 활용해 기능을 직접 기획-개발-QA까지 전 과정을 경험합니다.<br/>
+          <div className="bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 backdrop-blur-sm border border-white/20">
+            <h3 className="font-bold text-base sm:text-lg mb-2">사전 제작 워크북 기준 실전 바이브 코딩(Vibe Coding)</h3>
+            <p className="text-white/90 text-xs sm:text-sm sm:leading-relaxed">
+              사전 제작 워크북 기준으로 활동하며, 바이브 코딩을 활용해 기능을 직접 기획-개발-QA까지 전 과정을 경험합니다.<br className="hidden sm:inline"/>
               개발한 노션 위젯은 <strong>개발했슈 전용 홈페이지</strong>에 직접 배포하여 홍보할 수 있습니다! 🍕
             </p>
           </div>
 
           <div>
-            <h3 className="font-bold text-lg mb-4">🗓️ 8주 커리큘럼 (2개월 단위)</h3>
-            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">🗓️ 8주 커리큘럼 (2개월 단위)</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm">
-                <div className="text-yellow-300 font-black text-base mb-1 tracking-wide">1~2주차</div>
-                <div className="font-bold mb-2 text-white">기획 & 자료조사</div>
-                <p className="text-sm text-white/80">기획서 작성<br/>레퍼런스 및 API 조사</p>
+                <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">1~2주차</div>
+                <div className="font-bold mb-1 sm:mb-2 text-white text-sm sm:text-base">기획 & 자료조사</div>
+                <p className="text-xs sm:text-sm text-white/80">기획서 작성<br/>레퍼런스 및 API 조사</p>
               </div>
               <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm">
-                <div className="text-yellow-300 font-black text-base mb-1 tracking-wide">3~5주차</div>
-                <div className="font-bold mb-2 text-white">개발 진행</div>
-                <p className="text-sm text-white/80">기초 위젯 제작<br/>MVP → 최종 완성/최적화</p>
+                <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">3~5주차</div>
+                <div className="font-bold mb-1 sm:mb-2 text-white text-sm sm:text-base">개발 진행</div>
+                <p className="text-xs sm:text-sm text-white/80">기초 위젯 제작<br/>MVP → 최종 완성/최적화</p>
               </div>
               <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm">
-                <div className="text-yellow-300 font-black text-base mb-1 tracking-wide">6~7주차</div>
-                <div className="font-bold mb-2 text-white">피드백 수집</div>
-                <p className="text-sm text-white/80">슬랙으로 요청/수집<br/>선별, 반영, 기록</p>
+                <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">6~7주차</div>
+                <div className="font-bold mb-1 sm:mb-2 text-white text-sm sm:text-base">피드백 수집</div>
+                <p className="text-xs sm:text-sm text-white/80">슬랙으로 요청/수집<br/>선별, 반영, 기록</p>
               </div>
               <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm">
-                <div className="text-yellow-300 font-black text-base mb-1 tracking-wide">8주차</div>
-                <div className="font-bold mb-2 text-white">배포 & 마무리</div>
-                <p className="text-sm text-white/80">배포 링크 공유<br/>GitHub / 최종 레포 정리</p>
+                <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">8주차</div>
+                <div className="font-bold mb-1 sm:mb-2 text-white text-sm sm:text-base">배포 & 마무리</div>
+                <p className="text-xs sm:text-sm text-white/80">배포 링크 공유<br/>GitHub / 최종 레포 정리</p>
               </div>
             </div>
           </div>
@@ -157,20 +157,20 @@ export default function AboutPage() {
       </section>
 
       {/* 5. 피드백 루프 */}
-      <section className="bg-white rounded-[32px] p-8 border border-toast-brown/20 shadow-sm">
-        <h2 className="text-xl font-bold text-ink mb-6 flex items-center gap-2">
+      <section className="bg-white rounded-2xl sm:rounded-[32px] p-5 sm:p-8 border border-toast-brown/20 shadow-sm">
+        <h2 className="text-lg sm:text-xl font-bold text-ink mb-4 sm:mb-6 flex items-center gap-2">
           <span>🔄</span> 우리의 피드백 루프
         </h2>
-        <p className="text-ink/80 font-medium leading-relaxed">
-          Slack 스레드를 중심으로 <strong>공유 → 피드백 → 개선</strong>의 빠른 루프를 만들고, 주 1회 진행 상황을 공유합니다.<br/>
+        <p className="text-ink/80 text-sm sm:text-base font-medium leading-relaxed">
+          Slack 스레드를 중심으로 <strong>공유 → 피드백 → 개선</strong>의 빠른 루프를 만들고, 주 1회 진행 상황을 공유합니다.<br className="hidden sm:inline"/>
           2개월에 1회 베타테스터 피드백 5건 이상을 수집해 품질을 개선하고 결과물을 문서화/아카이빙합니다.
         </p>
       </section>
 
       {/* 6. 운영진의 한 마디 */}
-      <section className="bg-bakery-beige rounded-[32px] p-8 md:p-12 text-center shadow-inner border-2 border-dashed border-toast-brown/30">
-        <h2 className="text-xl font-bold text-toast-brown mb-4">💬 운영진의 한 마디</h2>
-        <p className="text-ink font-bold text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
+      <section className="bg-bakery-beige rounded-2xl sm:rounded-[32px] p-6 sm:p-8 md:p-12 text-center shadow-inner border-2 border-dashed border-toast-brown/30">
+        <h2 className="text-lg sm:text-xl font-bold text-toast-brown mb-3 sm:mb-4">💬 운영진의 한 마디</h2>
+        <p className="text-ink font-bold text-base sm:text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
           바이브 코딩을 해보고 싶은데 어떤 것부터 해야 할지 잘 모르는 친구들 환영!!<br/>
           노션 위젯을 직접 개발해보면서 기획과 개발 경험을 모두 해보는 건 어떨까?
         </p>
