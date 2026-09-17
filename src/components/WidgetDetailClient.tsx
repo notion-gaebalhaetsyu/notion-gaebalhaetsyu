@@ -84,142 +84,149 @@ export default function WidgetDetailClient({
   };
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8 pb-24 lg:pb-8">
-      {/* 1. 좌측 영역: 실시간 위젯 미리보기 */}
-      <div className="flex-1 flex flex-col">
-        <Link href="/widgets" className="text-forest-green font-bold mb-4 hover:underline inline-flex items-center gap-2">
+    <div className="max-w-6xl mx-auto pb-24 lg:pb-8">
+      {/* 뒤로가기 링크 */}
+      <div className="mb-4">
+        <Link href="/widgets" className="text-forest-green font-bold hover:underline inline-flex items-center gap-2">
           ← 위젯 진열대로 돌아가기
         </Link>
-        <div className="bg-white rounded-[24px] border border-toast-brown/30 flex-1 min-h-[420px] flex items-center justify-center relative overflow-hidden shadow-sm">
-          {/* 장식용 텍스쳐 */}
-          <div className="absolute inset-0 bg-paper-texture opacity-10 pointer-events-none"></div>
-          
-          {/* 위젯 실제 렌더링 / 임베드 iframe 또는 미리보기 시뮬레이션 */}
-          {widget.thumbnail_url ? (
-            <div className="w-full h-full p-6 flex items-center justify-center">
-              <img 
-                src={widget.thumbnail_url} 
-                alt={widget.name} 
-                className="max-h-[360px] object-contain rounded-2xl shadow-sm border border-toast-brown/20" 
-              />
-            </div>
-          ) : (
-            <div className="p-8 rounded-[20px] shadow-md border border-toast-brown/20 bg-bakery-beige/80 backdrop-blur-sm z-10 text-center max-w-sm">
-              <img src="/pizza_icon.png" alt="피자" className="w-16 h-16 mx-auto object-contain mb-3" />
-              <h3 className="text-xl font-bold text-ink mb-2">{widget.name}</h3>
-              <p className="text-sm text-ink/70 font-medium mb-4">{widget.short_description}</p>
-              <div className="inline-block bg-forest-green text-white text-xs font-bold px-3 py-1 rounded-full">
-                {widget.categories?.name || '개발했슈 1기'}
-              </div>
-            </div>
-          )}
-        </div>
       </div>
 
-      {/* 2. 우측 영역: 상세 정보 패널 */}
-      <div className="w-full lg:w-[420px] flex flex-col gap-6">
-        {/* 기본 정보 */}
-        <div className="bg-white rounded-[24px] border border-toast-brown/30 p-6 sm:p-8 shadow-sm flex flex-col justify-between flex-1">
-          <div>
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <div className="flex flex-wrap items-center gap-1.5 mb-2">
-                  {widget.categories_list && widget.categories_list.length > 0 ? (
-                    widget.categories_list.map((cat: any) => (
-                      <span key={cat.id || cat.name} className="inline-flex items-center gap-1 bg-forest-green/10 text-forest-green text-xs font-bold px-3 py-1 rounded-full">
-                        {cat.icon && <span>{cat.icon}</span>}
-                        <span>{cat.name}</span>
-                      </span>
-                    ))
-                  ) : (
-                    <span className="inline-block bg-forest-green/10 text-forest-green text-xs font-bold px-3 py-1 rounded-full">
-                      {widget.categories?.name || '위젯'}
-                    </span>
-                  )}
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-ink">{widget.name}</h1>
-              </div>
-              <button 
-                onClick={handleToggleFavorite}
-                className={`text-3xl hover:scale-125 transition-transform ${isFavorited ? 'text-strawberry-pink' : 'text-gray-300 hover:text-strawberry-pink'}`}
-                title={isFavorited ? '찜 취소' : '관심 위젯으로 찜하기'}
-              >
-                {isFavorited ? '❤️' : '🤍'}
-              </button>
-            </div>
-
-            <div className="flex items-center gap-3 text-sm text-ink font-medium mb-6 pb-5 border-b border-toast-brown/20">
-              {widget.creator_profiles?.character_image_url ? (
-                <img 
-                  src={widget.creator_profiles.character_image_url} 
-                  alt={widget.creator_profiles?.nickname || '제작자'} 
-                  className="w-10 h-10 rounded-full object-cover border border-toast-brown/20"
-                />
-              ) : (
-                <span className="w-10 h-10 rounded-full bg-custard-cream flex items-center justify-center text-lg">🧑‍🍳</span>
-              )}
-              <div>
-                <Link href={`/creators/${widget.creator_profiles?.nickname || ''}`} className="font-bold text-ink hover:underline hover:text-forest-green block">
-                  {widget.creator_profiles?.nickname || '익명의 제작자'}
-                </Link>
-                <span className="text-xs text-ink/50">
-                  {widget.creator_profiles?.cohort || widget.cohort || '개발했슈 1기'} 제작자
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-4 mb-6">
-              <div>
-                <h3 className="text-xs font-bold text-toast-brown uppercase tracking-wider mb-1">소개</h3>
-                <p className="text-ink/80 text-sm leading-relaxed whitespace-pre-line">
-                  {widget.long_description || widget.short_description}
-                </p>
-              </div>
-
-              {widget.creator_comment && (
-                <div className="bg-bakery-beige/60 p-4 rounded-xl border border-toast-brown/20">
-                  <h4 className="text-xs font-bold text-forest-green mb-1">💬 제작자의 한 마디</h4>
-                  <p className="text-xs text-ink/80">{widget.creator_comment}</p>
-                </div>
-              )}
-            </div>
+      <div className="flex flex-col lg:flex-row gap-8 items-stretch">
+        {/* 1. 좌측 영역: 실시간 위젯 미리보기 */}
+        <div className="flex-1 flex flex-col">
+          <div className="bg-white rounded-[24px] border border-toast-brown/30 flex-1 min-h-[420px] flex items-center justify-center relative overflow-hidden shadow-sm">
+            {/* 장식용 텍스쳐 */}
+            <div className="absolute inset-0 bg-paper-texture opacity-10 pointer-events-none"></div>
             
-            <div className="flex items-center gap-4 text-xs font-bold text-ink/60 bg-bakery-beige px-4 py-3 rounded-xl mb-6">
-              <span title="조회수">👀 조회수 {widget.view_count || 0}</span>
-              <span title="복사수">📋 복사 {copyCount}</span>
-              <span title="좋아요 수">❤️ 찜 {widget.like_count || (isFavorited ? 1 : 0)}</span>
-            </div>
+            {/* 위젯 실제 렌더링 / 임베드 iframe 또는 미리보기 시뮬레이션 */}
+            {widget.thumbnail_url ? (
+              <div className="w-full h-full p-6 flex items-center justify-center">
+                <img 
+                  src={widget.thumbnail_url} 
+                  alt={widget.name} 
+                  className="max-h-[360px] object-contain rounded-2xl shadow-sm border border-toast-brown/20" 
+                />
+              </div>
+            ) : (
+              <div className="p-8 rounded-[20px] shadow-md border border-toast-brown/20 bg-bakery-beige/80 backdrop-blur-sm z-10 text-center max-w-sm">
+                <img src="/pizza_icon.png" alt="피자" className="w-16 h-16 mx-auto object-contain mb-3" />
+                <h3 className="text-xl font-bold text-ink mb-2">{widget.name}</h3>
+                <p className="text-sm text-ink/70 font-medium mb-4">{widget.short_description}</p>
+                <div className="inline-block bg-forest-green text-white text-xs font-bold px-3 py-1 rounded-full">
+                  {widget.categories?.name || '개발했슈 1기'}
+                </div>
+              </div>
+            )}
           </div>
+        </div>
 
-          {/* 노션에 담기 / 링크 복사 버튼 & 수정 버튼 */}
-          <div className="pt-4 border-t border-toast-brown/20 flex flex-col gap-3">
-            {canEdit && (
-              <Link
-                href={`/creators/widgets/${widget.id}/edit`}
-                className="w-full py-3 rounded-xl bg-white border-2 border-forest-green text-forest-green font-bold text-center hover:bg-forest-green/5 transition-colors flex items-center justify-center gap-2 text-sm"
+        {/* 2. 우측 영역: 상세 정보 패널 */}
+        <div className="w-full lg:w-[420px] flex flex-col">
+          {/* 기본 정보 */}
+          <div className="bg-white rounded-[24px] border border-toast-brown/30 p-6 sm:p-8 shadow-sm flex flex-col justify-between flex-1">
+            <div>
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <div className="flex flex-wrap items-center gap-1.5 mb-2">
+                    {widget.categories_list && widget.categories_list.length > 0 ? (
+                      widget.categories_list.map((cat: any) => (
+                        <span key={cat.id || cat.name} className="inline-flex items-center gap-1 bg-forest-green/10 text-forest-green text-xs font-bold px-3 py-1 rounded-full">
+                          {cat.icon && <span>{cat.icon}</span>}
+                          <span>{cat.name}</span>
+                        </span>
+                      ))
+                    ) : (
+                      <span className="inline-block bg-forest-green/10 text-forest-green text-xs font-bold px-3 py-1 rounded-full">
+                        {widget.categories?.name || '위젯'}
+                      </span>
+                    )}
+                  </div>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-ink">{widget.name}</h1>
+                </div>
+                <button 
+                  onClick={handleToggleFavorite}
+                  className={`text-3xl hover:scale-125 transition-transform ${isFavorited ? 'text-strawberry-pink' : 'text-gray-300 hover:text-strawberry-pink'}`}
+                  title={isFavorited ? '찜 취소' : '관심 위젯으로 찜하기'}
+                >
+                  {isFavorited ? '❤️' : '🤍'}
+                </button>
+              </div>
+
+              <div className="flex items-center gap-3 text-sm text-ink font-medium mb-6 pb-5 border-b border-toast-brown/20">
+                {widget.creator_profiles?.character_image_url ? (
+                  <img 
+                    src={widget.creator_profiles.character_image_url} 
+                    alt={widget.creator_profiles?.nickname || '제작자'} 
+                    className="w-10 h-10 rounded-full object-cover border border-toast-brown/20"
+                  />
+                ) : (
+                  <span className="w-10 h-10 rounded-full bg-custard-cream flex items-center justify-center text-lg">🧑‍🍳</span>
+                )}
+                <div>
+                  <Link href={`/creators/${widget.creator_profiles?.nickname || ''}`} className="font-bold text-ink hover:underline hover:text-forest-green block">
+                    {widget.creator_profiles?.nickname || '익명의 제작자'}
+                  </Link>
+                  <span className="text-xs text-ink/50">
+                    {widget.creator_profiles?.cohort || widget.cohort || '개발했슈 1기'} 제작자
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-4 mb-6">
+                <div>
+                  <h3 className="text-xs font-bold text-toast-brown uppercase tracking-wider mb-1">소개</h3>
+                  <p className="text-ink/80 text-sm leading-relaxed whitespace-pre-line">
+                    {widget.long_description || widget.short_description}
+                  </p>
+                </div>
+
+                {widget.creator_comment && (
+                  <div className="bg-bakery-beige/60 p-4 rounded-xl border border-toast-brown/20">
+                    <h4 className="text-xs font-bold text-forest-green mb-1">💬 제작자의 한 마디</h4>
+                    <p className="text-xs text-ink/80">{widget.creator_comment}</p>
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex items-center gap-4 text-xs font-bold text-ink/60 bg-bakery-beige px-4 py-3 rounded-xl mb-6">
+                <span title="조회수">👀 조회수 {widget.view_count || 0}</span>
+                <span title="복사수">📋 복사 {copyCount}</span>
+                <span title="좋아요 수">❤️ 찜 {widget.like_count || (isFavorited ? 1 : 0)}</span>
+              </div>
+            </div>
+
+            {/* 노션에 담기 / 링크 복사 버튼 & 수정 버튼 */}
+            <div className="pt-4 border-t border-toast-brown/20 flex flex-col gap-3">
+              {canEdit && (
+                <Link
+                  href={`/creators/widgets/${widget.id}/edit`}
+                  className="w-full py-3 rounded-xl bg-white border-2 border-forest-green text-forest-green font-bold text-center hover:bg-forest-green/5 transition-colors flex items-center justify-center gap-2 text-sm"
+                >
+                  <span>✏️</span> 위젯 정보 수정하기
+                </Link>
+              )}
+              {widget.github_url && (
+                <a
+                  href={widget.github_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 rounded-xl bg-bakery-beige border border-toast-brown/30 text-ink/80 font-bold text-center hover:bg-toast-brown/10 transition-colors flex items-center justify-center gap-2 text-sm"
+                >
+                  <span>🐙</span> 깃허브(GitHub) 저장소 구경하기 ↗
+                </a>
+              )}
+              <button 
+                onClick={handleCopyLink}
+                className="w-full bg-forest-green text-white py-4 rounded-2xl font-bold text-lg shadow-md hover:bg-forest-green/90 transition-all shadow-[0_3px_0_#1c452b] active:shadow-none active:translate-y-[3px] flex items-center justify-center gap-2"
               >
-                <span>✏️</span> 위젯 정보 수정하기
-              </Link>
-            )}
-            {widget.github_url && (
-              <a
-                href={widget.github_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 rounded-xl bg-bakery-beige border border-toast-brown/30 text-ink/80 font-bold text-center hover:bg-toast-brown/10 transition-colors flex items-center justify-center gap-2 text-sm"
-              >
-                <span>🐙</span> 깃허브(GitHub) 저장소 구경하기 ↗
-              </a>
-            )}
-            <button 
-              onClick={handleCopyLink}
-              className="w-full bg-forest-green text-white py-4 rounded-2xl font-bold text-lg shadow-md hover:bg-forest-green/90 transition-all shadow-[0_3px_0_#1c452b] active:shadow-none active:translate-y-[3px] flex items-center justify-center gap-2"
-            >
-              <span>📋</span> 노션에 담기 · 링크 복사
-            </button>
-            <p className="text-center text-xs text-ink/50 mt-1">
-              복사한 링크를 노션 페이지에 붙여넣고 [임베드 생성]을 누르면 바로 작동해요! 🍕
-            </p>
+                <span>📋</span> 노션에 담기 · 링크 복사
+              </button>
+              <p className="text-center text-xs text-ink/50 mt-1 leading-relaxed break-keep">
+                복사한 링크를 노션 페이지에 붙여넣고<br />
+                [임베드 생성]을 누르면 바로 작동해요! 🍕
+              </p>
+            </div>
           </div>
         </div>
       </div>
