@@ -99,7 +99,19 @@ export interface WidgetComment {
   email: string;
   user_avatar?: string;
   created_at: string; // YYYY-MM-DD HH:mm:ss (초 단위까지)
+  updated_at?: string; // YYYY-MM-DD HH:mm:ss (수정 일시)
   content: string;
+}
+
+export interface UserCommentItem {
+  comment: WidgetComment;
+  widget: {
+    id: string;
+    slug: string;
+    name: string;
+    thumbnail_url?: string;
+    category_name?: string;
+  };
 }
 
 export interface Favorite {

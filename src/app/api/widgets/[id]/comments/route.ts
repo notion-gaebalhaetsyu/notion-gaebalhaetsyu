@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/utils/firebase/server-auth';
-import { addWidgetComment, deleteWidgetComment } from '@/utils/firebase/db';
+import { addWidgetComment, deleteWidgetComment, updateWidgetComment } from '@/utils/firebase/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -130,3 +130,75 @@ export async function DELETE(
     );
   }
 }
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json(
+        { error: '로그인이 필요합니다.' },
+        { status: 401 }
+      );
+    }
+
+    const { id } = await params;
+    const widgetId = decodeURIComponent(id || '');
+
+    const body = await request.json();
+    const commentId = (body.commentId || '').trim();
+    const content = (body.content || '').trim();
+
+    if (!commentId) {
+      return NextResponse.json(
+        { error: '수정할 댓글 ID가 누락되었습니다.' },
+        { status: 400 }
+      );
+    }
+
+    if (!content) {
+      return NextResponse.json(
+        { error: '댓글 내용을 입력해주세요.' },
+        { status: 400 }
+      );
+    }
+
+    if (content.length > 500) {
+      return NextResponse.json(
+        { error: '댓글은 최대 500자까지 작성할 수 있습니다.' },
+        { status: 400 }
+      );
+    }
+
+    const result = await updateWidgetComment(
+      widgetId,
+      commentId,
+      user.id,
+      content,
+      user.role === 'admin'
+    );
+
+    if (!result.success || !result.comment) {
+      return NextResponse.json(
+        { error: result.error || '댓글 수정에 실패했습니다.' },
+        { status: 400 }
+      );
+    }
+
+    revalidatePath(`/widgets/${widgetId}`);
+
+    return NextResponse.json({
+      success: true,
+      comment: result.comment,
+    });
+  } catch (error: any) {
+    console.error('PATCH /api/widgets/[id]/comments error:', error);
+    return NextResponse.json(
+      { error: error.message || '서버 오류가 발생했습니다.' },
+      { status: 500 }
+    );
+  }
+}
+

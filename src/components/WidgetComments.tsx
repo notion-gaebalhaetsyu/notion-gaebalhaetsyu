@@ -33,6 +33,9 @@ export default function WidgetComments({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
   const showFeedback = (text: string, type: 'success' | 'error' = 'success') => {
@@ -136,6 +139,54 @@ export default function WidgetComments({
       showFeedback(err.message || '댓글 삭제에 실패했습니다.', 'error');
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleStartEdit = (comment: WidgetComment) => {
+    setEditingId(comment.id);
+    setEditContent(comment.content);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditContent('');
+  };
+
+  const handleSaveEdit = async (commentId: string) => {
+    const trimmed = editContent.trim();
+    if (!trimmed) {
+      alert('수정할 댓글 내용을 입력해주세요.');
+      return;
+    }
+    if (trimmed.length > 500) {
+      alert('댓글은 500자 이내로 작성해주세요.');
+      return;
+    }
+
+    try {
+      setIsUpdating(true);
+      const res = await fetch(`/api/widgets/${widgetId}/comments`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ commentId, content: trimmed }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || '댓글 수정에 실패했습니다.');
+      }
+
+      setComments((prev) =>
+        prev.map((c) => (c.id === commentId ? data.comment : c))
+      );
+      setEditingId(null);
+      setEditContent('');
+      showFeedback('댓글이 수정되었습니다! 🍕', 'success');
+    } catch (err: any) {
+      console.error('Comment update error:', err);
+      showFeedback(err.message || '댓글 수정에 실패했습니다.', 'error');
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -260,9 +311,10 @@ export default function WidgetComments({
               (creatorProfileId && comment.user_id === creatorProfileId) ||
               (creatorEmail && comment.email.toLowerCase() === creatorEmail.toLowerCase())
             );
-            const canDelete = Boolean(
+            const canModify = Boolean(
               currentUser && (currentUser.id === comment.user_id || currentUser.role === 'admin')
             );
+            const isEditing = editingId === comment.id;
 
             return (
               <div
@@ -299,29 +351,87 @@ export default function WidgetComments({
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    {/* 초 단위까지 표기된 작성 일시 */}
-                    <span className="text-xs text-ink/45 whitespace-nowrap font-mono">
-                      {comment.created_at}
-                    </span>
-                    {/* 삭제 버튼 */}
-                    {canDelete && (
-                      <button
-                        onClick={() => handleDelete(comment.id)}
-                        disabled={deletingId === comment.id}
-                        className="text-xs text-ink/40 hover:text-strawberry-pink transition-colors px-1.5 py-0.5 rounded hover:bg-strawberry-pink/10 disabled:opacity-40"
-                        title="댓글 삭제"
-                      >
-                        {deletingId === comment.id ? '삭제 중...' : '삭제'}
-                      </button>
+                  <div className="flex items-center gap-2.5">
+                    {/* 초 단위까지 표기된 작성 일시 및 수정 여부 */}
+                    <div className="flex items-center gap-1.5 text-xs text-ink/45 whitespace-nowrap font-mono">
+                      <span>{comment.created_at}</span>
+                      {comment.updated_at && (
+                        <span
+                          className="text-[11px] text-forest-green font-medium font-sans cursor-help"
+                          title={`최근 수정: ${comment.updated_at}`}
+                        >
+                          (수정됨)
+                        </span>
+                      )}
+                    </div>
+
+                    {/* 수정 및 삭제 버튼 */}
+                    {canModify && !isEditing && (
+                      <div className="flex items-center gap-1 border-l border-toast-brown/20 pl-2">
+                        <button
+                          onClick={() => handleStartEdit(comment)}
+                          disabled={isUpdating || deletingId === comment.id}
+                          className="text-xs text-ink/50 hover:text-forest-green transition-colors px-1.5 py-0.5 rounded hover:bg-forest-green/10 disabled:opacity-40 font-medium"
+                          title="댓글 수정"
+                        >
+                          수정
+                        </button>
+                        <span className="text-ink/20 text-xs">·</span>
+                        <button
+                          onClick={() => handleDelete(comment.id)}
+                          disabled={deletingId === comment.id || isUpdating}
+                          className="text-xs text-ink/50 hover:text-strawberry-pink transition-colors px-1.5 py-0.5 rounded hover:bg-strawberry-pink/10 disabled:opacity-40 font-medium"
+                          title="댓글 삭제"
+                        >
+                          {deletingId === comment.id ? '삭제 중...' : '삭제'}
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
 
-                {/* 댓글 본문 */}
-                <p className="text-sm text-ink/85 whitespace-pre-line leading-relaxed break-words pl-0.5 sm:pl-10">
-                  {comment.content}
-                </p>
+                {/* 댓글 본문 또는 인라인 수정 폼 */}
+                {isEditing ? (
+                  <div className="pl-0.5 sm:pl-10 mt-2 space-y-2">
+                    <textarea
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                      rows={3}
+                      maxLength={500}
+                      disabled={isUpdating}
+                      className="w-full p-3.5 rounded-xl border border-forest-green/40 bg-white focus:outline-none focus:ring-2 focus:ring-forest-green/20 text-sm text-ink resize-none shadow-inner"
+                      placeholder="댓글을 수정해주세요."
+                      autoFocus
+                    />
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-ink/40 font-medium">
+                        {editContent.length} / 500자
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={handleCancelEdit}
+                          disabled={isUpdating}
+                          className="px-3 py-1.5 rounded-lg border border-toast-brown/30 text-ink/70 text-xs font-bold hover:bg-toast-brown/10 transition-colors disabled:opacity-50"
+                        >
+                          취소
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleSaveEdit(comment.id)}
+                          disabled={isUpdating || !editContent.trim()}
+                          className="px-4 py-1.5 rounded-lg bg-forest-green text-white text-xs font-bold hover:bg-forest-green/90 transition-all shadow-sm disabled:opacity-50 flex items-center gap-1"
+                        >
+                          {isUpdating ? '저장 중...' : '수정 완료'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-ink/85 whitespace-pre-line leading-relaxed break-words pl-0.5 sm:pl-10">
+                    {comment.content}
+                  </p>
+                )}
               </div>
             );
           })

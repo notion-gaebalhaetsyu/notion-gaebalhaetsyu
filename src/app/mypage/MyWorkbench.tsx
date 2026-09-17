@@ -2,17 +2,120 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Widget, UserRole } from '@/utils/firebase/types'
+import { Widget, UserRole, UserCommentItem } from '@/utils/firebase/types'
 
 interface MyWorkbenchProps {
   bakedWidgets: Widget[]
   favoriteWidgets: Widget[]
+  userComments?: UserCommentItem[]
   role?: UserRole
 }
 
-export default function MyWorkbench({ bakedWidgets, favoriteWidgets, role = 'visitor' }: MyWorkbenchProps) {
-  const [activeTab, setActiveTab] = useState<'favorites' | 'baked'>('favorites')
+export default function MyWorkbench({ 
+  bakedWidgets, 
+  favoriteWidgets, 
+  userComments = [], 
+  role = 'visitor' 
+}: MyWorkbenchProps) {
+  const [activeTab, setActiveTab] = useState<'favorites' | 'comments' | 'baked'>('favorites')
+  const [commentsList, setCommentsList] = useState<UserCommentItem[]>(userComments)
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null)
+  const [editContent, setEditContent] = useState('')
+  const [isUpdatingComment, setIsUpdatingComment] = useState(false)
+  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null)
+  const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
+
   const isCreatorOrAdmin = role === 'provider' || role === 'creator' || role === 'admin'
+
+  const showFeedback = (text: string, type: 'success' | 'error' = 'success') => {
+    setFeedbackMsg({ text, type })
+    setTimeout(() => setFeedbackMsg(null), 3000)
+  }
+
+  // 댓글 수정 시작
+  const handleStartEditComment = (item: UserCommentItem) => {
+    setEditingCommentId(item.comment.id)
+    setEditContent(item.comment.content)
+  }
+
+  // 댓글 수정 취소
+  const handleCancelEditComment = () => {
+    setEditingCommentId(null)
+    setEditContent('')
+  }
+
+  // 댓글 수정 저장
+  const handleSaveEditComment = async (item: UserCommentItem) => {
+    const trimmed = editContent.trim()
+    if (!trimmed) {
+      alert('수정할 댓글 내용을 입력해주세요.')
+      return
+    }
+    if (trimmed.length > 500) {
+      alert('댓글은 500자 이내로 작성해주세요.')
+      return
+    }
+
+    try {
+      setIsUpdatingComment(true)
+      const res = await fetch(`/api/widgets/${item.widget.id}/comments`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          commentId: item.comment.id,
+          content: trimmed,
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || '댓글 수정에 실패했습니다.')
+      }
+
+      setCommentsList(prev =>
+        prev.map(c =>
+          c.comment.id === item.comment.id
+            ? { ...c, comment: data.comment }
+            : c
+        )
+      )
+      setEditingCommentId(null)
+      setEditContent('')
+      showFeedback('댓글이 수정되었습니다! 🍕', 'success')
+    } catch (err: any) {
+      console.error('Comment update error:', err)
+      showFeedback(err.message || '댓글 수정에 실패했습니다.', 'error')
+    } finally {
+      setIsUpdatingComment(false)
+    }
+  }
+
+  // 댓글 삭제
+  const handleDeleteComment = async (item: UserCommentItem) => {
+    if (!confirm(`'${item.widget.name}' 위젯에 남긴 댓글을 삭제하시겠습니까?`)) return
+
+    try {
+      setDeletingCommentId(item.comment.id)
+      const res = await fetch(`/api/widgets/${item.widget.id}/comments`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ commentId: item.comment.id }),
+      })
+
+      const data = await res.json()
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || '댓글 삭제에 실패했습니다.')
+      }
+
+      setCommentsList(prev => prev.filter(c => c.comment.id !== item.comment.id))
+      showFeedback('댓글이 삭제되었습니다.', 'success')
+    } catch (err: any) {
+      console.error('Comment delete error:', err)
+      showFeedback(err.message || '댓글 삭제에 실패했습니다.', 'error')
+    } finally {
+      setDeletingCommentId(null)
+    }
+  }
 
   // 위젯 카드 렌더링 함수
   const renderWidgetCard = (widget: Widget, isBaked: boolean = false) => (
@@ -85,11 +188,25 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets, role = 'vis
 
   return (
     <section>
+      {/* 피드백 메시지 알림 */}
+      {feedbackMsg && (
+        <div
+          className={`mb-6 p-4 rounded-2xl text-sm font-bold flex items-center gap-2.5 transition-all shadow-sm ${
+            feedbackMsg.type === 'success'
+              ? 'bg-forest-green/10 text-forest-green border border-forest-green/20'
+              : 'bg-strawberry-pink/10 text-strawberry-pink border border-strawberry-pink/20'
+          }`}
+        >
+          <span>{feedbackMsg.type === 'success' ? '🍕' : '⚠️'}</span>
+          <span>{feedbackMsg.text}</span>
+        </div>
+      )}
+
       {/* 탭 네비게이션 */}
-      <div className="flex gap-4 mb-8 border-b border-toast-brown/20 pb-4 overflow-x-auto no-scrollbar">
+      <div className="flex gap-3 sm:gap-4 mb-8 border-b border-toast-brown/20 pb-4 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveTab('favorites')}
-          className={`px-6 py-3 rounded-full font-bold transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+          className={`px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold transition-colors whitespace-nowrap flex items-center gap-1.5 text-sm sm:text-base ${
             activeTab === 'favorites' 
               ? 'bg-ink text-white shadow-md' 
               : 'bg-white text-ink/60 hover:bg-bakery-beige'
@@ -99,9 +216,23 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets, role = 'vis
           <span>내가 찜한 피자</span>
           <span className="ml-1 opacity-70">({favoriteWidgets.length})</span>
         </button>
+
+        <button
+          onClick={() => setActiveTab('comments')}
+          className={`px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold transition-colors whitespace-nowrap flex items-center gap-1.5 text-sm sm:text-base ${
+            activeTab === 'comments' 
+              ? 'bg-ink text-white shadow-md' 
+              : 'bg-white text-ink/60 hover:bg-bakery-beige'
+          }`}
+        >
+          <span>💬</span>
+          <span>내가 남긴 한마디</span>
+          <span className="ml-1 opacity-70">({commentsList.length})</span>
+        </button>
+
         <button
           onClick={() => setActiveTab('baked')}
-          className={`px-6 py-3 rounded-full font-bold transition-colors whitespace-nowrap ${
+          className={`px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold transition-colors whitespace-nowrap text-sm sm:text-base ${
             activeTab === 'baked' 
               ? 'bg-ink text-white shadow-md' 
               : 'bg-white text-ink/60 hover:bg-bakery-beige'
@@ -113,6 +244,7 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets, role = 'vis
 
       {/* 탭 콘텐츠 영역 */}
       <div>
+        {/* 1. 내가 찜한 피자 탭 */}
         {activeTab === 'favorites' && (
           <div>
             {favoriteWidgets.length === 0 ? (
@@ -132,6 +264,150 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets, role = 'vis
           </div>
         )}
 
+        {/* 2. 내가 남긴 한마디 (댓글) 탭 */}
+        {activeTab === 'comments' && (
+          <div>
+            {commentsList.length === 0 ? (
+              <div className="text-center py-20 bg-white rounded-3xl border border-toast-brown/20 shadow-sm border-dashed">
+                <span className="text-5xl block mb-3 opacity-70">💬</span>
+                <h3 className="text-xl font-bold text-ink mb-2">아직 남긴 한마디가 없슈!</h3>
+                <p className="text-ink/60 font-medium mb-6">위젯 상세 페이지에서 제작자에게 따뜻한 응원이나 피드백을 남겨보세요. 🍕</p>
+                <Link href="/widgets" className="inline-block bg-forest-green text-white font-bold py-3 px-6 rounded-xl hover:bg-forest-green/90 transition-colors">
+                  진열대 둘러보기
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-4 max-w-4xl mx-auto">
+                {commentsList.map(item => {
+                  const isEditing = editingCommentId === item.comment.id
+
+                  return (
+                    <div
+                      key={item.comment.id}
+                      className="bg-white rounded-[24px] border border-toast-brown/20 p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-forest-green/30 transition-all"
+                    >
+                      {/* 상단: 연결된 위젯 정보 및 액션 버튼 */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-toast-brown/15">
+                        <Link 
+                          href={`/widgets/${item.widget.slug}`} 
+                          className="flex items-center gap-3 group flex-1 min-w-0"
+                        >
+                          <div className="w-11 h-11 rounded-xl bg-bakery-beige flex items-center justify-center overflow-hidden border border-toast-brown/20 flex-shrink-0 group-hover:border-forest-green transition-colors">
+                            {item.widget.thumbnail_url ? (
+                              <img 
+                                src={item.widget.thumbnail_url} 
+                                alt={item.widget.name} 
+                                className="w-full h-full object-cover" 
+                              />
+                            ) : (
+                              <span className="text-2xl">🍕</span>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-extrabold text-ink text-sm sm:text-base group-hover:text-forest-green transition-colors truncate">
+                                {item.widget.name}
+                              </span>
+                              <span className="text-[11px] font-bold bg-forest-green/10 text-forest-green px-2 py-0.5 rounded-full whitespace-nowrap">
+                                {item.widget.category_name}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 mt-0.5 text-xs text-ink/40 font-mono">
+                              <span>작성: {item.comment.created_at}</span>
+                              {item.comment.updated_at && (
+                                <span
+                                  className="text-[11px] text-forest-green font-medium font-sans cursor-help"
+                                  title={`최근 수정: ${item.comment.updated_at}`}
+                                >
+                                  (수정됨)
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </Link>
+
+                        {/* 우측 액션 버튼들 */}
+                        <div className="flex items-center gap-2 self-end sm:self-center flex-shrink-0">
+                          <Link
+                            href={`/widgets/${item.widget.slug}`}
+                            className="px-2.5 py-1 text-xs font-bold rounded-lg bg-toast-brown/10 text-ink/70 hover:bg-toast-brown/20 hover:text-ink transition-colors flex items-center gap-1"
+                            title="해당 위젯 상세 페이지로 이동"
+                          >
+                            <span>위젯 보기</span>
+                            <span>↗</span>
+                          </Link>
+                          {!isEditing && (
+                            <>
+                              <button
+                                onClick={() => handleStartEditComment(item)}
+                                disabled={isUpdatingComment || deletingCommentId === item.comment.id}
+                                className="px-2.5 py-1 text-xs font-bold rounded-lg border border-toast-brown/30 text-ink/70 hover:bg-forest-green/10 hover:border-forest-green hover:text-forest-green transition-colors disabled:opacity-40"
+                              >
+                                ✏️ 수정
+                              </button>
+                              <button
+                                onClick={() => handleDeleteComment(item)}
+                                disabled={deletingCommentId === item.comment.id || isUpdatingComment}
+                                className="px-2.5 py-1 text-xs font-bold rounded-lg border border-toast-brown/30 text-ink/70 hover:bg-strawberry-pink/10 hover:border-strawberry-pink hover:text-strawberry-pink transition-colors disabled:opacity-40"
+                              >
+                                {deletingCommentId === item.comment.id ? '삭제 중...' : '🗑️ 삭제'}
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* 하단: 댓글 본문 또는 인라인 수정 에디터 */}
+                      {isEditing ? (
+                        <div className="mt-3.5 space-y-2.5">
+                          <textarea
+                            value={editContent}
+                            onChange={(e) => setEditContent(e.target.value)}
+                            rows={3}
+                            maxLength={500}
+                            disabled={isUpdatingComment}
+                            className="w-full p-3.5 rounded-xl border border-forest-green/40 bg-white focus:outline-none focus:ring-2 focus:ring-forest-green/20 text-sm text-ink resize-none shadow-inner"
+                            placeholder="댓글 내용을 수정해주세요."
+                            autoFocus
+                          />
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-ink/40 font-medium">
+                              {editContent.length} / 500자
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={handleCancelEditComment}
+                                disabled={isUpdatingComment}
+                                className="px-3 py-1.5 rounded-lg border border-toast-brown/30 text-ink/70 text-xs font-bold hover:bg-toast-brown/10 transition-colors disabled:opacity-50"
+                              >
+                                취소
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleSaveEditComment(item)}
+                                disabled={isUpdatingComment || !editContent.trim()}
+                                className="px-4 py-1.5 rounded-lg bg-forest-green text-white text-xs font-bold hover:bg-forest-green/90 transition-all shadow-sm disabled:opacity-50 flex items-center gap-1"
+                              >
+                                {isUpdatingComment ? '저장 중...' : '수정 완료 🍕'}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="mt-3.5 p-4 rounded-xl bg-bakery-beige/30 border border-toast-brown/15 text-sm text-ink/85 whitespace-pre-line leading-relaxed">
+                          {item.comment.content}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 3. 내가 구운 피자 탭 */}
         {activeTab === 'baked' && (
           <div>
             {!isCreatorOrAdmin ? (
@@ -179,5 +455,3 @@ export default function MyWorkbench({ bakedWidgets, favoriteWidgets, role = 'vis
     </section>
   )
 }
-
-

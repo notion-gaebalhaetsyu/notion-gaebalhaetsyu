@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/utils/firebase/server-auth'
-import { getCreatorProfileByUserId, getWidgets, getUserFavorites } from '@/utils/firebase/db'
+import { getCreatorProfileByUserId, getWidgets, getUserFavorites, getUserComments } from '@/utils/firebase/db'
 import MyWorkbench from './MyWorkbench'
 
 export const dynamic = 'force-dynamic'
@@ -30,11 +30,14 @@ export default async function MyPage() {
   // 4. "내가 찜한 빵" (관심 위젯) 데이터 가져오기
   const favoriteWidgets = await getUserFavorites(user.id)
 
+  // 5. "내가 남긴 한마디" (작성한 댓글) 데이터 가져오기
+  const userComments = await getUserComments(user.id, user.email)
+
   // 프로필 정보 세팅
   const isCreator = user.role === 'provider' || user.role === 'creator' || creatorProfile?.cohort === '개발했슈 1기'
   const profile = {
     nickname: creatorProfile?.nickname || user.name || user.email?.split('@')[0] || '익명의 제빵사',
-    role: user.role === 'admin' ? '관리자 (admin)' : isCreator ? '1기 제작자 (provider) 🍕' : '일반 손님 (visitor) ☕',
+    role: user.role === 'admin' ? '관리자 (admin)' : isCreator ? '개발했슈 제빵사 (provider) 🍕' : '일반 손님 (visitor) ☕',
     bio: creatorProfile?.bio_short || '아직 자기소개가 없슈.',
   }
 
@@ -82,6 +85,7 @@ export default async function MyPage() {
       <MyWorkbench 
         bakedWidgets={bakedWidgets} 
         favoriteWidgets={favoriteWidgets} 
+        userComments={userComments}
         role={user.role}
       />
     </div>
