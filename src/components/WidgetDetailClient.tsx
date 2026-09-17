@@ -3,17 +3,21 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Widget } from "@/utils/firebase/types";
+import WidgetComments from "@/components/WidgetComments";
+import type { ServerUser } from "@/utils/firebase/server-auth";
 
 export default function WidgetDetailClient({ 
   widget, 
   initialIsFavorited,
   userId,
-  canEdit = false
+  canEdit = false,
+  currentUser = null,
 }: { 
   widget: Widget;
   initialIsFavorited: boolean;
   userId?: string;
   canEdit?: boolean;
+  currentUser?: ServerUser | null;
 }) {
   const [isToastVisible, setIsToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("노션에 담을 준비가 됐슈! 🍕");
@@ -229,6 +233,17 @@ export default function WidgetDetailClient({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* 3. 하단 영역: 위젯 제작자에게 하고 싶은 말 (댓글 영역) */}
+      <div className="mt-8 sm:mt-10">
+        <WidgetComments
+          widgetId={widget.id}
+          creatorProfileId={widget.creator_profile_id}
+          creatorEmail={widget.creator_profiles?.id}
+          initialComments={widget.comments || []}
+          currentUser={currentUser}
+        />
       </div>
 
       {/* 토스트 메시지 */}

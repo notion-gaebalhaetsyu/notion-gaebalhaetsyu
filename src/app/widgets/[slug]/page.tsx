@@ -49,6 +49,7 @@ export default async function WidgetDetailPage({
       initialIsFavorited={isFavorited} 
       userId={user?.id} 
       canEdit={canEdit}
+      currentUser={user}
     />
   );
 }

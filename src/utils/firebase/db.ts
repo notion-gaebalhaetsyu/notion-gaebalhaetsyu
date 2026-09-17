@@ -23,6 +23,7 @@ import {
   WidgetStatus, 
   UserRole,
   CohortInvite,
+  WidgetComment,
 } from './types';
 
 // 타임아웃 헬퍼 (지연 방지용)
@@ -835,6 +836,139 @@ export async function deleteCohortInvite(id: string): Promise<{ success: boolean
   } catch (e: any) {
     console.error('deleteCohortInvite error:', e);
     return { success: false, error: e.message || '초대 코드 삭제 실패' };
+  }
+}
+
+// ==========================================
+// 8. 위젯 댓글 (Widget Comments - Sub-property)
+// ==========================================
+
+export async function addWidgetComment(
+  widgetId: string,
+  commentData: {
+    user_id: string;
+    nickname: string;
+    email: string;
+    content: string;
+    user_avatar?: string;
+  }
+): Promise<{ success: boolean; comment?: WidgetComment; error?: string }> {
+  try {
+    const cleanWidgetId = (widgetId || '').trim();
+    if (!cleanWidgetId) throw new Error('위젯 ID가 누락되었습니다.');
+
+    // KST 시간 기준 초 단위까지 포맷팅 (YYYY-MM-DD HH:mm:ss)
+    const now = new Date();
+    const kstDate = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+    const created_at = kstDate.toISOString().replace('T', ' ').slice(0, 19);
+
+    const newComment: WidgetComment = {
+      id: `cmt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      user_id: commentData.user_id,
+      nickname: commentData.nickname.trim() || '익명',
+      email: commentData.email.trim(),
+      user_avatar: commentData.user_avatar || '',
+      created_at,
+      content: commentData.content.trim(),
+    };
+
+    if (adminDb) {
+      let widgetRef = adminDb.collection('widgets').doc(cleanWidgetId);
+      let widgetDoc = await widgetRef.get();
+      if (!widgetDoc.exists) {
+        const slugSnap = await adminDb.collection('widgets').where('slug', '==', cleanWidgetId).limit(1).get();
+        if (slugSnap.empty) {
+          throw new Error('위젯을 찾을 수 없습니다.');
+        }
+        widgetRef = slugSnap.docs[0]!.ref;
+        widgetDoc = slugSnap.docs[0]!;
+      }
+      const existingComments = (widgetDoc.data()?.comments || []) as WidgetComment[];
+      const updatedComments = [newComment, ...existingComments];
+      await widgetRef.update({ comments: updatedComments });
+      return { success: true, comment: newComment };
+    } else {
+      let widgetRef = doc(db, 'widgets', cleanWidgetId);
+      let widgetDoc = await getDoc(widgetRef);
+      if (!widgetDoc.exists()) {
+        const q = query(collection(db, 'widgets'), where('slug', '==', cleanWidgetId), limit(1));
+        const qSnap = await getDocs(q);
+        if (qSnap.empty) {
+          throw new Error('위젯을 찾을 수 없습니다.');
+        }
+        widgetRef = doc(db, 'widgets', qSnap.docs[0]!.id);
+        widgetDoc = qSnap.docs[0]!;
+      }
+      const existingComments = (widgetDoc.data()?.comments || []) as WidgetComment[];
+      const updatedComments = [newComment, ...existingComments];
+      await updateDoc(widgetRef, { comments: updatedComments });
+      return { success: true, comment: newComment };
+    }
+  } catch (error: any) {
+    console.error('addWidgetComment error:', error);
+    return { success: false, error: error.message || '댓글 등록에 실패했습니다.' };
+  }
+}
+
+export async function deleteWidgetComment(
+  widgetId: string,
+  commentId: string,
+  userId: string,
+  isAdmin: boolean = false
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const cleanWidgetId = (widgetId || '').trim();
+    if (!cleanWidgetId || !commentId) throw new Error('필수 매개변수가 누락되었습니다.');
+
+    if (adminDb) {
+      let widgetRef = adminDb.collection('widgets').doc(cleanWidgetId);
+      let widgetDoc = await widgetRef.get();
+      if (!widgetDoc.exists) {
+        const slugSnap = await adminDb.collection('widgets').where('slug', '==', cleanWidgetId).limit(1).get();
+        if (slugSnap.empty) {
+          throw new Error('위젯을 찾을 수 없습니다.');
+        }
+        widgetRef = slugSnap.docs[0]!.ref;
+        widgetDoc = slugSnap.docs[0]!;
+      }
+      const existingComments = (widgetDoc.data()?.comments || []) as WidgetComment[];
+      const targetComment = existingComments.find(c => c.id === commentId);
+      if (!targetComment) {
+        throw new Error('삭제할 댓글을 찾을 수 없습니다.');
+      }
+      if (targetComment.user_id !== userId && !isAdmin) {
+        throw new Error('본인이 작성한 댓글만 삭제할 수 있습니다.');
+      }
+      const updatedComments = existingComments.filter(c => c.id !== commentId);
+      await widgetRef.update({ comments: updatedComments });
+      return { success: true };
+    } else {
+      let widgetRef = doc(db, 'widgets', cleanWidgetId);
+      let widgetDoc = await getDoc(widgetRef);
+      if (!widgetDoc.exists()) {
+        const q = query(collection(db, 'widgets'), where('slug', '==', cleanWidgetId), limit(1));
+        const qSnap = await getDocs(q);
+        if (qSnap.empty) {
+          throw new Error('위젯을 찾을 수 없습니다.');
+        }
+        widgetRef = doc(db, 'widgets', qSnap.docs[0]!.id);
+        widgetDoc = qSnap.docs[0]!;
+      }
+      const existingComments = (widgetDoc.data()?.comments || []) as WidgetComment[];
+      const targetComment = existingComments.find(c => c.id === commentId);
+      if (!targetComment) {
+        throw new Error('삭제할 댓글을 찾을 수 없습니다.');
+      }
+      if (targetComment.user_id !== userId && !isAdmin) {
+        throw new Error('본인이 작성한 댓글만 삭제할 수 있습니다.');
+      }
+      const updatedComments = existingComments.filter(c => c.id !== commentId);
+      await updateDoc(widgetRef, { comments: updatedComments });
+      return { success: true };
+    }
+  } catch (error: any) {
+    console.error('deleteWidgetComment error:', error);
+    return { success: false, error: error.message || '댓글 삭제에 실패했습니다.' };
   }
 }
 

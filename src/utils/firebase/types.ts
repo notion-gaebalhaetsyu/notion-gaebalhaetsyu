@@ -89,6 +89,17 @@ export interface Widget {
     character_image_url?: string;
     cohort?: string;
   };
+  comments?: WidgetComment[];
+}
+
+export interface WidgetComment {
+  id: string;
+  user_id: string;
+  nickname: string;
+  email: string;
+  user_avatar?: string;
+  created_at: string; // YYYY-MM-DD HH:mm:ss (초 단위까지)
+  content: string;
 }
 
 export interface Favorite {
