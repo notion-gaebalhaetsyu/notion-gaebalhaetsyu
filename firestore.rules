@@ -62,5 +62,22 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+
+    // 8. Visitor Statistics & Tracking
+    match /visitor_summary/{docId} {
+      allow read, write: if true;
+    }
+
+    match /visitor_daily_stats/{dateId} {
+      allow read, write: if true;
+    }
+
+    match /visitor_hourly_stats/{hourId} {
+      allow read, write: if true;
+    }
+
+    match /visitor_ips/{ipHash} {
+      allow read, write: if true;
+    }
   }
 }

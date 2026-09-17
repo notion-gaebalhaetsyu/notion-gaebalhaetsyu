@@ -120,3 +120,34 @@ export interface CohortInvite {
   created_at?: string;
 }
 
+export interface VisitorSummary {
+  total_count: number;
+  today_date: string; // YYYY-MM-DD
+  today_count: number;
+  updated_at: string;
+}
+
+export interface VisitorDailyStat {
+  id?: string;
+  date: string; // YYYY-MM-DD
+  count: number;
+  updated_at: string;
+}
+
+export interface VisitorHourlyStat {
+  id?: string;
+  date_hour: string; // YYYY-MM-DD_HH
+  date: string; // YYYY-MM-DD
+  hour: number; // 0-23
+  count: number;
+  updated_at: string;
+}
+
+export interface VisitorIpSession {
+  ip_hash: string;
+  last_visited_at: number; // milliseconds timestamp
+  visit_count: number;
+  first_visited_at: string;
+  user_agent?: string;
+}
+

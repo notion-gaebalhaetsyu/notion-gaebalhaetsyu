@@ -1,29 +1,43 @@
 import Link from 'next/link'
 import { getWidgets, getUserFavorites } from '@/utils/firebase/db'
+import { getVisitorStats } from '@/utils/firebase/visitor-db'
 import { getCurrentUser } from '@/utils/firebase/server-auth'
 import WidgetCard from '@/components/WidgetCard'
 import HeroBanner from '@/components/HeroBanner'
 import HowToUse from '@/components/HowToUse'
+import VisitorCounter from '@/components/VisitorCounter'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Home() {
   const user = await getCurrentUser()
   
-  // 홈 화면은 발행된 최신 위젯 최대 8개 표시
-  const [widgets, favoriteWidgets] = await Promise.all([
+  // 홈 화면은 발행된 최신 위젯 최대 8개 및 방문자 통계 표시
+  const [widgets, favoriteWidgets, visitorStats] = await Promise.all([
     getWidgets({
       status: 'published',
       sortBy: 'latest',
       limitCount: 8,
     }),
-    user ? getUserFavorites(user.id) : Promise.resolve([])
+    user ? getUserFavorites(user.id) : Promise.resolve([]),
+    getVisitorStats(),
   ])
 
   const favoriteIds = new Set(favoriteWidgets.map(f => f.id))
 
   return (
     <div className="pb-24">
+      {/* 상단 헤더 영역 (방문자 카운터 및 상단 여백 확보) */}
+      <div className="flex items-center justify-between gap-4 mb-4 sm:mb-5">
+        <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-toast-brown/85 bg-white/60 px-3.5 py-1.5 rounded-full border border-toast-brown/15 shadow-2xs">
+          <span>🍕</span>
+          <span>노션에 필요한 기능, 우리가 직접 구웠슈!</span>
+        </div>
+        <div className="ml-auto">
+          <VisitorCounter initialStats={visitorStats} />
+        </div>
+      </div>
+
       {/* 히어로 배너 */}
       <HeroBanner />
 
