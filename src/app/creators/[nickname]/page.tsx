@@ -42,7 +42,13 @@ export default async function CreatorProfilePage({
         
         <div className="relative z-10 text-center md:text-left flex-1">
           <div className="inline-block bg-forest-green/10 text-forest-green text-sm font-bold px-3 py-1 rounded-full mb-3">
-            개발했슈 1기 제작자
+            {(() => {
+              const c = creator.cohort;
+              if (!c || c === '개발했슈' || c.trim() === '') return '개발했슈 제빵사';
+              if (c.includes('제빵사')) return c;
+              if (c.includes('제작자')) return c.replace(/제작자/g, '제빵사');
+              return `${c} 제빵사`;
+            })()}
           </div>
           <h1 className="text-3xl font-extrabold text-ink mb-2">
             {creator.nickname}의 작업대

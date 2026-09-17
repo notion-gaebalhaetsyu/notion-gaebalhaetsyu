@@ -225,7 +225,12 @@ export async function getWidgets(options: GetWidgetsOptions = {}): Promise<Widge
 
     const categoryMap = new Map(categories.map(c => [c.id, c]));
     const categoryBySlug = categories.find(c => c.slug === categorySlug);
-    const creatorMap = new Map(creatorProfiles.map(cp => [cp.id, cp]));
+    const creatorMap = new Map<string, CreatorProfile>();
+    for (const cp of creatorProfiles) {
+      if (cp.id) creatorMap.set(cp.id, cp);
+      if (cp.user_id) creatorMap.set(cp.user_id, cp);
+      if (cp.email) creatorMap.set(cp.email.toLowerCase(), cp);
+    }
 
     let rawWidgets = rawWidgetsList;
 
@@ -344,7 +349,11 @@ export async function getWidgetBySlug(slug: string): Promise<Widget | null> {
       : (widget.category_id ? [widget.category_id] : []);
     const matchedCats = catIds.map(cid => categories.find(c => c.id === cid)).filter(Boolean) as Category[];
     const primaryCat = matchedCats[0] || categories.find(c => c.id === widget.category_id);
-    const creator = creatorProfiles.find(cp => cp.id === widget.creator_profile_id);
+    const creator = creatorProfiles.find(cp => 
+      cp.id === widget.creator_profile_id || 
+      cp.user_id === widget.creator_profile_id || 
+      (Boolean(cp.email && widget.creator_profile_id) && cp.email!.toLowerCase() === widget.creator_profile_id.toLowerCase())
+    );
 
     return {
       ...widget,
@@ -423,7 +432,11 @@ export async function getWidgetById(id: string): Promise<Widget | null> {
       : (widget.category_id ? [widget.category_id] : []);
     const matchedCats = catIds.map(cid => categories.find(c => c.id === cid)).filter(Boolean) as Category[];
     const primaryCat = matchedCats[0] || categories.find(c => c.id === widget.category_id);
-    const creator = creatorProfiles.find(cp => cp.id === widget.creator_profile_id);
+    const creator = creatorProfiles.find(cp => 
+      cp.id === widget.creator_profile_id || 
+      cp.user_id === widget.creator_profile_id || 
+      (Boolean(cp.email && widget.creator_profile_id) && cp.email!.toLowerCase() === widget.creator_profile_id.toLowerCase())
+    );
 
     return {
       ...widget,

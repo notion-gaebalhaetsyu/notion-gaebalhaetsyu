@@ -161,7 +161,7 @@ export default function WidgetDetailClient({
                 {widget.creator_profiles?.character_image_url ? (
                   <img 
                     src={widget.creator_profiles.character_image_url} 
-                    alt={widget.creator_profiles?.nickname || '제작자'} 
+                    alt={widget.creator_profiles?.nickname || '제빵사'} 
                     className="w-10 h-10 rounded-full object-cover border border-toast-brown/20"
                   />
                 ) : (
@@ -169,10 +169,18 @@ export default function WidgetDetailClient({
                 )}
                 <div>
                   <Link href={`/creators/${widget.creator_profiles?.nickname || ''}`} className="font-bold text-ink hover:underline hover:text-forest-green block">
-                    {widget.creator_profiles?.nickname || '익명의 제작자'}
+                    {widget.creator_profiles?.nickname || '익명의 제빵사'}
                   </Link>
                   <span className="text-xs text-ink/50">
-                    {widget.creator_profiles?.cohort || widget.cohort || '개발했슈 1기'} 제작자
+                    {(() => {
+                      const cohort = widget.creator_profiles?.cohort || widget.cohort;
+                      if (!cohort || cohort === '개발했슈' || cohort.trim() === '') {
+                        return '개발했슈 제빵사';
+                      }
+                      if (cohort.includes('제빵사')) return cohort;
+                      if (cohort.includes('제작자')) return cohort.replace(/제작자/g, '제빵사');
+                      return `${cohort} 제빵사`;
+                    })()}
                   </span>
                 </div>
               </div>

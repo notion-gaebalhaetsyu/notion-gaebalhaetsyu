@@ -51,13 +51,13 @@ export default function WidgetCard({
             {widget.creator_profiles?.character_image_url ? (
               <img 
                 src={widget.creator_profiles.character_image_url} 
-                alt={widget.creator_profiles?.nickname || '제작자'} 
+                alt={widget.creator_profiles?.nickname || '제빵사'} 
                 className="w-5 h-5 rounded-full object-cover border border-toast-brown/20"
               />
             ) : (
               <span className="text-base">🧑‍🍳</span>
             )}
-            <span className="line-clamp-1">{widget.creator_profiles?.nickname || '익명의 제작자'}</span>
+            <span className="line-clamp-1">{widget.creator_profiles?.nickname || '익명의 제빵사'}</span>
           </div>
           <WidgetCardCopy widget={widget} />
         </div>
