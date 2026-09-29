@@ -27,6 +27,11 @@ function getAdminApp() {
         }),
         projectId,
       });
+    } else {
+      // In development or when service account key is not set, adminApp will be null and fallback to client SDK
+      if (!privateKey && process.env.NODE_ENV !== 'production') {
+        console.info('[Firebase Admin] Service account private key is not configured. Falling back to Client SDK for database operations.');
+      }
     }
   } catch (error) {
     console.warn('Firebase Admin SDK initialization warning:', error);

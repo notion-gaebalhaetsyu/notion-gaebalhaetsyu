@@ -36,7 +36,8 @@ function initFirestore() {
     return databaseId && databaseId !== '(default)'
       ? getFirestore(app, databaseId)
       : getFirestore(app);
-  } catch {
+  } catch (e) {
+    console.error('initFirestore error:', e);
     return {} as any;
   }
 }
