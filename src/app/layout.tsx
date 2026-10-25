@@ -16,6 +16,18 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "개발했슈 | 노션 바이브 코딩 동아리",
   description: "노션에 필요한 기능, 우리가 직접 구웠슈!",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon.png", type: "image/png" },
+      { url: "/pizza_icon.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [
+      { url: "/apple-icon.png" },
+      { url: "/apple-touch-icon.png" },
+    ],
+  },
 };
 
 export const viewport: Viewport = {
