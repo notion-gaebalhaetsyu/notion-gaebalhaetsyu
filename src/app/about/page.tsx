@@ -132,20 +132,23 @@ export default function AboutPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm flex flex-col justify-start">
                 <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">1주차</div>
-                <div className="font-bold text-white text-sm sm:text-base">기획하기</div>
-                <p className="text-xs sm:text-sm text-white/80 mt-1">(레시피 작성하기)</p>
+                <div className="font-bold text-white text-sm sm:text-base mb-1.5">기획하기 <span className="text-xs font-normal text-white/80 block sm:inline">(레시피 작성하기)</span></div>
+                <p className="text-xs text-white/80 leading-relaxed">누구를 위한 위젯인지, 어떤 위젯을 만들 것인지 기획하는 과정</p>
               </div>
               <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm flex flex-col justify-start">
                 <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">2주차</div>
-                <div className="font-bold text-white text-sm sm:text-base">개발 연습하기</div>
+                <div className="font-bold text-white text-sm sm:text-base mb-1.5">개발 연습하기</div>
+                <p className="text-xs text-white/80 leading-relaxed">예시 위젯을 만들어보며 바이브 코딩을 입문하는 과정</p>
               </div>
               <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm flex flex-col justify-start">
                 <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">3주차</div>
-                <div className="font-bold text-white text-sm sm:text-base">위젯 개발하기</div>
+                <div className="font-bold text-white text-sm sm:text-base mb-1.5">위젯 개발하기</div>
+                <p className="text-xs text-white/80 leading-relaxed">기획한 위젯을 바이브 코딩으로 직접 개발하고 배포하는 과정</p>
               </div>
               <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm flex flex-col justify-start">
                 <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">4주차</div>
-                <div className="font-bold text-white text-sm sm:text-base">피드백 반영하기</div>
+                <div className="font-bold text-white text-sm sm:text-base mb-1.5">피드백 반영하기</div>
+                <p className="text-xs text-white/80 leading-relaxed">다른 멤버들에게 피드백을 수집·반영하면서 고도화하는 과정</p>
               </div>
             </div>
           </div>
