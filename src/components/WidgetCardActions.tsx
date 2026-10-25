@@ -79,7 +79,7 @@ export function WidgetCardCopy({ widget }: { widget: any }) {
     
     const embedUrl = widget.embed_url || `${window.location.origin}/embed/${widget.id}`;
     navigator.clipboard.writeText(embedUrl).then(() => {
-      showToast("노션에 담을 링크를 복사했슈! 🍕");
+      showToast("노션에 담을 링크를 복사했슈!");
     }).catch(() => {
       showToast("링크 복사에 실패했슈.");
     });

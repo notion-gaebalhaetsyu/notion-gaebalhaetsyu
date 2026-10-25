@@ -22,8 +22,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={{ showToast }}>
       {children}
       {toast && (
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-ink text-white px-6 py-3 rounded-2xl shadow-xl font-bold flex items-center gap-3 animate-bounce z-50">
-          <span>🍞</span> {toast}
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-ink text-white px-6 py-3.5 rounded-2xl shadow-2xl font-bold flex items-center gap-2.5 animate-bounce z-50">
+          <img src="/pizza_icon.png" alt="파비콘" className="w-5 h-5 object-contain flex-shrink-0" />
+          <span className="whitespace-nowrap text-sm sm:text-base">{toast.replace(/🍕/g, '').trim()}</span>
+          <img src="/pizza_icon.png" alt="파비콘" className="w-5 h-5 object-contain flex-shrink-0" />
         </div>
       )}
     </ToastContext.Provider>

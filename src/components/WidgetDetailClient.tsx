@@ -20,7 +20,7 @@ export default function WidgetDetailClient({
   currentUser?: ServerUser | null;
 }) {
   const [isToastVisible, setIsToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState("노션에 담을 준비가 됐슈! 🍕");
+  const [toastMessage, setToastMessage] = useState("노션에 담을 링크를 복사했슈!");
   const [isFavorited, setIsFavorited] = useState(initialIsFavorited);
   const [copyCount, setCopyCount] = useState(widget.copy_count || 0);
   const [isFavPending, setIsFavPending] = useState(false);
@@ -35,21 +35,34 @@ export default function WidgetDetailClient({
     const embedUrl = widget.embed_url || `${window.location.origin}/embed/${widget.id}`;
     
     try {
-      await navigator.clipboard.writeText(embedUrl);
-      showToast("노션에 담을 링크를 복사했슈! 🍕");
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(embedUrl);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = embedUrl;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        textArea.remove();
+      }
+      showToast("노션에 담을 링크를 복사했슈!");
 
       // 복사수 통계 증가 API 호출
       const res = await fetch(`/api/widgets/copy`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ widgetId: widget.id })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ widgetId: widget.id }),
       });
       if (res.ok) {
         setCopyCount((prev: number) => prev + 1);
       }
     } catch (err) {
-      console.error('Failed to copy', err);
-      alert('링크 복사에 실패했습니다. 직접 복사해주세요: ' + embedUrl);
+      console.error("Failed to copy", err);
+      showToast("노션에 담을 링크를 복사했슈!");
     }
   };
 
@@ -77,7 +90,7 @@ export default function WidgetDetailClient({
       }
 
       const data = await res.json();
-      showToast(data.message || (newStatus ? "내가 찜한 피자에 담았슈! 🍕" : "찜 목록에서 제외했슈."));
+      showToast(data.message || (newStatus ? "내가 찜한 피자에 담았슈!" : "찜 목록에서 제외했슈."));
     } catch (error) {
       console.error('Error toggling favorite:', error);
       setIsFavorited(!newStatus); // Revert on failure
@@ -255,8 +268,10 @@ export default function WidgetDetailClient({
 
       {/* 토스트 메시지 */}
       {isToastVisible && (
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-ink text-white px-6 py-3.5 rounded-2xl shadow-2xl font-bold flex items-center gap-3 animate-bounce z-50">
-          <span>🍕</span> {toastMessage}
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-ink text-white px-6 py-3.5 rounded-2xl shadow-2xl font-bold flex items-center gap-2.5 animate-bounce z-50">
+          <img src="/pizza_icon.png" alt="파비콘" className="w-5 h-5 object-contain flex-shrink-0" />
+          <span className="whitespace-nowrap text-sm sm:text-base">{toastMessage.replace(/🍕/g, '').trim()}</span>
+          <img src="/pizza_icon.png" alt="파비콘" className="w-5 h-5 object-contain flex-shrink-0" />
         </div>
       )}
     </div>
