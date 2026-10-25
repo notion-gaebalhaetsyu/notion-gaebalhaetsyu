@@ -200,7 +200,7 @@ export default function WidgetDetailClient({
                 )}
               </div>
               
-              <div className="flex items-center gap-4 text-xs font-bold text-ink/60 bg-bakery-beige px-4 py-3 rounded-xl mb-6">
+              <div className="flex items-center gap-4 text-xs font-bold text-ink/60 border border-toast-brown/20 px-4 py-2.5 rounded-xl mb-6">
                 <span title="조회수">👀 조회수 {widget.view_count || 0}</span>
                 <span title="복사수">📋 복사 {copyCount}</span>
                 <span title="좋아요 수">❤️ 찜 {widget.like_count || (isFavorited ? 1 : 0)}</span>
@@ -212,7 +212,7 @@ export default function WidgetDetailClient({
               {canEdit && (
                 <Link
                   href={`/creators/widgets/${widget.id}/edit`}
-                  className="w-full py-3 rounded-xl bg-white border-2 border-forest-green text-forest-green font-bold text-center hover:bg-forest-green/5 transition-colors flex items-center justify-center gap-2 text-sm"
+                  className="w-full h-14 rounded-2xl bg-white border-2 border-forest-green text-forest-green font-bold text-center hover:bg-forest-green/5 transition-colors flex items-center justify-center gap-2 text-base"
                 >
                   <span>✏️</span> 위젯 정보 수정하기
                 </Link>
@@ -222,14 +222,14 @@ export default function WidgetDetailClient({
                   href={widget.github_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3 rounded-xl bg-bakery-beige border border-toast-brown/30 text-ink/80 font-bold text-center hover:bg-toast-brown/10 transition-colors flex items-center justify-center gap-2 text-sm"
+                  className="w-full h-14 rounded-2xl bg-bakery-beige border border-toast-brown/30 text-ink/80 font-bold text-center hover:bg-toast-brown/10 transition-colors flex items-center justify-center gap-2 text-base shadow-sm"
                 >
                   <span>🐙</span> 깃허브(GitHub) 저장소 구경하기 ↗
                 </a>
               )}
               <button 
                 onClick={handleCopyLink}
-                className="w-full bg-forest-green text-white py-4 rounded-2xl font-bold text-lg shadow-md hover:bg-forest-green/90 transition-all shadow-[0_3px_0_#1c452b] active:shadow-none active:translate-y-[3px] flex items-center justify-center gap-2"
+                className="w-full h-14 bg-forest-green text-white rounded-2xl font-bold text-base sm:text-lg shadow-md hover:bg-forest-green/90 transition-all shadow-[0_3px_0_#1c452b] active:shadow-none active:translate-y-[3px] flex items-center justify-center gap-2"
               >
                 <span>📋</span> 노션에 담기 · 링크 복사
               </button>
