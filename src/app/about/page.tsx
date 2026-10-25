@@ -38,7 +38,6 @@ export default function AboutPage() {
               <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 노션 앰버서더 / 공식 템플릿 제작자</li>
               <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 기술 개발 및 창업 관련 경진대회 다수 수상<br/>(한국항공우주연구원 창업 아카데미 최우수)</li>
               <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> 네이버 테크 분야 블로거 (블덱스 기준 상위 1%, 최적 2+)<br/>(블로그 이웃: 2,961명)</li>
-              <li className="flex gap-2.5 items-start"><img src="/pizza_icon.png" alt="피자" className="w-4 h-4 object-contain mt-0.5 flex-shrink-0" /> Microsoft 광주전남 테크 커뮤니티 회원</li>
             </ul>
           </div>
 
@@ -129,27 +128,24 @@ export default function AboutPage() {
           </div>
 
           <div>
-            <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">🗓️ 8주 커리큘럼 (2개월 단위)</h3>
+            <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">🗓️ 4주 커리큘럼</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-              <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm">
-                <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">1~2주차</div>
-                <div className="font-bold mb-1 sm:mb-2 text-white text-sm sm:text-base">기획 & 자료조사</div>
-                <p className="text-xs sm:text-sm text-white/80">기획서 작성<br/>레퍼런스 및 API 조사</p>
+              <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm flex flex-col justify-start">
+                <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">1주차</div>
+                <div className="font-bold text-white text-sm sm:text-base">기획하기</div>
+                <p className="text-xs sm:text-sm text-white/80 mt-1">(레시피 작성하기)</p>
               </div>
-              <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm">
-                <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">3~5주차</div>
-                <div className="font-bold mb-1 sm:mb-2 text-white text-sm sm:text-base">개발 진행</div>
-                <p className="text-xs sm:text-sm text-white/80">기초 위젯 제작<br/>MVP → 최종 완성/최적화</p>
+              <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm flex flex-col justify-start">
+                <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">2주차</div>
+                <div className="font-bold text-white text-sm sm:text-base">개발 연습하기</div>
               </div>
-              <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm">
-                <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">6~7주차</div>
-                <div className="font-bold mb-1 sm:mb-2 text-white text-sm sm:text-base">피드백 수집</div>
-                <p className="text-xs sm:text-sm text-white/80">슬랙으로 요청/수집<br/>선별, 반영, 기록</p>
+              <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm flex flex-col justify-start">
+                <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">3주차</div>
+                <div className="font-bold text-white text-sm sm:text-base">위젯 개발하기</div>
               </div>
-              <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm">
-                <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">8주차</div>
-                <div className="font-bold mb-1 sm:mb-2 text-white text-sm sm:text-base">배포 & 마무리</div>
-                <p className="text-xs sm:text-sm text-white/80">배포 링크 공유<br/>GitHub / 최종 레포 정리</p>
+              <div className="bg-black/20 rounded-xl p-4 border border-white/20 shadow-sm flex flex-col justify-start">
+                <div className="text-yellow-300 font-black text-sm sm:text-base mb-1 tracking-wide">4주차</div>
+                <div className="font-bold text-white text-sm sm:text-base">피드백 반영하기</div>
               </div>
             </div>
           </div>
