@@ -146,7 +146,7 @@ export default function ProfileEditForm({
           </label>
           {is1stGen && (
             <span className="bg-forest-green text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
-              1기 제빵사 인증됨 ✔
+              1기 제작자 인증됨 ✔
             </span>
           )}
         </div>

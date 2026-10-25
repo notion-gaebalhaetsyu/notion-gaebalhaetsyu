@@ -173,13 +173,12 @@ export default function WidgetDetailClient({
                   </Link>
                   <span className="text-xs text-ink/50">
                     {(() => {
-                      const cohort = widget.creator_profiles?.cohort || widget.cohort;
-                      if (!cohort || cohort === '개발했슈' || cohort.trim() === '') {
-                        return '개발했슈 제빵사';
-                      }
-                      if (cohort.includes('제빵사')) return cohort;
-                      if (cohort.includes('제작자')) return cohort.replace(/제작자/g, '제빵사');
-                      return `${cohort} 제빵사`;
+                      let cohort = (widget.creator_profiles?.cohort || widget.cohort)?.trim();
+                      if (!cohort || cohort === '개발했슈') return '개발했슈 1기 제작자';
+                      if (cohort.includes('제빵사')) cohort = cohort.replace(/제빵사/g, '제작자');
+                      if (!cohort.includes('제작자')) cohort = `${cohort} 제작자`;
+                      if (!cohort.includes('개발했슈')) cohort = `개발했슈 ${cohort}`;
+                      return cohort;
                     })()}
                   </span>
                 </div>
