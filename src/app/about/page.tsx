@@ -199,15 +199,26 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 5. 피드백 루프 */}
+      {/* 5. 온라인 모임 안내 */}
       <section className="bg-white rounded-2xl sm:rounded-[32px] p-5 sm:p-8 border border-toast-brown/20 shadow-sm">
         <h2 className="text-lg sm:text-xl font-bold text-ink mb-4 sm:mb-6 flex items-center gap-2">
-          <span>🔄</span> 우리의 피드백 루프
+          <span>💻</span> 온라인 모임 안내
         </h2>
-        <p className="text-ink/80 text-sm sm:text-base font-medium leading-relaxed">
-          Slack 스레드를 중심으로 <strong>공유 → 피드백 → 개선</strong>의 빠른 루프를 만들고, 주 1회 진행 상황을 공유합니다.<br className="hidden sm:inline"/>
-          2개월에 1회 베타테스터 피드백 5건 이상을 수집해 품질을 개선하고 결과물을 문서화/아카이빙합니다.
-        </p>
+        <div className="space-y-3 text-ink/80 text-sm sm:text-base font-medium">
+          <ul className="space-y-2.5">
+            <li className="flex gap-3 items-start">
+              <span className="text-forest-green mt-0.5 font-bold">✔</span>
+              <span>2주차, 4주차에 온라인 Zoom 모임 진행</span>
+            </li>
+            <li className="flex gap-3 items-start">
+              <span className="text-forest-green mt-0.5 font-bold">✔</span>
+              <span className="font-bold text-ink">4주차 Zoom 모임은 필수 참여! ⭐</span>
+            </li>
+          </ul>
+          <p className="text-xs sm:text-sm text-ink/50 font-normal pl-6">
+            (자세한 일정은 추후 공지)
+          </p>
+        </div>
       </section>
 
       {/* 6. 운영진의 한 마디 */}
