@@ -29,7 +29,29 @@ export default function AboutPage() {
               </div>
               <div>
                 <div className="text-sm font-bold text-forest-green mb-1">운영진</div>
-                <h3 className="text-xl font-bold text-ink">필버트 제빵사</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-ink">필버트 제빵사</h3>
+                  <div className="flex items-center gap-1.5">
+                    <a
+                      href="https://blog.naver.com/filbert_insight"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:scale-110 transition-transform flex items-center"
+                      title="필버트 네이버 블로그"
+                    >
+                      <img src="/naver_blog.svg" alt="네이버 블로그" className="w-5 h-5 object-contain" />
+                    </a>
+                    <a
+                      href="https://www.instagram.com/filbert.notion"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:scale-110 transition-transform flex items-center"
+                      title="필버트 인스타그램"
+                    >
+                      <img src="/instagram.svg" alt="인스타그램" className="w-5 h-5 object-contain rounded-md" />
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
             <ul className="space-y-3 text-ink/80 text-sm font-medium">
@@ -49,7 +71,29 @@ export default function AboutPage() {
               </div>
               <div>
                 <div className="text-sm font-bold text-toast-brown mb-1">운영진</div>
-                <h3 className="text-xl font-bold text-ink">만두 제빵메이트</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-ink">만두 제빵메이트</h3>
+                  <div className="flex items-center gap-1.5">
+                    <a
+                      href="https://blog.naver.com/mandoo_notion"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:scale-110 transition-transform flex items-center"
+                      title="만두 네이버 블로그"
+                    >
+                      <img src="/naver_blog.svg" alt="네이버 블로그" className="w-5 h-5 object-contain" />
+                    </a>
+                    <a
+                      href="https://www.instagram.com/do_mandooo/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:scale-110 transition-transform flex items-center"
+                      title="만두 인스타그램"
+                    >
+                      <img src="/instagram.svg" alt="인스타그램" className="w-5 h-5 object-contain rounded-md" />
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
             <ul className="space-y-3 text-ink/80 text-sm font-medium">
